@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { createReadStream, existsSync, readFileSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
 import { createServer } from "node:http";
+import { oracleFortunes } from "./oracle-data.js";
 
 const rootDir = process.cwd();
 
@@ -86,14 +87,6 @@ const tarotDeck = [
   ["錢幣國王", "成熟掌控資源，適合談合作與長期計畫。"],
 ];
 
-const oraclePoems = [
-  "心定則路明，事緩則局開。",
-  "雲散月自現，貴人近身來。",
-  "先守後可進，勿急自有成。",
-  "一念轉方向，舊局生新光。",
-  "話到七分止，緣分十分留。",
-];
-
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -104,6 +97,25 @@ const mimeTypes = {
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
   ".svg": "image/svg+xml",
+};
+
+const oracleProductMap = {
+  love: {
+    title: "月光關係修復香氛",
+    reason: "適合感情卡關、想穩定溝通與提升柔和能量時使用。",
+  },
+  career: {
+    title: "晨星專注筆記組",
+    reason: "適合工作轉換、考試、創業規劃與整理下一步行動。",
+  },
+  wealth: {
+    title: "豐盛水晶小物",
+    reason: "適合財務整理、開源規劃與提醒自己穩定累積。",
+  },
+  general: {
+    title: "小夢老師開運選品",
+    reason: "依照籤意挑選療癒、提醒與日常儀式感商品。",
+  },
 };
 
 function loadEnvFile() {
@@ -188,6 +200,13 @@ function calculateLifePath(input) {
   return total;
 }
 
+function getOracleProduct(question) {
+  if (/感情|愛情|復合|曖昧|交往|分手|對方|桃花/.test(question)) return oracleProductMap.love;
+  if (/工作|事業|轉職|創業|考試|升遷|合作|客戶/.test(question)) return oracleProductMap.career;
+  if (/財|錢|投資|收入|業績|賺|負債/.test(question)) return oracleProductMap.wealth;
+  return oracleProductMap.general;
+}
+
 function buildReplyMessages(event) {
   const text = event.message?.type === "text" ? event.message.text.trim() : "";
   const lowerText = text.toLowerCase();
@@ -214,9 +233,12 @@ function buildReplyMessages(event) {
   }
 
   if (text.includes("求籤") || text.includes("籤")) {
+    const fortune = randomItem(oracleFortunes);
+    const question = text.replace(/求籤|籤詩|抽籤|問籤/g, "").trim() || "今日整體指引";
+    const product = getOracleProduct(question);
     return [
       textMessage(
-        `今日籤詩：${randomItem(oraclePoems)}\n\n這是免費籤詩。想看完整解籤、感情/事業/財運分項，之後可接付費解鎖。\n${publicBaseUrl}/#demo`
+        `小夢老師替你求到：第 ${fortune.no} 籤｜${fortune.level}\n${fortune.title}\n\n所問：${question}\n\n籤詩：${fortune.poem}\n\n免費簡解：${fortune.summary}\n\n感情：${fortune.love}\n事業：${fortune.career}\n財運：${fortune.wealth}\n\n注意事項：${fortune.advice}\n\n深度解析可延伸：未來 30 天提醒、對方想法、下一步行動與開運建議。\n\n推薦選品：${product.title}\n${product.reason}\n${publicBaseUrl}/#market\n\n完整求籤頁：${publicBaseUrl}/#demo`
       ),
     ];
   }

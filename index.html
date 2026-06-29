@@ -186,12 +186,38 @@
           <article class="tool-panel">
             <div class="panel-head">
               <span>02</span>
-              <h3>求籤</h3>
+              <h3>籤詩小幫手</h3>
+            </div>
+            <div class="oracle-form">
+              <fieldset>
+                <legend>您的性別</legend>
+                <label><input type="radio" name="oracleGender" value="男" /> 男</label>
+                <label><input type="radio" name="oracleGender" value="女" /> 女</label>
+                <label><input type="radio" name="oracleGender" value="不透露" checked /> 不透露</label>
+              </fieldset>
+              <label class="input-label">
+                您的問題
+                <textarea
+                  id="oracleQuestion"
+                  rows="4"
+                  placeholder="請輸入您想求籤的問題，例如：我和對方未來三個月的感情發展？目前工作是否適合轉換？"
+                ></textarea>
+              </label>
+              <label class="input-label">
+                選擇籤詩
+                <select id="oracleType">
+                  <option value="系統選擇">系統選擇</option>
+                  <option value="六十甲子籤詩">六十甲子籤詩</option>
+                  <option value="觀音靈籤">觀音靈籤</option>
+                  <option value="雷雨師">雷雨師</option>
+                  <option value="地藏靈籤">地藏靈籤</option>
+                </select>
+              </label>
             </div>
             <div class="oracle-card">
-              <p id="oraclePoem">心定則路明，事緩則局開。</p>
+              <p id="oraclePoem">按下求籤後，小夢老師會給你籤號、吉凶、詩文與簡易解籤。</p>
             </div>
-            <button class="panel-button" id="drawOracle" type="button">再求一次</button>
+            <button class="panel-button" id="drawOracle" type="button">求籤</button>
           </article>
 
           <article class="tool-panel">
@@ -365,6 +391,6 @@
       <p>本頁為原創 MVP 示範，圖片與文案皆可替換成你的正式品牌素材。</p>
     </footer>
 
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

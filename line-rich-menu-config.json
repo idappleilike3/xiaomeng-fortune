@@ -1,0 +1,59 @@
+{
+  "size": {
+    "width": 2500,
+    "height": 1686
+  },
+  "selected": true,
+  "name": "小夢老師主選單",
+  "chatBarText": "小夢選單",
+  "areas": [
+    {
+      "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "設定生日",
+        "uri": "https://xiaomeng-fortune.onrender.com/#profile"
+      }
+    },
+    {
+      "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "塔羅抽牌",
+        "uri": "https://xiaomeng-fortune.onrender.com/#demo"
+      }
+    },
+    {
+      "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
+      "action": {
+        "type": "message",
+        "label": "求籤",
+        "text": "求籤"
+      }
+    },
+    {
+      "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
+      "action": {
+        "type": "message",
+        "label": "生命靈數",
+        "text": "靈數 1996-08-18"
+      }
+    },
+    {
+      "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "命盤",
+        "uri": "https://xiaomeng-fortune.onrender.com/#profile"
+      }
+    },
+    {
+      "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "命運市集",
+        "uri": "https://xiaomeng-fortune.onrender.com/#market"
+      }
+    }
+  ]
+}

@@ -50,7 +50,7 @@ PORT=3000
 5. Webhook URL 填：
 
 ```text
-https://你的正式網址/api/line/webhook
+https://xiaomeng-fortune.onrender.com/api/line/webhook
 ```
 
 6. 開啟 `Use webhook`
@@ -88,8 +88,8 @@ MBTI
 
 ## 6. 下一步
 
-- 把網站部署到公開網址
 - 建立 LIFF App，讓網頁可在 LINE 內開啟
+- 建立 Rich Menu，讓使用者在 LINE 裡按「設定生日、塔羅、求籤、靈數、命盤、市集」
 - 接 Supabase 儲存會員、解析紀錄、商品點擊
 - 做管理後台管理牌義、籤詩、文章、商品連結
 - 串付款，做完整解析付費解鎖
@@ -108,11 +108,14 @@ MBTI
 - LINE Webhook 後端
 - Channel secret 與 access token 本機設定
 - Render 部署設定檔 `render.yaml`
+- Render 正式部署
+- 正式 Webhook HTTPS 網址
+- 完整籤詩資料 `oracle-data.js`
+- LINE 後台設定表 `line-setup.md`
+- Rich Menu 設定草稿 `line-rich-menu-config.json`
 
 尚未完成：
 
-- 正式部署到 Render / Railway / Vercel
-- 正式 Webhook HTTPS 網址
 - LINE Developers 後台驗證 Webhook
 - LIFF App 建立
 - 資料庫儲存會員資料
@@ -126,7 +129,7 @@ MBTI
 現在正在做的階段：
 
 ```text
-部署準備與正式 Webhook 產生
+LINE 官方後台設定、LIFF、Rich Menu 與內容升級
 ```
 
 ## 8. Render 部署設定
@@ -150,7 +153,7 @@ PUBLIC_BASE_URL=https://Render給你的網址
 正式 Webhook：
 
 ```text
-https://Render給你的網址/api/line/webhook
+https://xiaomeng-fortune.onrender.com/api/line/webhook
 ```
 
 ## 9. 如果另一邊也有人在做網站

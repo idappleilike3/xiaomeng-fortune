@@ -1,3 +1,5 @@
+import { oracleFortunes } from "./oracle-data.js";
+
 const tarotDeck = [
   ["愚者", "新的旅程正在展開，先讓心保持開放，別急著替未知下定論。"],
   ["魔術師", "你手上已有資源，適合主動出擊，把想法變成具體行動。"],
@@ -79,14 +81,6 @@ const tarotDeck = [
   ["錢幣國王", "成熟的物質掌控力，適合談合作、財務與長期計畫。"],
 ];
 
-const oraclePoems = [
-  "心定則路明，事緩則局開。",
-  "雲散月自現，貴人近身來。",
-  "先守後可進，勿急自有成。",
-  "一念轉方向，舊局生新光。",
-  "話到七分止，緣分十分留。",
-];
-
 const menuTargets = {
   chart: "#profile",
   tarot: "#demo",
@@ -106,6 +100,36 @@ const automationTemplates = {
     "你今天的牌面有明顯提醒。免費版先給你方向；如果想知道對方想法、未來 14 天走勢與下一步行動，可以解鎖完整解析。",
 };
 
+const oracleProductMap = {
+  love: {
+    title: "月光關係修復香氛",
+    reason: "適合感情卡關、想穩定溝通與提升柔和能量時使用。",
+    url: "#market",
+  },
+  career: {
+    title: "晨星專注筆記組",
+    reason: "適合工作轉換、考試、創業規劃與整理下一步行動。",
+    url: "#market",
+  },
+  wealth: {
+    title: "豐盛水晶小物",
+    reason: "適合財務整理、開源規劃與提醒自己穩定累積。",
+    url: "#market",
+  },
+  general: {
+    title: "小夢老師開運選品",
+    reason: "依照籤意挑選療癒、提醒與日常儀式感商品。",
+    url: "#market",
+  },
+};
+
+function getOracleProduct(question) {
+  if (/感情|愛情|復合|曖昧|交往|分手|對方|桃花/.test(question)) return oracleProductMap.love;
+  if (/工作|事業|轉職|創業|考試|升遷|合作|客戶/.test(question)) return oracleProductMap.career;
+  if (/財|錢|投資|收入|業績|賺|負債/.test(question)) return oracleProductMap.wealth;
+  return oracleProductMap.general;
+}
+
 document.querySelectorAll("[data-card]").forEach((button) => {
   button.addEventListener("click", () => {
     const selected = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
@@ -115,8 +139,22 @@ document.querySelectorAll("[data-card]").forEach((button) => {
 });
 
 document.querySelector("#drawOracle").addEventListener("click", () => {
-  const poem = oraclePoems[Math.floor(Math.random() * oraclePoems.length)];
-  document.querySelector("#oraclePoem").textContent = poem;
+  const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];
+  const question = document.querySelector("#oracleQuestion").value.trim();
+  const oracleType = document.querySelector("#oracleType").value;
+  const gender = document.querySelector("input[name='oracleGender']:checked")?.value || "不透露";
+  const product = getOracleProduct(question);
+  const questionText = question || "目前心中尚未寫下問題，系統以今日整體指引解讀。";
+  document.querySelector("#oraclePoem").innerHTML =
+    `<span class="oracle-meta">${oracleType}｜${gender}</span>
+    <br>第 ${fortune.no} 籤｜${fortune.level}
+    <br>${fortune.title}
+    <small>所問：${questionText}</small>
+    <small>籤詩：${fortune.poem}</small>
+    <strong>免費簡解：${fortune.summary}</strong>
+    <small>注意事項：${fortune.advice}</small>
+    <span class="premium-note">深度解析可延伸：感情、事業、財運、未來 30 天提醒、下一步行動方案。</span>
+    <a class="oracle-product" href="${product.url}">推薦選品：${product.title}<small>${product.reason}</small></a>`;
 });
 
 document.querySelector("#calcNumber").addEventListener("click", () => {

@@ -675,7 +675,7 @@ h1 {
 
 .oracle-card {
   display: grid;
-  min-height: 142px;
+  min-height: 172px;
   margin-bottom: 14px;
   padding: 18px;
   place-items: center;
@@ -688,11 +688,119 @@ h1 {
   text-align: center;
 }
 
+.oracle-form {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.oracle-form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 12px;
+}
+
+.oracle-form legend {
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.oracle-form label {
+  color: #fff;
+  font-weight: 900;
+}
+
+.oracle-form input[type="radio"] {
+  width: auto;
+  margin-right: 6px;
+  accent-color: #f5d06f;
+}
+
+.oracle-form textarea,
+.oracle-form select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 12px;
+  color: #20202d;
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.oracle-form textarea {
+  resize: vertical;
+}
+
 .oracle-card p {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 900;
   line-height: 1.45;
+}
+
+.oracle-card small {
+  display: block;
+  margin: 10px 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.oracle-card strong {
+  display: block;
+  color: #fff4ca;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.oracle-meta,
+.premium-note,
+.oracle-product {
+  display: block;
+}
+
+.oracle-meta {
+  color: #bfe8ff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.premium-note {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(245, 208, 111, 0.12);
+  border: 1px solid rgba(245, 208, 111, 0.4);
+  border-radius: 12px;
+  color: #ffe9a8;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.oracle-product {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.oracle-product small {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
 }
 
 .panel-button {
