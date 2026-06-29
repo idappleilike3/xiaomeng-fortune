@@ -36,6 +36,8 @@ Auto-reply messages：測試期建議關閉或只保留簡短引導
 Greeting messages：可開啟
 ```
 
+加入好友歡迎詞由 LINE 官方後台負責，Webhook 的 follow 自動歡迎已關閉，避免使用者收到兩段重複訊息。
+
 如果 LINE 後台顯示「驗證失敗」，先確認 Render 網站醒著，再按一次 Verify。
 
 ## 3. LIFF App

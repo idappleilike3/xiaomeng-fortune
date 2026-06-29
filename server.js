@@ -212,11 +212,7 @@ function buildReplyMessages(event) {
   const lowerText = text.toLowerCase();
 
   if (event.type === "follow") {
-    return [
-      textMessage(
-        `{Nickname}，歡迎你來找小夢老師\n\n如果你心裡剛好有一件事想問，可以先回我「求籤」；想看最近的感情、工作或財運，也可以回「塔羅」\n\n第一次來建議先設定生日，之後我就能幫你帶入命盤、生命靈數和每日提醒`
-      ),
-    ];
+    return [];
   }
 
   if (!text) {
@@ -338,6 +334,7 @@ async function handleLineWebhook(request, response) {
     (payload.events || []).map(async (event) => {
       if (!event.replyToken) return;
       const messages = buildReplyMessages(event);
+      if (!messages.length) return;
       await replyToLine(event.replyToken, messages);
     })
   );
