@@ -278,15 +278,13 @@ function flexMessage(altText, contents) {
 
 function menuFlexMessage() {
   const menuItems = [
-    ["生日", "設定資料", liffPageUrl("profile")],
-    ["塔羅", "直接抽牌", liffPageUrl("demo")],
-    ["求籤", "先寫問題", liffPageUrl("demo")],
-    ["靈數", "生日靈數", liffPageUrl("demo")],
-    ["命盤", "八字紫微", liffPageUrl("profile")],
-    ["市集", "解鎖選品", liffPageUrl("market")],
+    ["先設定生日", "之後會帶入命盤與提醒", liffPageUrl("profile"), "#F5D38B"],
+    ["塔羅抽牌", "感情、工作、財運都可以問", liffPageUrl("demo"), "#B780FF"],
+    ["求籤問事", "像到廟裡一樣先寫問題", liffPageUrl("demo"), "#78E0D5"],
+    ["命運市集", "看適合你的療癒選品", liffPageUrl("market"), "#F8A6C7"],
   ];
 
-  return flexMessage("小夢老師功能選單", {
+  return flexMessage("歡迎來找小夢老師", {
     type: "bubble",
     size: "mega",
     body: {
@@ -297,14 +295,15 @@ function menuFlexMessage() {
       contents: [
         {
           type: "text",
-          text: "小夢老師",
+          text: "歡迎你來找小夢老師",
           weight: "bold",
           size: "xl",
           color: "#F5D38B",
+          wrap: true,
         },
         {
           type: "text",
-          text: "想問什麼，直接點下面開始。",
+          text: "如果你心裡剛好有一件事，可以先選塔羅或求籤。想讓之後的解析更貼近你，建議先設定生日資料。",
           size: "sm",
           color: "#F8EEDB",
           wrap: true,
@@ -313,14 +312,134 @@ function menuFlexMessage() {
           type: "box",
           layout: "vertical",
           spacing: "sm",
+          paddingAll: "14px",
           margin: "md",
-          contents: menuItems.map(([label, hint, uri]) => ({
+          backgroundColor: "#2A1744",
+          borderColor: "#F5D38B",
+          borderWidth: "1px",
+          cornerRadius: "16px",
+          contents: [
+            {
+              type: "text",
+              text: "你可以這樣開始",
+              size: "sm",
+              weight: "bold",
+              color: "#F5D38B",
+            },
+            {
+              type: "text",
+              text: "感情卡住、工作選擇、財運方向、最近心情，都可以先從一個問題開始。",
+              size: "xs",
+              color: "#FFF8EE",
+              wrap: true,
+            },
+          ],
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: menuItems.map(([label, hint, uri, color]) => ({
             type: "button",
             style: "secondary",
             height: "sm",
-            color: "#F5D38B",
+            color,
             action: uriAction(`${label}｜${hint}`, uri),
           })),
+        },
+        {
+          type: "text",
+          text: "也可以直接打：塔羅、求籤、靈數 1996-08-18、命盤、MBTI、市集。",
+          size: "xs",
+          color: "#CDBCEB",
+          wrap: true,
+        },
+      ],
+    },
+  });
+}
+
+function tarotEntryFlexMessage() {
+  const examples = ["感情：他現在怎麼看我？", "工作：我適合換工作嗎？", "財運：最近投資要注意什麼？"];
+
+  return flexMessage("塔羅抽牌入口", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#190D28",
+      contents: [
+        {
+          type: "text",
+          text: "先把問題放清楚，再抽牌",
+          weight: "bold",
+          size: "xl",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "塔羅不是隨便給一張牌就結束。你先想一件正在困擾你的事，選感情、工作、財運或個人成長，再從 78 張牌裡親手抽一張。",
+          size: "sm",
+          color: "#FFF8EE",
+          wrap: true,
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          paddingAll: "14px",
+          margin: "md",
+          backgroundColor: "#2A1744",
+          borderColor: "#B780FF",
+          borderWidth: "1px",
+          cornerRadius: "16px",
+          contents: [
+            {
+              type: "text",
+              text: "可以這樣問",
+              size: "sm",
+              weight: "bold",
+              color: "#F5D38B",
+            },
+            ...examples.map((text) => ({
+              type: "text",
+              text,
+              size: "xs",
+              color: "#F8EEDB",
+              wrap: true,
+            })),
+          ],
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: [
+            {
+              type: "button",
+              style: "primary",
+              color: "#B780FF",
+              action: uriAction("進去寫問題並抽牌", liffPageUrl("demo")),
+            },
+            {
+              type: "button",
+              style: "secondary",
+              color: "#F5D38B",
+              action: uriAction("先設定生日資料", liffPageUrl("profile")),
+            },
+          ],
+        },
+        {
+          type: "text",
+          text: "免費版會給牌名、正逆位與簡易提醒；深度解析會延伸對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項與適合選品。",
+          size: "xs",
+          color: "#CDBCEB",
+          wrap: true,
         },
       ],
     },
@@ -592,8 +711,7 @@ function buildReplyMessages(event) {
   }
 
   if (text.includes("塔羅") || lowerText.includes("tarot")) {
-    const card = randomItem(tarotDeck);
-    return [tarotFlexMessage(card)];
+    return [tarotEntryFlexMessage()];
   }
 
   if (text.includes("求籤") || text.includes("籤")) {
