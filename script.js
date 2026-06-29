@@ -565,6 +565,16 @@ function shuffleCards(cards) {
     .map(({ card, index }) => ({ name: card[0], meaning: card[1], index }));
 }
 
+function tarotCardBackMarkup() {
+  return `
+    <span class="tarot-card-back">
+      <i></i>
+      <b>小夢</b>
+      <em></em>
+    </span>
+  `;
+}
+
 function renderTarotDeck() {
   const grid = document.querySelector("#tarotDeckGrid");
   if (!grid) return;
@@ -574,11 +584,7 @@ function renderTarotDeck() {
     .map(
       (card, order) => `
         <button class="tarot-card" type="button" data-tarot-index="${order}" aria-label="選擇第 ${order + 1} 張塔羅牌">
-          <span class="tarot-card-back">
-            <i></i>
-            <b>小夢</b>
-            <em></em>
-          </span>
+          ${tarotCardBackMarkup()}
         </button>
       `
     )
@@ -595,6 +601,7 @@ function drawTarotCard(order) {
   const safeQuestion = escapeHtml(question || "今天我需要知道的提醒是什麼？");
   const position = isReversed ? "逆位" : "正位";
   const result = document.querySelector("#tarotResult");
+  const selectedButton = document.querySelector(`[data-tarot-index="${order}"]`);
   latestTarotReading = {
     name: selected.name,
     position,
@@ -603,10 +610,38 @@ function drawTarotCard(order) {
     meaning: selected.meaning,
   };
 
-  document.querySelectorAll(".tarot-card").forEach((button) => button.classList.remove("is-selected"));
-  document.querySelector(`[data-tarot-index="${order}"]`)?.classList.add("is-selected");
-
+  document.querySelectorAll(".tarot-card").forEach((button) => {
+    button.classList.remove("is-selected", "is-revealed");
+    button.innerHTML = tarotCardBackMarkup();
+  });
+  selectedButton?.classList.add("is-selected", "is-revealing");
+  playRitualTone(540, 0.16, "triangle");
   result.innerHTML = `
+    <div class="tarot-ritual-state">
+      <span>小夢老師正在替你翻牌</span>
+      <strong>請先深呼吸一次，把問題放在心裡。</strong>
+    </div>
+  `;
+
+  window.setTimeout(() => {
+    selectedButton?.classList.remove("is-revealing");
+    selectedButton?.classList.add("is-revealed");
+    if (selectedButton) {
+      selectedButton.innerHTML = `
+        <span class="tarot-card-face ${isReversed ? "is-reversed" : ""}">
+          <i></i>
+          <b>${selected.name}</b>
+          <small>${position}</small>
+        </span>
+      `;
+    }
+
+    result.innerHTML = `
+    <div class="tarot-reveal-card ${isReversed ? "is-reversed" : ""}">
+      <span>翻開的牌</span>
+      <strong>${selected.name}</strong>
+      <em>${position}</em>
+    </div>
     <span class="tarot-kicker">${topic}｜${position}</span>
     <h4>${selected.name}</h4>
     <p><strong>所問：</strong>${safeQuestion}</p>
@@ -614,6 +649,7 @@ function drawTarotCard(order) {
     <p><strong>${topic}提醒：</strong>${topicGuidance[topic]}</p>
     <a class="premium-note premium-link" href="#market">解鎖深度解析：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</a>
   `;
+  }, 850);
 }
 
 document.querySelector("#shuffleTarot")?.addEventListener("click", () => {
