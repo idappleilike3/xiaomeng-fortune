@@ -1172,6 +1172,68 @@ h1 {
   line-height: 1.75;
 }
 
+.wallet-panel {
+  display: grid;
+  gap: 18px;
+  margin: 22px 0;
+  padding: 22px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 88% 18%, rgba(120, 224, 213, 0.2), transparent 34%),
+    radial-gradient(circle at 12% 90%, rgba(245, 211, 139, 0.16), transparent 30%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 26px 70px rgba(3, 5, 20, 0.24);
+}
+
+.wallet-panel h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.wallet-panel p {
+  margin: 0;
+  color: var(--soft);
+  line-height: 1.6;
+}
+
+.wallet-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.payment-plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.payment-plan {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(245, 211, 139, 0.22);
+  border-radius: 12px;
+}
+
+.payment-plan strong {
+  color: var(--gold);
+  font-size: 20px;
+}
+
+.payment-plan span,
+.payment-plan small {
+  color: var(--soft);
+  line-height: 1.45;
+}
+
+.payment-plan button {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
 .premium-link {
   color: #ffe9a8;
   text-decoration: none;
@@ -1291,6 +1353,8 @@ h1 {
 
   .market-grid,
   .unlock-grid,
+  .wallet-actions,
+  .payment-plans,
   .admin-grid,
   .demo-grid,
   .automation-grid,

@@ -2,6 +2,8 @@ import { oracleFortunes } from "./oracle-data.js";
 
 const LIFF_ID = "2010549494-KRb0mn7U";
 const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
+const API_BASE = window.location.protocol === "file:" ? "https://xiaomeng-fortune.onrender.com" : "";
+const DEFAULT_MEMBER_ID = "demo-member-001";
 
 const tarotDeck = [
   ["愚者", "新的旅程正在展開，先讓心保持開放，別急著替未知下定論。"],
@@ -154,6 +156,7 @@ const topicGuidance = {
 let currentTarotDeck = [];
 let latestTarotReading = null;
 let bonusDraws = Number(localStorage.getItem("bonusDraws") || 0);
+let activeMemberId = localStorage.getItem("memberId") || DEFAULT_MEMBER_ID;
 
 function escapeHtml(value) {
   return value
@@ -162,6 +165,20 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    headers: { "content-type": "application/json", ...(options.headers || {}) },
+    ...options,
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    const error = new Error(payload.message || payload.error || "API request failed");
+    error.payload = payload;
+    throw error;
+  }
+  return payload;
 }
 
 function setLiffStatus(message) {
@@ -193,6 +210,9 @@ async function initializeLiffProfile() {
         pictureUrl: profile.pictureUrl,
       })
     );
+    activeMemberId = profile.userId || activeMemberId;
+    localStorage.setItem("memberId", activeMemberId);
+    loadWallet();
   } catch (error) {
     console.warn("LIFF init failed", error);
     setLiffStatus("LIFF 等待 LINE 環境");
@@ -219,6 +239,95 @@ function storeBonusDraw() {
   localStorage.setItem("bonusDraws", String(bonusDraws));
 }
 
+function renderWallet(wallet) {
+  const summary = document.querySelector("#walletSummary");
+  if (summary) {
+    summary.innerHTML = `目前會員：<strong>${escapeHtml(wallet.member.nickname || "LINE 使用者")}</strong>｜點數餘額：<strong>${wallet.member.points}</strong> 點｜等級：${escapeHtml(wallet.member.tier || "一般會員")}`;
+  }
+
+  const plans = document.querySelector("#paymentPlans");
+  if (plans) {
+    plans.innerHTML = wallet.plans
+      .map(
+        (plan) => `
+          <article class="payment-plan">
+            <span>${plan.name}</span>
+            <strong>$${plan.amount}</strong>
+            <small>${plan.points ? `${plan.points} 點｜` : ""}${plan.description}</small>
+            <button class="panel-button ghost-button" type="button" data-plan-id="${plan.id}">綠界付款預覽</button>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  const status = document.querySelector("#paymentStatus");
+  if (status) {
+    status.textContent = wallet.ecpayConfigured
+      ? "綠界參數已設定，下一步可接正式送單與付款回傳。"
+      : "綠界尚未填 Merchant ID、HashKey、HashIV，目前先提供付款流程預覽。";
+  }
+}
+
+async function loadWallet() {
+  try {
+    const payload = await apiRequest(`/api/member/wallet?memberId=${encodeURIComponent(activeMemberId)}`);
+    renderWallet(payload.wallet);
+  } catch (error) {
+    console.warn("wallet load failed", error);
+    const summary = document.querySelector("#walletSummary");
+    if (summary) summary.textContent = "目前無法讀取會員錢包，請稍後再試。";
+  }
+}
+
+async function rewardMemberPoints(note = "分享今日運勢") {
+  const payload = await apiRequest("/api/member/share-reward", {
+    method: "POST",
+    body: JSON.stringify({ memberId: activeMemberId, points: 20, note }),
+  });
+  renderWallet(payload.wallet);
+  return payload.reward;
+}
+
+async function unlockDeepReading() {
+  const status = document.querySelector("#paymentStatus");
+  try {
+    const payload = await apiRequest("/api/member/unlock", {
+      method: "POST",
+      body: JSON.stringify({
+        memberId: activeMemberId,
+        points: 60,
+        type: latestTarotReading ? "tarot" : "premium",
+        topic: latestTarotReading?.topic || "深度解析",
+        summary: latestTarotReading
+          ? `${latestTarotReading.name}｜${latestTarotReading.position} 深度解析`
+          : "使用點數解鎖一份深度解析。",
+        note: "深度解析解鎖",
+      }),
+    });
+    renderWallet(payload.wallet);
+    if (status) status.textContent = "已扣 60 點，深度解析已解鎖。正式版會進入完整報告頁。";
+  } catch (error) {
+    renderWallet(error.payload?.wallet || { member: { nickname: "會員", points: 0, tier: "一般會員" }, plans: [], ecpayConfigured: false });
+    if (status) status.textContent = error.message || "點數不足，請先購買點數包或分享取得獎勵。";
+  }
+}
+
+async function startPaymentPreview(planId) {
+  const status = document.querySelector("#paymentStatus");
+  try {
+    const payload = await apiRequest("/api/payment/ecpay/create", {
+      method: "POST",
+      body: JSON.stringify({ memberId: activeMemberId, planId }),
+    });
+    if (status) {
+      status.textContent = `${payload.plan.name}｜$${payload.plan.amount}：${payload.message}`;
+    }
+  } catch (error) {
+    if (status) status.textContent = "付款流程暫時無法建立，請稍後再試。";
+  }
+}
+
 async function shareFortune() {
   const message = buildShareText();
 
@@ -227,7 +336,8 @@ async function shareFortune() {
       const result = await window.liff.shareTargetPicker([{ type: "text", text: message }]);
       if (result) {
         storeBonusDraw();
-        updateShareStatus("分享完成，已送你一次額外抽牌機會。");
+        rewardMemberPoints("分享今日運勢").catch((error) => console.warn("share reward failed", error));
+        updateShareStatus("分享完成，已送你一次額外抽牌機會與 20 點。");
       } else {
         updateShareStatus("你剛剛取消分享，沒有增加次數。");
       }
@@ -235,7 +345,8 @@ async function shareFortune() {
     }
 
     storeBonusDraw();
-    updateShareStatus("目前不是 LINE 內頁，先用測試模式增加一次額外抽牌。");
+    rewardMemberPoints("測試分享獎勵").catch((error) => console.warn("share reward failed", error));
+    updateShareStatus("目前不是 LINE 內頁，先用測試模式增加一次額外抽牌與 20 點。");
   } catch (error) {
     console.warn("shareTargetPicker failed", error);
     updateShareStatus("分享功能需要在 LINE 內頁開啟，也要在 LINE Developers 打開 shareTargetPicker。");
@@ -327,9 +438,40 @@ document.querySelector("#bonusDraw")?.addEventListener("click", () => {
   updateShareStatus("已使用一次額外抽牌機會。");
 });
 
+document.querySelector("#rewardPoints")?.addEventListener("click", async () => {
+  const status = document.querySelector("#paymentStatus");
+  try {
+    const reward = await rewardMemberPoints("手動測試分享送點");
+    if (status) status.textContent = `已增加 ${reward} 點。正式版會在分享成功後自動入帳。`;
+  } catch (error) {
+    if (status) status.textContent = "送點測試失敗，請稍後再試。";
+  }
+});
+
+document.querySelector("#unlockWithPoints")?.addEventListener("click", unlockDeepReading);
+
+document.querySelector("#paymentPlans")?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-plan-id]");
+  if (!button) return;
+  startPaymentPreview(button.dataset.planId);
+});
+
+document.querySelectorAll("[data-track-product]").forEach((link) => {
+  link.addEventListener("click", () => {
+    apiRequest("/api/admin/track-click", {
+      method: "POST",
+      body: JSON.stringify({
+        product: link.dataset.trackProduct,
+        source: link.dataset.trackSource,
+      }),
+    }).catch((error) => console.warn("track click failed", error));
+  });
+});
+
 renderTarotDeck();
 initializeLiffProfile();
 updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
+loadWallet();
 
 document.querySelector("#drawOracle").addEventListener("click", () => {
   const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];

@@ -225,6 +225,19 @@ async function readRawBody(request) {
   return Buffer.concat(chunks);
 }
 
+async function readJsonBody(request) {
+  const rawBody = await readRawBody(request);
+  if (!rawBody.length) return {};
+
+  try {
+    return JSON.parse(rawBody.toString("utf8"));
+  } catch {
+    const error = new Error("INVALID_JSON");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
 function verifyLineSignature(rawBody, signature) {
   if (!channelSecret || !signature) return false;
 
@@ -237,7 +250,12 @@ function verifyLineSignature(rawBody, signature) {
 }
 
 function jsonResponse(response, statusCode, payload) {
-  response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
+  response.writeHead(statusCode, {
+    "content-type": "application/json; charset=utf-8",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "content-type,x-line-signature",
+  });
   response.end(JSON.stringify(payload));
 }
 
@@ -293,6 +311,45 @@ function getPaymentPlans() {
       description: "每月點數、週運提醒、深度解析折扣與會員選品推薦。",
     },
   ];
+}
+
+function getOrCreateMember(memberId = "demo-member-001") {
+  let member = appData.members.find((item) => item.id === memberId);
+  if (!member) {
+    member = {
+      id: memberId,
+      nickname: "LINE 使用者",
+      birthday: "",
+      birthTime: "",
+      birthPlace: "",
+      points: 0,
+      tier: "一般會員",
+    };
+    appData.members.push(member);
+  }
+  return member;
+}
+
+function addPointLedger(memberId, action, points, note) {
+  const entry = {
+    id: `point-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    memberId,
+    action,
+    points,
+    note,
+  };
+  appData.pointLedger.unshift(entry);
+  return entry;
+}
+
+function getMemberWallet(memberId = "demo-member-001") {
+  const member = getOrCreateMember(memberId);
+  return {
+    member,
+    ledger: appData.pointLedger.filter((item) => item.memberId === member.id).slice(0, 8),
+    plans: getPaymentPlans(),
+    ecpayConfigured: isEcpayConfigured(),
+  };
 }
 
 function randomItem(items) {
@@ -471,6 +528,11 @@ function serveStatic(request, response) {
 
 const server = createServer(async (request, response) => {
   try {
+    if (request.method === "OPTIONS") {
+      jsonResponse(response, 204, {});
+      return;
+    }
+
     if (request.method === "GET" && request.url === "/health") {
       jsonResponse(response, 200, {
         ok: true,
@@ -488,6 +550,68 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    if (request.method === "GET" && request.url.startsWith("/api/member/wallet")) {
+      const url = new URL(request.url, `http://${request.headers.host}`);
+      const memberId = url.searchParams.get("memberId") || "demo-member-001";
+      jsonResponse(response, 200, {
+        ok: true,
+        wallet: getMemberWallet(memberId),
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/member/share-reward") {
+      const payload = await readJsonBody(request);
+      const member = getOrCreateMember(payload.memberId || "demo-member-001");
+      const reward = Number(payload.points || 20);
+      member.points += reward;
+      const ledger = addPointLedger(member.id, "share_reward", reward, payload.note || "分享今日運勢");
+
+      jsonResponse(response, 200, {
+        ok: true,
+        reward,
+        ledger,
+        wallet: getMemberWallet(member.id),
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/member/unlock") {
+      const payload = await readJsonBody(request);
+      const member = getOrCreateMember(payload.memberId || "demo-member-001");
+      const cost = Number(payload.points || 60);
+
+      if (member.points < cost) {
+        jsonResponse(response, 402, {
+          ok: false,
+          error: "POINTS_NOT_ENOUGH",
+          message: "點數不足，請先購買點數包或分享今日運勢取得獎勵。",
+          wallet: getMemberWallet(member.id),
+        });
+        return;
+      }
+
+      member.points -= cost;
+      const reading = {
+        id: `reading-${Date.now()}`,
+        memberId: member.id,
+        type: payload.type || "tarot",
+        topic: payload.topic || "深度解析",
+        summary: payload.summary || "使用點數解鎖一份深度解析。",
+        unlocked: true,
+      };
+      appData.readings.unshift(reading);
+      const ledger = addPointLedger(member.id, "unlock", -cost, payload.note || "深度解析解鎖");
+
+      jsonResponse(response, 200, {
+        ok: true,
+        reading,
+        ledger,
+        wallet: getMemberWallet(member.id),
+      });
+      return;
+    }
+
     if (request.method === "GET" && request.url.startsWith("/api/admin/summary")) {
       jsonResponse(response, 200, {
         ok: true,
@@ -497,8 +621,7 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "POST" && request.url === "/api/admin/track-click") {
-      const rawBody = await readRawBody(request);
-      const payload = JSON.parse(rawBody.toString("utf8") || "{}");
+      const payload = await readJsonBody(request);
       const product = payload.product || "未命名商品";
       const source = payload.source || "unknown";
       const existing = appData.productClicks.find((item) => item.product === product && item.source === source);
@@ -533,8 +656,7 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "POST" && request.url === "/api/payment/ecpay/create") {
-      const rawBody = await readRawBody(request);
-      const payload = JSON.parse(rawBody.toString("utf8") || "{}");
+      const payload = await readJsonBody(request);
       const plan = getPaymentPlans().find((item) => item.id === payload.planId) || getPaymentPlans()[0];
 
       jsonResponse(response, isEcpayConfigured() ? 200 : 202, {
@@ -555,8 +677,7 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "POST" && request.url === "/api/line/push-preview") {
-      const rawBody = await readRawBody(request);
-      const payload = JSON.parse(rawBody.toString("utf8") || "{}");
+      const payload = await readJsonBody(request);
       const automationTemplates = getAutomationTemplates();
       const template = automationTemplates[payload.template] || automationTemplates.daily;
 
@@ -587,6 +708,10 @@ const server = createServer(async (request, response) => {
     jsonResponse(response, 405, { ok: false, error: "Method not allowed" });
   } catch (error) {
     console.error(error);
+    if (error.statusCode === 400 && error.message === "INVALID_JSON") {
+      jsonResponse(response, 400, { ok: false, error: "Invalid JSON body" });
+      return;
+    }
     jsonResponse(response, 500, { ok: false, error: "Internal server error" });
   }
 });

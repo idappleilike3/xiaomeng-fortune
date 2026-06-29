@@ -445,24 +445,38 @@
           <p id="unlockPreview">選擇一個方案，這裡會顯示使用者看到的付費引導文案。</p>
         </div>
 
+        <div class="wallet-panel" aria-label="會員錢包與點數">
+          <div>
+            <span class="product-tag">會員錢包</span>
+            <h3>點數餘額與解鎖流程</h3>
+            <p id="walletSummary">正在讀取會員點數與付款方案。</p>
+          </div>
+          <div class="wallet-actions">
+            <button class="panel-button" id="rewardPoints" type="button">分享送 20 點</button>
+            <button class="panel-button ghost-button" id="unlockWithPoints" type="button">60 點解鎖深度解析</button>
+          </div>
+          <div class="payment-plans" id="paymentPlans" aria-label="綠界付款方案"></div>
+          <p class="share-status" id="paymentStatus">綠界正式收款需填入 Merchant ID、HashKey、HashIV。現在先提供流程預覽。</p>
+        </div>
+
         <div class="market-grid">
           <article class="product-card">
             <span class="product-tag">塔羅結果推薦</span>
             <h3>直覺塔羅入門組</h3>
             <p>適合抽到「女祭司、月亮、星星」的使用者，主打直覺與自我對話。</p>
-            <a href="https://example.com/tarot?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看聯盟商品</a>
+            <a href="https://example.com/tarot?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="直覺塔羅入門組" data-track-source="tarot-result">查看聯盟商品</a>
           </article>
           <article class="product-card">
             <span class="product-tag">感情運推薦</span>
             <h3>月光香氛蠟燭</h3>
             <p>適合感情占卜後推薦，搭配睡前冥想、書寫與顯化儀式。</p>
-            <a href="https://example.com/candle?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看聯盟商品</a>
+            <a href="https://example.com/candle?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="月光香氛蠟燭" data-track-source="love-fortune">查看聯盟商品</a>
           </article>
           <article class="product-card">
             <span class="product-tag">命盤進階</span>
             <h3>一對一命盤諮詢</h3>
             <p>免費命盤給摘要，完整解析導到付費諮詢、課程或會員訂閱。</p>
-            <a href="https://example.com/consulting?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看合作方案</a>
+            <a href="https://example.com/consulting?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="一對一命盤諮詢" data-track-source="chart-upsell">查看合作方案</a>
           </article>
         </div>
       </section>
@@ -525,8 +539,8 @@
           </div>
           <div class="admin-row" role="row">
             <span role="cell">付款 / 點數</span>
-            <strong class="status wait" role="cell">待串接</strong>
-            <span role="cell">等付款平台決定後，串單次解鎖與點數包。</span>
+            <strong class="status active" role="cell">API 雛形</strong>
+            <span role="cell">已加入會員錢包、分享送點、扣點解鎖與綠界付款方案預覽。</span>
           </div>
         </div>
       </section>
