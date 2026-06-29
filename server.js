@@ -140,6 +140,69 @@ const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET || "";
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${port}`).replace(/\/$/, "");
+const ecpayConfig = {
+  merchantId: process.env.ECPAY_MERCHANT_ID || "",
+  hashKey: process.env.ECPAY_HASH_KEY || "",
+  hashIv: process.env.ECPAY_HASH_IV || "",
+  mode: process.env.ECPAY_MODE || "test",
+};
+
+const appData = {
+  members: [
+    {
+      id: "demo-member-001",
+      nickname: "小月",
+      birthday: "1996-08-18",
+      birthTime: "08:30",
+      birthPlace: "台北市",
+      points: 300,
+      tier: "體驗會員",
+    },
+  ],
+  readings: [
+    {
+      id: "reading-001",
+      memberId: "demo-member-001",
+      type: "tarot",
+      topic: "感情",
+      summary: "抽到星星，免費版顯示希望與修復方向。",
+      unlocked: false,
+    },
+    {
+      id: "reading-002",
+      memberId: "demo-member-001",
+      type: "oracle",
+      topic: "工作",
+      summary: "求到上吉籤，提醒先整理方法再出手。",
+      unlocked: true,
+    },
+  ],
+  productClicks: [
+    {
+      id: "click-001",
+      product: "月光香氛蠟燭",
+      source: "oracle-love",
+      clicks: 18,
+      revenueHint: "可替換正式聯盟報表",
+    },
+  ],
+  pointLedger: [
+    {
+      id: "point-001",
+      memberId: "demo-member-001",
+      action: "purchase",
+      points: 300,
+      note: "靈感點數包",
+    },
+    {
+      id: "point-002",
+      memberId: "demo-member-001",
+      action: "unlock",
+      points: -60,
+      note: "深度解籤",
+    },
+  ],
+};
 
 function getAutomationTemplates() {
   return {
@@ -180,6 +243,56 @@ function jsonResponse(response, statusCode, payload) {
 
 function textMessage(text) {
   return { type: "text", text };
+}
+
+function getAdminSummary() {
+  const totalPoints = appData.members.reduce((sum, member) => sum + member.points, 0);
+  const unlockedReadings = appData.readings.filter((reading) => reading.unlocked).length;
+  const totalClicks = appData.productClicks.reduce((sum, item) => sum + item.clicks, 0);
+
+  return {
+    members: appData.members.length,
+    readings: appData.readings.length,
+    unlockedReadings,
+    totalClicks,
+    totalPoints,
+    modules: {
+      members: appData.members,
+      readings: appData.readings,
+      productClicks: appData.productClicks,
+      pointLedger: appData.pointLedger,
+    },
+  };
+}
+
+function isEcpayConfigured() {
+  return Boolean(ecpayConfig.merchantId && ecpayConfig.hashKey && ecpayConfig.hashIv);
+}
+
+function getPaymentPlans() {
+  return [
+    {
+      id: "single-reading",
+      name: "單次深度解析",
+      amount: 99,
+      points: 0,
+      description: "解鎖一次塔羅、求籤、生命靈數或命盤的完整解析。",
+    },
+    {
+      id: "points-300",
+      name: "靈感點數包",
+      amount: 300,
+      points: 300,
+      description: "常回來抽牌、求籤、看週運的人適合用點數扣款。",
+    },
+    {
+      id: "monthly-member",
+      name: "月度療癒會員",
+      amount: 499,
+      points: 600,
+      description: "每月點數、週運提醒、深度解析折扣與會員選品推薦。",
+    },
+  ];
 }
 
 function randomItem(items) {
@@ -371,6 +484,72 @@ const server = createServer(async (request, response) => {
       jsonResponse(response, 200, {
         ok: true,
         templates: getAutomationTemplates(),
+      });
+      return;
+    }
+
+    if (request.method === "GET" && request.url.startsWith("/api/admin/summary")) {
+      jsonResponse(response, 200, {
+        ok: true,
+        summary: getAdminSummary(),
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/admin/track-click") {
+      const rawBody = await readRawBody(request);
+      const payload = JSON.parse(rawBody.toString("utf8") || "{}");
+      const product = payload.product || "未命名商品";
+      const source = payload.source || "unknown";
+      const existing = appData.productClicks.find((item) => item.product === product && item.source === source);
+
+      if (existing) {
+        existing.clicks += 1;
+      } else {
+        appData.productClicks.push({
+          id: `click-${Date.now()}`,
+          product,
+          source,
+          clicks: 1,
+          revenueHint: "本機模擬紀錄，正式版會寫入資料庫",
+        });
+      }
+
+      jsonResponse(response, 200, {
+        ok: true,
+        summary: getAdminSummary(),
+      });
+      return;
+    }
+
+    if (request.method === "GET" && request.url.startsWith("/api/payment/plans")) {
+      jsonResponse(response, 200, {
+        ok: true,
+        provider: "ecpay",
+        configured: isEcpayConfigured(),
+        plans: getPaymentPlans(),
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/payment/ecpay/create") {
+      const rawBody = await readRawBody(request);
+      const payload = JSON.parse(rawBody.toString("utf8") || "{}");
+      const plan = getPaymentPlans().find((item) => item.id === payload.planId) || getPaymentPlans()[0];
+
+      jsonResponse(response, isEcpayConfigured() ? 200 : 202, {
+        ok: true,
+        provider: "ecpay",
+        configured: isEcpayConfigured(),
+        mode: ecpayConfig.mode,
+        plan,
+        message: isEcpayConfigured()
+          ? "綠界參數已設定，可進入正式付款串接。"
+          : "綠界尚未提供 Merchant ID / HashKey / HashIV，目前先回傳付款流程預覽。",
+        returnUrls: {
+          success: `${publicBaseUrl}/payment-success.html`,
+          failure: `${publicBaseUrl}/payment-failed.html`,
+        },
       });
       return;
     }

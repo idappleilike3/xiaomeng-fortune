@@ -42,6 +42,18 @@ Greeting messages：可開啟
 
 ## 3. LIFF App
 
+重要修正：新的 LIFF App 不能新增在 Messaging API Channel 裡，請改用 LINE Login Channel。
+
+正確路徑：
+
+```text
+LINE Developers
+→ 同一個 Provider
+→ 建立或打開 LINE Login Channel
+→ LIFF 分頁
+→ Add LIFF app
+```
+
 建立 LIFF App 時填：
 
 ```text
@@ -52,7 +64,14 @@ Scopes：profile
 Bot link feature：On
 ```
 
-建立完成後，請把 LIFF ID 貼給我。拿到 LIFF ID 後，我可以把網頁改成在 LINE 裡自動讀取使用者基本資料，並把「設定生日」做成 LINE 內視窗。
+建立完成後，請把 LIFF ID 或 LIFF URL 貼給我。LIFF ID 通常不是 U 開頭，會類似 `2001234567-AbCdEfGh`。拿到後，我可以把圖文選單與頁面入口改成 LINE 內視窗。
+
+LINE Login Channel 建立頁如果要求法律網址，請填：
+
+```text
+隱私權政策網址：https://xiaomeng-fortune.onrender.com/privacy.html
+使用條款網址：https://xiaomeng-fortune.onrender.com/terms.html
+```
 
 ## 4. Rich Menu 建議
 
