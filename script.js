@@ -1,5 +1,8 @@
 import { oracleFortunes } from "./oracle-data.js";
 
+const LIFF_ID = "2010549494-KRb0mn7U";
+const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
+
 const tarotDeck = [
   ["愚者", "新的旅程正在展開，先讓心保持開放，別急著替未知下定論。"],
   ["魔術師", "你手上已有資源，適合主動出擊，把想法變成具體行動。"],
@@ -149,6 +152,8 @@ const topicGuidance = {
 };
 
 let currentTarotDeck = [];
+let latestTarotReading = null;
+let bonusDraws = Number(localStorage.getItem("bonusDraws") || 0);
 
 function escapeHtml(value) {
   return value
@@ -157,6 +162,84 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function setLiffStatus(message) {
+  const badge = document.querySelector("#liffStatus");
+  if (badge) badge.textContent = message;
+}
+
+async function initializeLiffProfile() {
+  if (!window.liff) {
+    setLiffStatus("一般瀏覽器預覽");
+    return;
+  }
+
+  try {
+    await window.liff.init({ liffId: LIFF_ID });
+    document.documentElement.dataset.liffReady = "true";
+    setLiffStatus(window.liff.isInClient() ? "LINE 內頁已連線" : "LIFF 網頁模式");
+
+    if (!window.liff.isLoggedIn()) return;
+
+    const profile = await window.liff.getProfile();
+    const nameInput = document.querySelector("#profileName");
+    if (nameInput && !nameInput.value) nameInput.value = profile.displayName || "";
+    localStorage.setItem(
+      "lineProfile",
+      JSON.stringify({
+        userId: profile.userId,
+        displayName: profile.displayName,
+        pictureUrl: profile.pictureUrl,
+      })
+    );
+  } catch (error) {
+    console.warn("LIFF init failed", error);
+    setLiffStatus("LIFF 等待 LINE 環境");
+  }
+}
+
+function updateShareStatus(message) {
+  const status = document.querySelector("#shareStatus");
+  if (!status) return;
+  status.textContent = `${message} 目前可用額外抽牌：${bonusDraws} 次`;
+}
+
+function buildShareText() {
+  const reading = latestTarotReading;
+  if (!reading) {
+    return `我正在小夢老師抽今日指引。你也可以進來抽一張，看看感情、工作或財運的提醒：${LIFF_URL}#demo`;
+  }
+
+  return `我剛在小夢老師抽到「${reading.name}｜${reading.position}」。${reading.meaning} 你也可以抽一張今日指引：${LIFF_URL}#demo`;
+}
+
+function storeBonusDraw() {
+  bonusDraws += 1;
+  localStorage.setItem("bonusDraws", String(bonusDraws));
+}
+
+async function shareFortune() {
+  const message = buildShareText();
+
+  try {
+    if (window.liff?.isApiAvailable?.("shareTargetPicker")) {
+      const result = await window.liff.shareTargetPicker([{ type: "text", text: message }]);
+      if (result) {
+        storeBonusDraw();
+        updateShareStatus("分享完成，已送你一次額外抽牌機會。");
+      } else {
+        updateShareStatus("你剛剛取消分享，沒有增加次數。");
+      }
+      return;
+    }
+
+    storeBonusDraw();
+    updateShareStatus("目前不是 LINE 內頁，先用測試模式增加一次額外抽牌。");
+  } catch (error) {
+    console.warn("shareTargetPicker failed", error);
+    updateShareStatus("分享功能需要在 LINE 內頁開啟，也要在 LINE Developers 打開 shareTargetPicker。");
+  }
 }
 
 function shuffleCards(cards) {
@@ -196,6 +279,13 @@ function drawTarotCard(order) {
   const safeQuestion = escapeHtml(question || "今天我需要知道的提醒是什麼？");
   const position = isReversed ? "逆位" : "正位";
   const result = document.querySelector("#tarotResult");
+  latestTarotReading = {
+    name: selected.name,
+    position,
+    topic,
+    question: question || "今天我需要知道的提醒是什麼？",
+    meaning: selected.meaning,
+  };
 
   document.querySelectorAll(".tarot-card").forEach((button) => button.classList.remove("is-selected"));
   document.querySelector(`[data-tarot-index="${order}"]`)?.classList.add("is-selected");
@@ -222,7 +312,24 @@ document.querySelector("#tarotDeckGrid")?.addEventListener("click", (event) => {
   drawTarotCard(Number(cardButton.dataset.tarotIndex));
 });
 
+document.querySelector("#shareFortune")?.addEventListener("click", shareFortune);
+
+document.querySelector("#bonusDraw")?.addEventListener("click", () => {
+  if (bonusDraws < 1) {
+    updateShareStatus("先分享今日運勢，就能多抽一次。");
+    return;
+  }
+
+  bonusDraws -= 1;
+  localStorage.setItem("bonusDraws", String(bonusDraws));
+  if (!currentTarotDeck.length) renderTarotDeck();
+  drawTarotCard(Math.floor(Math.random() * currentTarotDeck.length));
+  updateShareStatus("已使用一次額外抽牌機會。");
+});
+
 renderTarotDeck();
+initializeLiffProfile();
+updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
 
 document.querySelector("#drawOracle").addEventListener("click", () => {
   const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];

@@ -66,6 +66,14 @@ Bot link feature：On
 
 建立完成後，請把 LIFF ID 或 LIFF URL 貼給我。LIFF ID 通常不是 U 開頭，會類似 `2001234567-AbCdEfGh`。拿到後，我可以把圖文選單與頁面入口改成 LINE 內視窗。
 
+目前已建立：
+
+```text
+LIFF ID：2010549494-KRb0mn7U
+LIFF URL：https://liff.line.me/2010549494-KRb0mn7U
+shareTargetPicker：建議開啟，用於分享今日運勢、分享後多抽一次、邀請好友送點數
+```
+
 LINE Login Channel 建立頁如果要求法律網址，請填：
 
 ```text
@@ -78,15 +86,15 @@ LINE Login Channel 建立頁如果要求法律網址，請填：
 六格按鈕：
 
 ```text
-設定生日 -> https://xiaomeng-fortune.onrender.com/#profile
-塔羅抽牌 -> https://xiaomeng-fortune.onrender.com/#demo
-求籤 -> 傳送文字：求籤
-生命靈數 -> https://xiaomeng-fortune.onrender.com/#demo
-命盤 -> https://xiaomeng-fortune.onrender.com/#profile
-命運市集 -> https://xiaomeng-fortune.onrender.com/#market
+設定生日 -> https://liff.line.me/2010549494-KRb0mn7U#profile
+塔羅抽牌 -> https://liff.line.me/2010549494-KRb0mn7U#demo
+求籤 -> https://liff.line.me/2010549494-KRb0mn7U#demo
+生命靈數 -> https://liff.line.me/2010549494-KRb0mn7U#demo
+命盤 -> https://liff.line.me/2010549494-KRb0mn7U#profile
+命運市集 -> https://liff.line.me/2010549494-KRb0mn7U#market
 ```
 
-如果使用 LIFF，前四個網址之後會換成 LIFF URL。
+這樣使用者從 LINE 點按鈕時，會在 LINE 內頁開啟，不會跳成一般外部網頁。
 
 舊圖文選單處理方式：
 

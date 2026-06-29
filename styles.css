@@ -996,6 +996,42 @@ h1 {
   line-height: 1.55;
 }
 
+.liff-status {
+  grid-column: 1 / -1;
+  width: fit-content;
+  padding: 7px 12px;
+  background: rgba(120, 224, 213, 0.14);
+  border: 1px solid rgba(120, 224, 213, 0.34);
+  border-radius: 999px;
+  color: #c8fff7;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.share-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.share-actions .panel-button {
+  min-height: 48px;
+}
+
+.ghost-button {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(245, 211, 139, 0.34);
+  color: var(--cream);
+}
+
+.share-status {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .oracle-product {
   margin-top: 12px;
   padding: 12px;

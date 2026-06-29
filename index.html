@@ -125,6 +125,7 @@
           </article>
 
           <div class="profile-card">
+            <span class="liff-status" id="liffStatus">LIFF 等待 LINE 內頁</span>
             <label class="input-label">
               暱稱
               <input id="profileName" type="text" placeholder="例：小月" />
@@ -206,6 +207,11 @@
               <p>免費版提供牌名、正逆位與簡易牌義。</p>
               <a class="premium-note premium-link" href="#market">深度解析可延伸：對方想法、未來走勢、注意事項、行動建議與推薦選品。</a>
             </div>
+            <div class="share-actions">
+              <button class="panel-button" id="shareFortune" type="button">分享今日運勢</button>
+              <button class="panel-button ghost-button" id="bonusDraw" type="button">分享後多抽一次</button>
+            </div>
+            <p class="share-status" id="shareStatus">分享給朋友後，可獲得一次額外抽牌機會。正式會員制上線後會改為點數入帳。</p>
           </article>
 
           <article class="tool-panel">
@@ -377,8 +383,8 @@
           </div>
           <div class="progress-row" role="row">
             <span role="cell">LIFF 內頁</span>
-            <strong class="status active" role="cell">進行中</strong>
-            <span role="cell">下一步把設定生日、塔羅、求籤做成更像 LINE 內視窗的流程。</span>
+            <strong class="status done" role="cell">已取得</strong>
+            <span role="cell">LIFF URL 已建立：https://liff.line.me/2010549494-KRb0mn7U，前台與圖文選單設定已改用 LINE 內頁入口。</span>
           </div>
           <div class="progress-row" role="row">
             <span role="cell">圖文選單</span>
@@ -546,6 +552,7 @@
       <p>本頁為原創 MVP 示範，圖片與文案皆可替換成你的正式品牌素材。</p>
     </footer>
 
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script type="module" src="./script.js"></script>
   </body>
 </html>

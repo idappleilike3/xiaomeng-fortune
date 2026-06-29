@@ -12,7 +12,7 @@
       "action": {
         "type": "uri",
         "label": "設定生日",
-        "uri": "https://xiaomeng-fortune.onrender.com/#profile"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#profile"
       }
     },
     {
@@ -20,23 +20,23 @@
       "action": {
         "type": "uri",
         "label": "塔羅抽牌",
-        "uri": "https://xiaomeng-fortune.onrender.com/#demo"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
       }
     },
     {
       "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
       "action": {
-        "type": "message",
+        "type": "uri",
         "label": "求籤",
-        "text": "求籤"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
       }
     },
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "message",
+        "type": "uri",
         "label": "生命靈數",
-        "text": "靈數 1996-08-18"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
       }
     },
     {
@@ -44,7 +44,7 @@
       "action": {
         "type": "uri",
         "label": "命盤",
-        "uri": "https://xiaomeng-fortune.onrender.com/#profile"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#profile"
       }
     },
     {
@@ -52,7 +52,7 @@
       "action": {
         "type": "uri",
         "label": "命運市集",
-        "uri": "https://xiaomeng-fortune.onrender.com/#market"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U#market"
       }
     }
   ]
