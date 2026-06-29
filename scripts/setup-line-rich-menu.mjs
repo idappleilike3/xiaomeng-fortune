@@ -22,12 +22,14 @@ function loadEnvFile() {
 async function lineRequest(path, options = {}) {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
   if (!token) throw new Error("Missing LINE_CHANNEL_ACCESS_TOKEN in .env");
+  const baseUrl = options.dataApi ? "https://api-data.line.me" : "https://api.line.me";
+  const { dataApi, ...fetchOptions } = options;
 
-  const response = await fetch(`https://api.line.me${path}`, {
-    ...options,
+  const response = await fetch(`${baseUrl}${path}`, {
+    ...fetchOptions,
     headers: {
       authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
+      ...(fetchOptions.headers || {}),
     },
   });
 
@@ -65,6 +67,7 @@ const created = await lineRequest("/v2/bot/richmenu", {
 
 await lineRequest(`/v2/bot/richmenu/${created.richMenuId}/content`, {
   method: "POST",
+  dataApi: true,
   headers: { "content-type": "image/png" },
   body: readFileSync(imagePath),
 });
