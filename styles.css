@@ -656,20 +656,125 @@ h1 {
 
 .tarot-table {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(6, minmax(42px, 1fr));
+  gap: 9px;
+  max-height: 360px;
+  overflow: auto;
+  padding: 10px;
+  margin-bottom: 14px;
+  background: rgba(8, 5, 18, 0.34);
+  border: 1px solid rgba(245, 211, 139, 0.18);
+  border-radius: 16px;
+}
+
+.tarot-form {
+  display: grid;
+  gap: 12px;
   margin-bottom: 14px;
 }
 
-.tarot-table button {
-  min-height: 112px;
-  background:
-    linear-gradient(145deg, rgba(37, 36, 58, 0.9), rgba(164, 44, 157, 0.78)),
-    url("./assets/cosmic-tarot-bg.png") center / cover;
-  border: 1px solid rgba(245, 211, 139, 0.34);
+.tarot-form textarea,
+.tarot-form select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(245, 211, 139, 0.24);
   border-radius: 12px;
+  color: #20202d;
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.tarot-form textarea {
+  resize: vertical;
+}
+
+.tarot-toolbar {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tarot-toolbar span {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tarot-table .tarot-card {
+  position: relative;
+  min-height: 86px;
+  padding: 6px;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(245, 211, 139, 0.28), transparent 30%),
+    linear-gradient(145deg, rgba(37, 24, 63, 0.96), rgba(126, 42, 143, 0.82)),
+    url("./assets/cosmic-tarot-bg.png") center / cover;
+  border: 1px solid rgba(245, 211, 139, 0.46);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 10px 22px rgba(0, 0, 0, 0.22);
   color: #fff;
   cursor: pointer;
+  font-weight: 900;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.tarot-table .tarot-card:hover,
+.tarot-table .tarot-card.is-selected {
+  transform: translateY(-4px);
+  border-color: rgba(255, 232, 166, 0.92);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3), 0 0 24px rgba(245, 211, 139, 0.18);
+}
+
+.tarot-card-back {
+  display: grid;
+  height: 100%;
+  min-height: 72px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 7px;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(245, 211, 139, 0.22) 49%, rgba(245, 211, 139, 0.22) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(245, 211, 139, 0.18) 49%, rgba(245, 211, 139, 0.18) 51%, transparent 52%);
+}
+
+.tarot-card-back i {
+  color: rgba(255, 244, 202, 0.82);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.tarot-card-back b {
+  color: #fff4ca;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.tarot-result {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(245, 211, 139, 0.22);
+  border-radius: 14px;
+}
+
+.tarot-result h4 {
+  margin: 6px 0 10px;
+  color: #fff4ca;
+  font-size: 24px;
+}
+
+.tarot-result p {
+  margin: 8px 0;
+  color: rgba(255, 255, 255, 0.84);
+  line-height: 1.7;
+}
+
+.tarot-kicker {
+  color: #bfe8ff;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -952,6 +1057,14 @@ h1 {
   .chat-stage {
     min-height: 560px;
   }
+
+  .tarot-table {
+    grid-template-columns: repeat(4, minmax(48px, 1fr));
+  }
+
+  .tarot-toolbar {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 450px) {
@@ -962,6 +1075,11 @@ h1 {
   .phone {
     border-radius: 30px;
     outline-width: 6px;
+  }
+
+  .tarot-table {
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
+    max-height: 420px;
   }
 
   .carousel {

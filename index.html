@@ -175,12 +175,35 @@
               <span>01</span>
               <h3>78 張塔羅抽牌</h3>
             </div>
-            <div class="tarot-table" aria-hidden="true">
-              <button type="button" data-card="random">抽一張</button>
-              <button type="button" data-card="random">感情牌</button>
-              <button type="button" data-card="random">指引牌</button>
+            <div class="tarot-form">
+              <label class="input-label">
+                你想問的問題
+                <textarea
+                  id="tarotQuestion"
+                  rows="3"
+                  placeholder="例如：我和對方未來三個月的關係會怎麼發展？目前是否適合轉職？"
+                ></textarea>
+              </label>
+              <label class="input-label">
+                問題領域
+                <select id="tarotTopic">
+                  <option value="感情">感情</option>
+                  <option value="工作">工作</option>
+                  <option value="事業">事業</option>
+                  <option value="財運">財運</option>
+                  <option value="健康">健康</option>
+                  <option value="個人成長">個人成長</option>
+                </select>
+              </label>
             </div>
-            <p id="tarotResult">免費版提供簡易牌義。想看感情、事業、財運與行動建議，可解鎖完整解析。</p>
+            <div class="tarot-toolbar">
+              <button class="panel-button" id="shuffleTarot" type="button">洗牌</button>
+              <span>靜下心，從 78 張牌中選一張</span>
+            </div>
+            <div class="tarot-table" id="tarotDeckGrid" aria-label="78 張塔羅牌"></div>
+            <div class="tarot-result" id="tarotResult">
+              <p>免費版提供牌名、正逆位與簡易牌義。深度解析可延伸對方想法、未來走勢、注意事項與行動建議。</p>
+            </div>
           </article>
 
           <article class="tool-panel">

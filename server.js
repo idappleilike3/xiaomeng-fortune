@@ -271,11 +271,7 @@ function buildReplyMessages(event) {
     return [textMessage(`命運市集已開啟：\n${publicBaseUrl}/#market\n\n這裡可以放聯盟商品、追蹤點擊、導向合作品牌。`)];
   }
 
-  return [
-    textMessage(
-      "小夢老師收到你的訊息了。\n\n目前可輸入：\n設定生日\n塔羅\n求籤\n靈數 1996-08-18\n命盤\nMBTI\n市集"
-    ),
-  ];
+  return [];
 }
 
 async function replyToLine(replyToken, messages) {

@@ -130,13 +130,89 @@ function getOracleProduct(question) {
   return oracleProductMap.general;
 }
 
-document.querySelectorAll("[data-card]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const selected = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
-    const result = document.querySelector("#tarotResult");
-    result.textContent = `${selected[0]}：${selected[1]} 想看完整感情、事業、財運與行動建議，可解鎖完整解析。`;
-  });
+const topicGuidance = {
+  感情: "感情題請先看互動是否真誠，再看自己是不是把期待放得太前面。",
+  工作: "工作題重點在流程、溝通與當下能掌握的任務，不急著用情緒決定去留。",
+  事業: "事業題要看長線布局，這張牌提醒你把願景拆成可以執行的下一步。",
+  財運: "財運題先看現金流與風險，再看是否值得投入更多資源。",
+  健康: "健康題以身心平衡與作息提醒為主；若有明顯不適，仍建議尋求專業醫療協助。",
+  個人成長: "個人成長題看的是內在課題，這張牌會指出你目前最需要調整的信念與行動。",
+};
+
+let currentTarotDeck = [];
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function shuffleCards(cards) {
+  return cards
+    .map((card, index) => ({ card, index, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ card, index }) => ({ name: card[0], meaning: card[1], index }));
+}
+
+function renderTarotDeck() {
+  const grid = document.querySelector("#tarotDeckGrid");
+  if (!grid) return;
+
+  currentTarotDeck = shuffleCards(tarotDeck);
+  grid.innerHTML = currentTarotDeck
+    .map(
+      (card, order) => `
+        <button class="tarot-card" type="button" data-tarot-index="${order}" aria-label="選擇第 ${order + 1} 張塔羅牌">
+          <span class="tarot-card-back">
+            <i>${String(order + 1).padStart(2, "0")}</i>
+            <b>小夢</b>
+          </span>
+        </button>
+      `
+    )
+    .join("");
+}
+
+function drawTarotCard(order) {
+  const selected = currentTarotDeck[order];
+  if (!selected) return;
+
+  const isReversed = Math.random() > 0.62;
+  const topic = document.querySelector("#tarotTopic").value;
+  const question = document.querySelector("#tarotQuestion").value.trim();
+  const safeQuestion = escapeHtml(question || "今天我需要知道的提醒是什麼？");
+  const position = isReversed ? "逆位" : "正位";
+  const result = document.querySelector("#tarotResult");
+
+  document.querySelectorAll(".tarot-card").forEach((button) => button.classList.remove("is-selected"));
+  document.querySelector(`[data-tarot-index="${order}"]`)?.classList.add("is-selected");
+
+  result.innerHTML = `
+    <span class="tarot-kicker">${topic}｜${position}</span>
+    <h4>${selected.name}</h4>
+    <p><strong>所問：</strong>${safeQuestion}</p>
+    <p><strong>免費簡解：</strong>${selected.meaning}</p>
+    <p><strong>${topic}提醒：</strong>${topicGuidance[topic]}</p>
+    <div class="premium-note">深度解析可延伸：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</div>
+  `;
+}
+
+document.querySelector("#shuffleTarot")?.addEventListener("click", () => {
+  renderTarotDeck();
+  document.querySelector("#tarotResult").innerHTML =
+    "<p>牌已洗好。請看著你的問題，從 78 張牌裡選一張最有感覺的牌。</p>";
 });
+
+document.querySelector("#tarotDeckGrid")?.addEventListener("click", (event) => {
+  const cardButton = event.target.closest("[data-tarot-index]");
+  if (!cardButton) return;
+  drawTarotCard(Number(cardButton.dataset.tarotIndex));
+});
+
+renderTarotDeck();
 
 document.querySelector("#drawOracle").addEventListener("click", () => {
   const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];
