@@ -373,6 +373,117 @@ function buildShareText() {
   return `我剛在小夢老師抽到「${reading.name}｜${reading.position}」。${reading.meaning} 你也可以抽一張今日指引：${LIFF_URL}?page=demo`;
 }
 
+function buildShareFlexMessage() {
+  const reading = latestTarotReading;
+  const title = reading ? `${reading.name}｜${reading.position}` : "今天你會抽到哪一張牌？";
+  const summary = reading
+    ? reading.meaning
+    : "有人正在小夢老師抽今日指引。你也可以進來寫下問題，從 78 張牌裡抽一張屬於你的提醒。";
+  const topic = reading ? reading.topic : "塔羅指引";
+  const question = reading ? reading.question : "感情、工作、財運、個人成長都可以問";
+
+  return {
+    type: "flex",
+    altText: `小夢老師塔羅牌：${title}`,
+    contents: {
+      type: "bubble",
+      size: "mega",
+      body: {
+        type: "box",
+        layout: "vertical",
+        spacing: "md",
+        backgroundColor: "#190D28",
+        contents: [
+          {
+            type: "text",
+            text: "小夢老師塔羅指引",
+            size: "sm",
+            weight: "bold",
+            color: "#F5D38B",
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            spacing: "sm",
+            paddingAll: "18px",
+            backgroundColor: "#2A1744",
+            borderColor: "#F5D38B",
+            borderWidth: "2px",
+            cornerRadius: "18px",
+            contents: [
+              {
+                type: "text",
+                text: "✦",
+                align: "center",
+                size: "xxl",
+                color: "#F5D38B",
+              },
+              {
+                type: "text",
+                text: title,
+                align: "center",
+                weight: "bold",
+                size: "xxl",
+                color: "#FFF8EE",
+                wrap: true,
+              },
+              {
+                type: "text",
+                text: topic,
+                align: "center",
+                size: "sm",
+                color: "#78E0D5",
+                wrap: true,
+              },
+              {
+                type: "text",
+                text: "☾  ✧  ☼",
+                align: "center",
+                size: "md",
+                color: "#CDBCEB",
+              },
+            ],
+          },
+          {
+            type: "text",
+            text: question,
+            size: "xs",
+            color: "#CDBCEB",
+            wrap: true,
+          },
+          {
+            type: "text",
+            text: summary,
+            size: "sm",
+            color: "#FFF8EE",
+            wrap: true,
+          },
+          {
+            type: "button",
+            style: "primary",
+            color: "#B780FF",
+            action: {
+              type: "uri",
+              label: "加入小夢老師抽自己的牌",
+              uri: `${LIFF_URL}?page=demo`,
+            },
+          },
+          {
+            type: "button",
+            style: "secondary",
+            color: "#F5D38B",
+            action: {
+              type: "uri",
+              label: "先設定生日資料",
+              uri: `${LIFF_URL}?page=profile`,
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
 function storeBonusDraw() {
   bonusDraws += 1;
   localStorage.setItem("bonusDraws", String(bonusDraws));
@@ -534,11 +645,12 @@ async function startPaymentPreview(planId) {
 }
 
 async function shareFortune() {
-  const message = buildShareText();
+  const textMessage = buildShareText();
+  const shareMessage = buildShareFlexMessage();
 
   try {
     if (window.liff?.isApiAvailable?.("shareTargetPicker")) {
-      const result = await window.liff.shareTargetPicker([{ type: "text", text: message }]);
+      const result = await window.liff.shareTargetPicker([shareMessage]);
       if (result) {
         storeBonusDraw();
         rewardMemberPoints("分享今日運勢").catch((error) => console.warn("share reward failed", error));
@@ -552,7 +664,7 @@ async function shareFortune() {
 
     storeBonusDraw();
     rewardMemberPoints("測試分享獎勵").catch((error) => console.warn("share reward failed", error));
-    updateShareStatus("目前不是 LINE 內頁，先用測試模式增加一次額外抽牌與 20 點。");
+    updateShareStatus(`目前不是 LINE 內頁，先用測試模式增加一次額外抽牌與 20 點。分享文案：${textMessage}`);
     return true;
   } catch (error) {
     console.warn("shareTargetPicker failed", error);
