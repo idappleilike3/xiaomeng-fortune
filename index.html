@@ -410,13 +410,13 @@
           </div>
           <div class="progress-row" role="row">
             <span role="cell">管理後台雛形</span>
-            <strong class="status done" role="cell">雛形完成</strong>
-            <span role="cell">已建立牌義、籤詩、商品連結、會員紀錄與點數管理的後台骨架。</span>
+            <strong class="status done" role="cell">儀表板完成</strong>
+            <span role="cell">已可讀取 API 顯示會員、點數、解析解鎖與商品點擊。</span>
           </div>
           <div class="progress-row" role="row">
             <span role="cell">資料庫</span>
-            <strong class="status wait" role="cell">待串接</strong>
-            <span role="cell">下一步會接會員資料、解析紀錄、商品點擊與點數紀錄。</span>
+            <strong class="status active" role="cell">API 雛形</strong>
+            <span role="cell">目前為伺服器記憶體資料；正式上線需接 PostgreSQL 或 Firebase。</span>
           </div>
         </div>
       </section>
@@ -496,8 +496,36 @@
       <section id="admin" class="admin-section">
         <div class="section-heading">
           <p class="eyebrow">Admin Prototype</p>
-          <h2>管理後台雛形</h2>
-          <p>正式上線後，這裡會管理牌義、籤詩、商品連結、解析方案與點擊紀錄。這一版先做成前台可看的營運骨架。</p>
+          <h2>管理後台儀表板</h2>
+          <p>這裡會讀取後端 API，顯示會員、點數、解析解鎖與商品點擊狀態。正式上線後可接資料庫與登入權限。</p>
+        </div>
+
+        <div class="admin-metrics" aria-label="營運數字">
+          <article class="metric-card">
+            <span>會員</span>
+            <strong id="metricMembers">--</strong>
+            <small>已建立資料的人數</small>
+          </article>
+          <article class="metric-card">
+            <span>解析</span>
+            <strong id="metricReadings">--</strong>
+            <small>抽牌與求籤紀錄</small>
+          </article>
+          <article class="metric-card">
+            <span>已解鎖</span>
+            <strong id="metricUnlocked">--</strong>
+            <small>深度解析次數</small>
+          </article>
+          <article class="metric-card">
+            <span>點擊</span>
+            <strong id="metricClicks">--</strong>
+            <small>市集商品導流</small>
+          </article>
+          <article class="metric-card">
+            <span>點數</span>
+            <strong id="metricPoints">--</strong>
+            <small>目前總餘額</small>
+          </article>
         </div>
 
         <div class="admin-grid">
@@ -554,6 +582,23 @@
             <strong class="status active" role="cell">API 雛形</strong>
             <span role="cell">已加入會員錢包、分享送點、扣點解鎖與綠界付款方案預覽。</span>
           </div>
+        </div>
+
+        <div class="admin-live-grid">
+          <article class="admin-live-card">
+            <div class="live-card-head">
+              <h3>商品點擊排行</h3>
+              <button class="panel-button ghost-button compact-button" id="refreshAdmin" type="button">刷新</button>
+            </div>
+            <div class="live-list" id="adminProductClicks">正在讀取商品點擊。</div>
+          </article>
+          <article class="admin-live-card">
+            <div class="live-card-head">
+              <h3>點數紀錄</h3>
+              <span class="product-tag">Ledger</span>
+            </div>
+            <div class="live-list" id="adminPointLedger">正在讀取點數紀錄。</div>
+          </article>
         </div>
       </section>
 

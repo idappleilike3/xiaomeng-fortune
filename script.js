@@ -391,6 +391,70 @@ function renderWallet(wallet) {
   }
 }
 
+function renderAdminSummary(summary) {
+  const metrics = {
+    metricMembers: summary.members,
+    metricReadings: summary.readings,
+    metricUnlocked: summary.unlockedReadings,
+    metricClicks: summary.totalClicks,
+    metricPoints: summary.totalPoints,
+  };
+
+  Object.entries(metrics).forEach(([id, value]) => {
+    const element = document.querySelector(`#${id}`);
+    if (element) element.textContent = value ?? "--";
+  });
+
+  const productClicks = document.querySelector("#adminProductClicks");
+  if (productClicks) {
+    const clicks = summary.modules.productClicks || [];
+    productClicks.innerHTML = clicks.length
+      ? clicks
+          .slice()
+          .sort((a, b) => b.clicks - a.clicks)
+          .slice(0, 6)
+          .map(
+            (item) => `
+              <div class="live-item">
+                <span><strong>${escapeHtml(item.product)}</strong><br><small>${escapeHtml(item.source)}</small></span>
+                <b>${item.clicks}</b>
+              </div>
+            `
+          )
+          .join("")
+      : "目前還沒有商品點擊。";
+  }
+
+  const pointLedger = document.querySelector("#adminPointLedger");
+  if (pointLedger) {
+    const ledger = summary.modules.pointLedger || [];
+    pointLedger.innerHTML = ledger.length
+      ? ledger
+          .slice(0, 8)
+          .map(
+            (item) => `
+              <div class="live-item">
+                <span><strong>${escapeHtml(item.note)}</strong><br><small>${escapeHtml(item.action)}｜${escapeHtml(item.memberId)}</small></span>
+                <b>${item.points > 0 ? "+" : ""}${item.points}</b>
+              </div>
+            `
+          )
+          .join("")
+      : "目前還沒有點數紀錄。";
+  }
+}
+
+async function loadAdminSummary() {
+  try {
+    const payload = await apiRequest("/api/admin/summary");
+    renderAdminSummary(payload.summary);
+  } catch (error) {
+    console.warn("admin summary failed", error);
+    const productClicks = document.querySelector("#adminProductClicks");
+    if (productClicks) productClicks.textContent = "目前無法讀取後台資料。";
+  }
+}
+
 async function loadWallet() {
   try {
     const payload = await apiRequest(`/api/member/wallet?memberId=${encodeURIComponent(activeMemberId)}`);
@@ -408,6 +472,7 @@ async function rewardMemberPoints(note = "分享今日運勢") {
     body: JSON.stringify({ memberId: activeMemberId, points: 20, note }),
   });
   renderWallet(payload.wallet);
+  loadAdminSummary();
   return payload.reward;
 }
 
@@ -428,6 +493,7 @@ async function unlockDeepReading() {
       }),
     });
     renderWallet(payload.wallet);
+    loadAdminSummary();
     if (status) status.textContent = "已扣 60 點，深度解析已解鎖。正式版會進入完整報告頁。";
   } catch (error) {
     renderWallet(error.payload?.wallet || { member: { nickname: "會員", points: 0, tier: "一般會員" }, plans: [], ecpayConfigured: false });
@@ -578,6 +644,8 @@ document.querySelector("#paymentPlans")?.addEventListener("click", (event) => {
   startPaymentPreview(button.dataset.planId);
 });
 
+document.querySelector("#refreshAdmin")?.addEventListener("click", loadAdminSummary);
+
 document.querySelectorAll("[data-track-product]").forEach((link) => {
   link.addEventListener("click", () => {
     apiRequest("/api/admin/track-click", {
@@ -586,7 +654,9 @@ document.querySelectorAll("[data-track-product]").forEach((link) => {
         product: link.dataset.trackProduct,
         source: link.dataset.trackSource,
       }),
-    }).catch((error) => console.warn("track click failed", error));
+    })
+      .then((payload) => renderAdminSummary(payload.summary))
+      .catch((error) => console.warn("track click failed", error));
   });
 });
 
@@ -594,6 +664,7 @@ renderTarotDeck();
 initializeLiffProfile();
 updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
 loadWallet();
+loadAdminSummary();
 
 document.querySelector("#drawOracle").addEventListener("click", () => {
   const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];
