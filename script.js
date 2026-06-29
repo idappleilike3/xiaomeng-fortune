@@ -2,6 +2,7 @@ import { oracleFortunes } from "./oracle-data.js";
 
 const LIFF_ID = "2010549494-KRb0mn7U";
 const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
+const LINE_ADD_FRIEND_URL = "https://line.me/R/ti/p/@471cptxk";
 const API_BASE = window.location.protocol === "file:" ? "https://xiaomeng-fortune.onrender.com" : "";
 const DEFAULT_MEMBER_ID = "demo-member-001";
 
@@ -465,7 +466,7 @@ function buildShareFlexMessage() {
             action: {
               type: "uri",
               label: "加入小夢老師抽自己的牌",
-              uri: `${LIFF_URL}?page=demo`,
+              uri: LINE_ADD_FRIEND_URL,
             },
           },
           {
