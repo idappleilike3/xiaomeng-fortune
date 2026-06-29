@@ -158,6 +158,7 @@ let latestTarotReading = null;
 let bonusDraws = Number(localStorage.getItem("bonusDraws") || 0);
 let activeMemberId = localStorage.getItem("memberId") || DEFAULT_MEMBER_ID;
 let audioContext;
+const supportsFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 function escapeHtml(value) {
   return value
@@ -251,6 +252,56 @@ document.addEventListener("pointerdown", (event) => {
     playRitualTone("soft");
   }
 });
+
+function getCursorMode(target) {
+  if (target.closest(".tarot-card, #tarotDeckGrid")) return { mode: "is-tarot", glyph: "✦" };
+  if (target.closest("input, select, textarea")) return { mode: "is-input", glyph: "" };
+  if (target.closest("button, .panel-button, .rich-button, [data-plan-id]")) return { mode: "is-button", glyph: "○" };
+  if (target.closest("a")) return { mode: "is-link", glyph: "✧" };
+  return { mode: "", glyph: "" };
+}
+
+function initializeRitualCursor() {
+  if (!supportsFinePointer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const cursor = document.querySelector(".ritual-cursor");
+  const glyph = document.querySelector(".cursor-glyph");
+  if (!cursor || !glyph) return;
+
+  document.body.classList.add("has-ritual-cursor");
+
+  let cursorX = -120;
+  let cursorY = -120;
+  let targetX = -120;
+  let targetY = -120;
+  const modes = ["is-button", "is-tarot", "is-link", "is-input"];
+
+  function animateCursor() {
+    cursorX += (targetX - cursorX) * 0.24;
+    cursorY += (targetY - cursorY) * 0.24;
+    cursor.style.transform = `translate3d(${cursorX - cursor.offsetWidth / 2}px, ${cursorY - cursor.offsetHeight / 2}px, 0)`;
+    requestAnimationFrame(animateCursor);
+  }
+
+  document.addEventListener("pointermove", (event) => {
+    targetX = event.clientX;
+    targetY = event.clientY;
+    cursor.classList.add("is-visible");
+
+    const { mode, glyph: glyphText } = getCursorMode(event.target);
+    cursor.classList.remove(...modes);
+    if (mode) cursor.classList.add(mode);
+    glyph.textContent = glyphText;
+  });
+
+  document.addEventListener("pointerleave", () => {
+    cursor.classList.remove("is-visible");
+  });
+
+  animateCursor();
+}
+
+initializeRitualCursor();
 
 function setLiffStatus(message) {
   const badge = document.querySelector("#liffStatus");

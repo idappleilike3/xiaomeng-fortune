@@ -188,6 +188,142 @@ body::after {
   border-color: rgba(255, 138, 183, 0.36);
 }
 
+.ritual-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 38px;
+  height: 38px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-120px, -120px, 0);
+  transition:
+    opacity 160ms ease,
+    width 180ms ease,
+    height 180ms ease;
+  mix-blend-mode: screen;
+}
+
+.ritual-cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor-core,
+.cursor-ring,
+.cursor-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.cursor-core {
+  inset: 14px;
+  background: rgba(255, 248, 238, 0.95);
+  box-shadow:
+    0 0 18px rgba(245, 211, 139, 0.68),
+    0 0 30px rgba(255, 138, 183, 0.28);
+}
+
+.cursor-ring {
+  border: 1px solid rgba(245, 211, 139, 0.62);
+  box-shadow:
+    inset 0 0 18px rgba(245, 211, 139, 0.12),
+    0 0 22px rgba(120, 224, 213, 0.2);
+  animation: cursorPulse 1.8s ease-in-out infinite;
+}
+
+.cursor-glyph {
+  color: rgba(255, 248, 238, 0);
+  font-size: 16px;
+  font-weight: 900;
+  transform: rotate(0deg);
+  transition:
+    color 160ms ease,
+    transform 180ms ease;
+}
+
+.ritual-cursor.is-button {
+  width: 54px;
+  height: 54px;
+}
+
+.ritual-cursor.is-button .cursor-core {
+  inset: 22px;
+  background: var(--gold);
+}
+
+.ritual-cursor.is-button .cursor-ring {
+  border-width: 2px;
+  border-color: rgba(120, 224, 213, 0.72);
+}
+
+.ritual-cursor.is-tarot {
+  width: 58px;
+  height: 58px;
+}
+
+.ritual-cursor.is-tarot .cursor-core {
+  inset: 18px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.95), rgba(255, 138, 183, 0.86));
+  transform: rotate(45deg);
+}
+
+.ritual-cursor.is-tarot .cursor-ring {
+  border-radius: 14px;
+  transform: rotate(45deg);
+}
+
+.ritual-cursor.is-tarot .cursor-glyph {
+  color: #24112f;
+  transform: rotate(0deg);
+}
+
+.ritual-cursor.is-link {
+  width: 50px;
+  height: 50px;
+}
+
+.ritual-cursor.is-link .cursor-core {
+  inset: 18px;
+  background: var(--teal);
+}
+
+.ritual-cursor.is-link .cursor-glyph {
+  color: rgba(255, 248, 238, 0.92);
+  transform: rotate(45deg);
+}
+
+.ritual-cursor.is-input {
+  width: 18px;
+  height: 46px;
+}
+
+.ritual-cursor.is-input .cursor-core {
+  inset: 6px 7px;
+  border-radius: 999px;
+  background: rgba(120, 224, 213, 0.9);
+}
+
+.ritual-cursor.is-input .cursor-ring {
+  border-radius: 999px;
+}
+
+@keyframes cursorPulse {
+  0%,
+  100% {
+    transform: scale(0.86);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
 @keyframes ritualFloat {
   0% {
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
@@ -233,6 +369,7 @@ body::after {
   .ritual-orbit,
   .star-field,
   .soft-veil,
+  .ritual-cursor,
   .click-spark {
     animation: none;
   }
@@ -240,6 +377,23 @@ body::after {
   .star-field,
   .soft-veil {
     opacity: 0.16;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.has-ritual-cursor,
+  body.has-ritual-cursor a,
+  body.has-ritual-cursor button,
+  body.has-ritual-cursor input,
+  body.has-ritual-cursor select,
+  body.has-ritual-cursor textarea {
+    cursor: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ritual-cursor {
+    display: none;
   }
 }
 
