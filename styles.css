@@ -466,6 +466,7 @@ h1 {
 .progress-section,
 .demo-section,
 .market-section,
+.admin-section,
 .setup-section {
   padding: 76px 0;
 }
@@ -493,10 +494,12 @@ h1 {
 .tool-panel,
 .automation-card,
 .product-card,
+.admin-card,
 .profile-card,
 .consent-card,
 .automation-preview,
 .progress-table,
+.admin-table,
 .setup-list li {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.07));
   border: 1px solid var(--line);
@@ -604,6 +607,59 @@ h1 {
 }
 
 .progress-row span {
+  color: var(--soft);
+  line-height: 1.55;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.admin-card {
+  padding: 22px;
+}
+
+.admin-card h3 {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+
+.admin-card ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--soft);
+  line-height: 1.55;
+}
+
+.admin-table {
+  overflow: hidden;
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(110px, 0.45fr) minmax(240px, 1.35fr);
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(245, 211, 139, 0.16);
+}
+
+.admin-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-head {
+  background: rgba(245, 211, 139, 0.11);
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.admin-row span {
   color: var(--soft);
   line-height: 1.55;
 }
@@ -1160,9 +1216,11 @@ h1 {
 
   .market-grid,
   .unlock-grid,
+  .admin-grid,
   .demo-grid,
   .automation-grid,
   .profile-card,
+  .admin-row,
   .progress-row {
     grid-template-columns: 1fr;
   }

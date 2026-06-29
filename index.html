@@ -24,6 +24,7 @@
         <a href="#automation">自動化</a>
         <a href="#progress">進度</a>
         <a href="#market">變現</a>
+        <a href="#admin">後台</a>
         <a href="#setup">串接</a>
       </nav>
     </header>
@@ -390,9 +391,14 @@
             <span role="cell">已建立免費、單次深度解析、點數包方案，以及商品推薦入口。</span>
           </div>
           <div class="progress-row" role="row">
-            <span role="cell">資料庫 / 後台</span>
-            <strong class="status wait" role="cell">下一步</strong>
-            <span role="cell">準備建立會員資料、解析紀錄、商品點擊與管理後台雛形。</span>
+            <span role="cell">管理後台雛形</span>
+            <strong class="status done" role="cell">雛形完成</strong>
+            <span role="cell">已建立牌義、籤詩、商品連結、會員紀錄與點數管理的後台骨架。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">資料庫</span>
+            <strong class="status wait" role="cell">待串接</strong>
+            <span role="cell">下一步會接會員資料、解析紀錄、商品點擊與點數紀錄。</span>
           </div>
         </div>
       </section>
@@ -452,6 +458,70 @@
             <p>免費命盤給摘要，完整解析導到付費諮詢、課程或會員訂閱。</p>
             <a href="https://example.com/consulting?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看合作方案</a>
           </article>
+        </div>
+      </section>
+
+      <section id="admin" class="admin-section">
+        <div class="section-heading">
+          <p class="eyebrow">Admin Prototype</p>
+          <h2>管理後台雛形</h2>
+          <p>正式上線後，這裡會管理牌義、籤詩、商品連結、解析方案與點擊紀錄。這一版先做成前台可看的營運骨架。</p>
+        </div>
+
+        <div class="admin-grid">
+          <article class="admin-card">
+            <span class="product-tag">內容管理</span>
+            <h3>牌義與籤詩</h3>
+            <ul>
+              <li>78 張塔羅牌義</li>
+              <li>正位 / 逆位解析</li>
+              <li>籤號、吉凶、詩文、解曰</li>
+              <li>免費版與深度版分層</li>
+            </ul>
+          </article>
+          <article class="admin-card">
+            <span class="product-tag">商品管理</span>
+            <h3>命運市集連結</h3>
+            <ul>
+              <li>商品名稱與分類</li>
+              <li>聯盟行銷連結</li>
+              <li>對應感情 / 財運 / 命盤結果</li>
+              <li>點擊追蹤 UTM</li>
+            </ul>
+          </article>
+          <article class="admin-card">
+            <span class="product-tag">會員紀錄</span>
+            <h3>解析與點數</h3>
+            <ul>
+              <li>生日與命盤資料</li>
+              <li>抽牌 / 求籤紀錄</li>
+              <li>深度解析解鎖紀錄</li>
+              <li>點數餘額與扣點紀錄</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="admin-table" role="table" aria-label="後台資料預覽">
+          <div class="admin-row admin-head" role="row">
+            <span role="columnheader">模組</span>
+            <span role="columnheader">目前狀態</span>
+            <span role="columnheader">下一步</span>
+          </div>
+          <div class="admin-row" role="row">
+            <span role="cell">牌義資料</span>
+            <strong class="status done" role="cell">前台可用</strong>
+            <span role="cell">拆成資料表，讓後台可新增、修改、停用。</span>
+          </div>
+          <div class="admin-row" role="row">
+            <span role="cell">商品連結</span>
+            <strong class="status active" role="cell">雛形</strong>
+            <span role="cell">加入點擊紀錄與來源追蹤，之後替換成正式聯盟連結。</span>
+          </div>
+          <div class="admin-row" role="row">
+            <span role="cell">付款 / 點數</span>
+            <strong class="status wait" role="cell">待串接</strong>
+            <span role="cell">等付款平台決定後，串單次解鎖與點數包。</span>
+          </div>
         </div>
       </section>
 
