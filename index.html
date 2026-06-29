@@ -378,8 +378,13 @@
           </div>
           <div class="progress-row" role="row">
             <span role="cell">付費解鎖 / 商品推薦</span>
-            <strong class="status wait" role="cell">待製作</strong>
-            <span role="cell">會先做前台流程與點擊追蹤雛形，付款平台資料之後再接。</span>
+            <strong class="status done" role="cell">雛形完成</strong>
+            <span role="cell">已建立免費、單次深度解析、點數包方案，以及商品推薦入口。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">資料庫 / 後台</span>
+            <strong class="status wait" role="cell">下一步</strong>
+            <span role="cell">準備建立會員資料、解析紀錄、商品點擊與管理後台雛形。</span>
           </div>
         </div>
       </section>
@@ -389,6 +394,35 @@
           <p class="eyebrow">Affiliate Funnel</p>
           <h2>算完之後，接商品與付費服務</h2>
           <p>每個命理結果都能對應一組商品：牌卡、香氛、課程、諮詢、開運小物，形成自然導購。</p>
+        </div>
+
+        <div class="unlock-grid" aria-label="付費解鎖方案">
+          <article class="unlock-card">
+            <span class="product-tag">免費</span>
+            <h3>簡易解析</h3>
+            <strong>$0</strong>
+            <p>提供牌名、籤號、正逆位、簡短提醒與一個注意事項，適合第一次體驗。</p>
+            <button class="panel-button" type="button" data-unlock="free">查看免費內容</button>
+          </article>
+          <article class="unlock-card featured">
+            <span class="product-tag">推薦</span>
+            <h3>單次深度解析</h3>
+            <strong>$99</strong>
+            <p>延伸感情、工作、財運、未來 14 到 30 天走勢、阻礙來源與下一步行動。</p>
+            <button class="panel-button" type="button" data-unlock="single">預覽解鎖流程</button>
+          </article>
+          <article class="unlock-card">
+            <span class="product-tag">點數</span>
+            <h3>靈感點數包</h3>
+            <strong>300 點</strong>
+            <p>適合常回來抽牌、求籤、看週運的人。每次深度解析可扣點，不必每次付款。</p>
+            <button class="panel-button" type="button" data-unlock="points">查看點數制</button>
+          </article>
+        </div>
+
+        <div class="unlock-preview">
+          <strong>解鎖預覽</strong>
+          <p id="unlockPreview">選擇一個方案，這裡會顯示使用者看到的付費引導文案。</p>
         </div>
 
         <div class="market-grid">

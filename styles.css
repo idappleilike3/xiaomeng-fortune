@@ -978,6 +978,69 @@ h1 {
   color: #160b21;
 }
 
+.unlock-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.unlock-card {
+  padding: 22px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07)),
+    radial-gradient(circle at 78% 12%, rgba(245, 211, 139, 0.18), transparent 34%);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.unlock-card.featured {
+  border-color: rgba(255, 138, 183, 0.5);
+  box-shadow: 0 22px 54px rgba(255, 138, 183, 0.12);
+}
+
+.unlock-card h3 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.unlock-card strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #fff4ca;
+  font-size: 30px;
+}
+
+.unlock-card p {
+  min-height: 94px;
+  color: var(--soft);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.unlock-preview {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(245, 211, 139, 0.2);
+  border-radius: 16px;
+}
+
+.unlock-preview strong {
+  color: #fff4ca;
+}
+
+.unlock-preview p {
+  margin: 8px 0 0;
+  color: var(--soft);
+  line-height: 1.75;
+}
+
+.premium-link {
+  color: #ffe9a8;
+  text-decoration: none;
+}
+
 .setup-section {
   display: grid;
   grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
@@ -1052,6 +1115,7 @@ h1 {
   }
 
   .market-grid,
+  .unlock-grid,
   .demo-grid,
   .automation-grid,
   .profile-card,

@@ -123,6 +123,15 @@ const oracleProductMap = {
   },
 };
 
+const unlockMessages = {
+  free:
+    "免費版適合先確認方向：看牌名、籤意、簡短提醒與一個注意事項。若問題牽涉感情決定、工作轉換或財務選擇，再引導深度解析。",
+  single:
+    "單次深度解析適合高意圖使用者：一次解鎖完整脈絡、未來 14 到 30 天走勢、阻礙來源、對方狀態與下一步行動。建議定價 $99 起。",
+  points:
+    "點數制適合提高回訪率：使用者一次購買點數，之後抽牌、求籤、週運、合盤都可扣點。這會比單次付款更適合長期經營。",
+};
+
 function getOracleProduct(question) {
   if (/感情|愛情|復合|曖昧|交往|分手|對方|桃花/.test(question)) return oracleProductMap.love;
   if (/工作|事業|轉職|創業|考試|升遷|合作|客戶/.test(question)) return oracleProductMap.career;
@@ -196,7 +205,7 @@ function drawTarotCard(order) {
     <p><strong>所問：</strong>${safeQuestion}</p>
     <p><strong>免費簡解：</strong>${selected.meaning}</p>
     <p><strong>${topic}提醒：</strong>${topicGuidance[topic]}</p>
-    <div class="premium-note">深度解析可延伸：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</div>
+    <a class="premium-note premium-link" href="#market">深度解析可延伸：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</a>
   `;
 }
 
@@ -268,6 +277,12 @@ document.querySelectorAll("[data-template]").forEach((button) => {
   button.addEventListener("click", () => {
     const template = automationTemplates[button.dataset.template];
     document.querySelector("#automationPreview").textContent = template;
+  });
+});
+
+document.querySelectorAll("[data-unlock]").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelector("#unlockPreview").textContent = unlockMessages[button.dataset.unlock];
   });
 });
 
