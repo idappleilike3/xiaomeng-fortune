@@ -157,6 +157,7 @@ let currentTarotDeck = [];
 let latestTarotReading = null;
 let bonusDraws = Number(localStorage.getItem("bonusDraws") || 0);
 let activeMemberId = localStorage.getItem("memberId") || DEFAULT_MEMBER_ID;
+let audioContext;
 
 function escapeHtml(value) {
   return value
@@ -180,6 +181,76 @@ async function apiRequest(path, options = {}) {
   }
   return payload;
 }
+
+function getAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  if (!audioContext) audioContext = new AudioContextClass();
+  return audioContext;
+}
+
+function playRitualTone(kind = "soft") {
+  const context = getAudioContext();
+  if (!context) return;
+
+  const now = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  const delay = context.createDelay();
+  const feedback = context.createGain();
+
+  const frequencies = {
+    soft: [523.25, 659.25],
+    card: [587.33, 880],
+    unlock: [659.25, 987.77],
+  };
+  const [startFrequency, endFrequency] = frequencies[kind] || frequencies.soft;
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(startFrequency, now);
+  oscillator.frequency.exponentialRampToValueAtTime(endFrequency, now + 0.18);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.045, now + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+
+  delay.delayTime.setValueAtTime(0.12, now);
+  feedback.gain.setValueAtTime(0.16, now);
+
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  gain.connect(delay);
+  delay.connect(feedback);
+  feedback.connect(delay);
+  delay.connect(context.destination);
+
+  oscillator.start(now);
+  oscillator.stop(now + 0.45);
+}
+
+function createClickSpark(event) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const spark = document.createElement("span");
+  spark.className = "click-spark";
+  spark.style.left = `${event.clientX}px`;
+  spark.style.top = `${event.clientY}px`;
+  document.body.appendChild(spark);
+  spark.addEventListener("animationend", () => spark.remove(), { once: true });
+}
+
+document.addEventListener("pointerdown", (event) => {
+  const interactive = event.target.closest("button, a, .tarot-card, input, select, textarea");
+  if (!interactive) return;
+  createClickSpark(event);
+  if (interactive.matches(".tarot-card, #drawOracle, #shuffleTarot")) {
+    playRitualTone("card");
+  } else if (interactive.matches("#unlockWithPoints, [data-plan-id], #rewardPoints, #shareFortune")) {
+    playRitualTone("unlock");
+  } else {
+    playRitualTone("soft");
+  }
+});
 
 function setLiffStatus(message) {
   const badge = document.querySelector("#liffStatus");
