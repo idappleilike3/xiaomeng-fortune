@@ -140,6 +140,7 @@ const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET || "";
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${port}`).replace(/\/$/, "");
+const liffBaseUrl = (process.env.LIFF_URL || "https://liff.line.me/2010549494-KRb0mn7U").replace(/\/$/, "");
 const ecpayConfig = {
   merchantId: process.env.ECPAY_MERCHANT_ID || "",
   hashKey: process.env.ECPAY_HASH_KEY || "",
@@ -263,6 +264,148 @@ function textMessage(text) {
   return { type: "text", text };
 }
 
+function uriAction(label, uri) {
+  return { type: "uri", label, uri };
+}
+
+function flexMessage(altText, contents) {
+  return { type: "flex", altText, contents };
+}
+
+function menuFlexMessage() {
+  const menuItems = [
+    ["生日", "設定資料", `${liffBaseUrl}#profile`],
+    ["塔羅", "直接抽牌", `${liffBaseUrl}#demo`],
+    ["求籤", "先寫問題", `${liffBaseUrl}#demo`],
+    ["靈數", "生日靈數", `${liffBaseUrl}#demo`],
+    ["命盤", "八字紫微", `${liffBaseUrl}#profile`],
+    ["市集", "解鎖選品", `${liffBaseUrl}#market`],
+  ];
+
+  return flexMessage("小夢老師功能選單", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#1A0F2D",
+      contents: [
+        {
+          type: "text",
+          text: "小夢老師",
+          weight: "bold",
+          size: "xl",
+          color: "#F5D38B",
+        },
+        {
+          type: "text",
+          text: "想問什麼，直接點下面開始。",
+          size: "sm",
+          color: "#F8EEDB",
+          wrap: true,
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: menuItems.map(([label, hint, uri]) => ({
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            color: "#F5D38B",
+            action: uriAction(`${label}｜${hint}`, uri),
+          })),
+        },
+      ],
+    },
+  });
+}
+
+function tarotFlexMessage(card) {
+  return flexMessage(`小夢老師替你抽到 ${card[0]}`, {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#190D28",
+      contents: [
+        {
+          type: "text",
+          text: "你這次抽到",
+          size: "sm",
+          color: "#CDBCEB",
+        },
+        {
+          type: "text",
+          text: card[0],
+          weight: "bold",
+          size: "xxl",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: card[1],
+          size: "md",
+          color: "#FFF8EE",
+          wrap: true,
+        },
+        {
+          type: "separator",
+          margin: "md",
+          color: "#6D5B8A",
+        },
+        {
+          type: "button",
+          style: "primary",
+          color: "#B780FF",
+          action: uriAction("進內頁看深度解析", `${liffBaseUrl}#demo`),
+        },
+      ],
+    },
+  });
+}
+
+function oracleEntryFlexMessage() {
+  return flexMessage("求籤小幫手", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#170D25",
+      contents: [
+        {
+          type: "text",
+          text: "求籤前，先把問題寫清楚",
+          weight: "bold",
+          size: "xl",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "像到廟裡求籤一樣，先想好一件事，再選籤種。免費版看簡解，深度版再看注意事項、未來提醒與適合選品。",
+          size: "sm",
+          color: "#FFF8EE",
+          wrap: true,
+        },
+        {
+          type: "button",
+          style: "primary",
+          color: "#78E0D5",
+          action: uriAction("進內頁求籤", `${liffBaseUrl}#demo`),
+        },
+      ],
+    },
+  });
+}
+
 function getAdminSummary() {
   const totalPoints = appData.members.reduce((sum, member) => sum + member.points, 0);
   const unlockedReadings = appData.readings.filter((reading) => reading.unlocked).length;
@@ -382,31 +525,25 @@ function buildReplyMessages(event) {
   const lowerText = text.toLowerCase();
 
   if (event.type === "follow") {
-    return [];
+    return [
+      textMessage(
+        "歡迎你來找小夢老師。\n\n如果心裡剛好有一件事想問，可以先點「求籤」；想看最近感情、工作或財運，可以點「塔羅」。"
+      ),
+      menuFlexMessage(),
+    ];
   }
 
   if (!text) {
-    return [textMessage("請輸入「設定生日」「塔羅」「求籤」「靈數 1996-08-18」「命盤」「MBTI」或「市集」。")];
+    return [menuFlexMessage()];
   }
 
   if (text.includes("塔羅") || lowerText.includes("tarot")) {
     const card = randomItem(tarotDeck);
-    return [
-      textMessage(
-        `小夢老師替你抽到：${card[0]}\n\n免費簡易解析：${card[1]}\n\n想看完整解析，可解鎖感情、事業、財運與下一步行動建議。\n${publicBaseUrl}/#demo`
-      ),
-    ];
+    return [tarotFlexMessage(card)];
   }
 
   if (text.includes("求籤") || text.includes("籤")) {
-    const fortune = randomItem(oracleFortunes);
-    const question = text.replace(/求籤|籤詩|抽籤|問籤/g, "").trim() || "今日整體指引";
-    const product = getOracleProduct(question);
-    return [
-      textMessage(
-        `小夢老師替你求到：第 ${fortune.no} 籤｜${fortune.level}\n${fortune.title}\n\n所問：${question}\n\n籤詩：${fortune.poem}\n\n免費簡解：${fortune.summary}\n\n感情：${fortune.love}\n事業：${fortune.career}\n財運：${fortune.wealth}\n\n注意事項：${fortune.advice}\n\n深度解析可延伸：未來 30 天提醒、對方想法、下一步行動與開運建議。\n\n推薦選品：${product.title}\n${product.reason}\n${publicBaseUrl}/#market\n\n完整求籤頁：${publicBaseUrl}/#demo`
-      ),
-    ];
+    return [oracleEntryFlexMessage()];
   }
 
   if (text.includes("靈數") || text.includes("生命靈數") || lowerText.includes("number")) {
@@ -416,7 +553,7 @@ function buildReplyMessages(event) {
     }
     return [
       textMessage(
-        `你的生命靈數是：${lifePath}\n\n免費簡易解析：這代表你目前的人生主題與天賦方向。完整人格、感情、事業與流年解析可做成付費報告。\n${publicBaseUrl}/#demo`
+        `你的生命靈數是：${lifePath}\n\n免費簡易解析：這代表你目前的人生主題與天賦方向。完整人格、感情、事業與流年解析可做成付費報告。\n${liffBaseUrl}#demo`
       ),
     ];
   }
@@ -424,7 +561,7 @@ function buildReplyMessages(event) {
   if (text.includes("設定生日") || text.includes("生日") || text.includes("命盤") || text.includes("紫微") || text.includes("八字") || text.includes("占星")) {
     return [
       textMessage(
-        `請先設定生日資料。\n\n需要填：暱稱、性別、出生日期、出生時間、出生地。\n之後會自動帶入八字、紫微斗數、生命靈數、合盤與擇日功能。\n${publicBaseUrl}/#profile`
+        `請先設定生日資料。\n\n需要填：暱稱、性別、出生日期、出生時間、出生地。\n之後會自動帶入八字、紫微斗數、生命靈數、合盤與擇日功能。\n${liffBaseUrl}#profile`
       ),
     ];
   }
@@ -432,16 +569,16 @@ function buildReplyMessages(event) {
   if (text.toUpperCase().includes("MBTI")) {
     return [
       textMessage(
-        `MBTI 測驗會做成 12 題快速版與完整付費版。\n\n免費版看人格輪廓，完整版延伸感情、職場、溝通模式與適合商品推薦。\n${publicBaseUrl}/#demo`
+        `MBTI 測驗會做成 12 題快速版與完整付費版。\n\n免費版看人格輪廓，完整版延伸感情、職場、溝通模式與適合商品推薦。\n${liffBaseUrl}#demo`
       ),
     ];
   }
 
   if (text.includes("市集") || text.includes("商品") || text.includes("推薦")) {
-    return [textMessage(`命運市集已開啟：\n${publicBaseUrl}/#market\n\n這裡可以放聯盟商品、追蹤點擊、導向合作品牌。`)];
+    return [textMessage(`命運市集已開啟：\n${liffBaseUrl}#market\n\n這裡可以放聯盟商品、追蹤點擊、導向合作品牌。`)];
   }
 
-  return [];
+  return [menuFlexMessage()];
 }
 
 async function replyToLine(replyToken, messages) {
