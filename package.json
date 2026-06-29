@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "check": "node --check server.js"
+    "check": "node --check server.js",
+    "rich-menu:image": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/generate-rich-menu.ps1",
+    "rich-menu:setup": "node scripts/setup-line-rich-menu.mjs"
   },
   "engines": {
     "node": ">=18"

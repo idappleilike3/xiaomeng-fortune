@@ -96,6 +96,28 @@ LINE Login Channel 建立頁如果要求法律網址，請填：
 
 這樣使用者從 LINE 點按鈕時，會在 LINE 內頁開啟，不會跳成一般外部網頁。
 
+已新增可用素材與工具：
+
+```text
+圖文選單圖片：assets/rich-menu-xiaomeng.png
+圖文選單設定：line-rich-menu-config.json
+產生圖片指令：npm run rich-menu:image
+用 API 建立並設成預設：npm run rich-menu:setup
+```
+
+如果用 LINE 官方後台手動設定：
+
+```text
+1. LINE Official Account Manager
+2. 圖文選單
+3. 建立新的圖文選單
+4. 選大型 3 欄 x 2 列版型
+5. 上傳 assets/rich-menu-xiaomeng.png
+6. 六格動作全部選「連結」
+7. 貼上上方六個 LIFF URL
+8. 儲存後設為啟用中的圖文選單
+```
+
 舊圖文選單處理方式：
 
 ```text
@@ -112,10 +134,14 @@ LINE Login Channel 建立頁如果要求法律網址，請填：
 ```text
 {Nickname}，歡迎你來找小夢老師
 
-如果你心裡剛好有一件事想問，可以先回我「求籤」；想看最近的感情、工作或財運，也可以回「塔羅」
+如果你心裡剛好有一件事想問，可以點下方選單的「求籤」。
 
-第一次來建議先設定生日，之後我就能幫你帶入命盤、生命靈數和每日提醒
+想看最近的感情、工作或財運，就點「塔羅」先抽一張牌。
+
+第一次來，建議先點「生日」設定資料。之後我就能幫你帶入命盤、生命靈數和每日提醒。
 ```
+
+同一份文字也放在 `line-welcome-message.txt`，方便直接複製到 LINE 官方後台。
 
 ## 6. 我可以幫你做什麼
 
