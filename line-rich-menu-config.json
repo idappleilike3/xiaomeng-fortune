@@ -12,7 +12,7 @@
       "action": {
         "type": "uri",
         "label": "設定生日",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#profile"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=profile"
       }
     },
     {
@@ -20,7 +20,7 @@
       "action": {
         "type": "uri",
         "label": "塔羅抽牌",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
       }
     },
     {
@@ -28,7 +28,7 @@
       "action": {
         "type": "uri",
         "label": "求籤",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
       }
     },
     {
@@ -36,7 +36,7 @@
       "action": {
         "type": "uri",
         "label": "生命靈數",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#demo"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
       }
     },
     {
@@ -44,7 +44,7 @@
       "action": {
         "type": "uri",
         "label": "命盤",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#profile"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=profile"
       }
     },
     {
@@ -52,7 +52,7 @@
       "action": {
         "type": "uri",
         "label": "命運市集",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U#market"
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=market"
       }
     }
   ]

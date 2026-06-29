@@ -86,12 +86,12 @@ LINE Login Channel 建立頁如果要求法律網址，請填：
 六格按鈕：
 
 ```text
-設定生日 -> https://liff.line.me/2010549494-KRb0mn7U#profile
-塔羅抽牌 -> https://liff.line.me/2010549494-KRb0mn7U#demo
-求籤 -> https://liff.line.me/2010549494-KRb0mn7U#demo
-生命靈數 -> https://liff.line.me/2010549494-KRb0mn7U#demo
-命盤 -> https://liff.line.me/2010549494-KRb0mn7U#profile
-命運市集 -> https://liff.line.me/2010549494-KRb0mn7U#market
+設定生日 -> https://liff.line.me/2010549494-KRb0mn7U?page=profile
+塔羅抽牌 -> https://liff.line.me/2010549494-KRb0mn7U?page=demo
+求籤 -> https://liff.line.me/2010549494-KRb0mn7U?page=demo
+生命靈數 -> https://liff.line.me/2010549494-KRb0mn7U?page=demo
+命盤 -> https://liff.line.me/2010549494-KRb0mn7U?page=profile
+命運市集 -> https://liff.line.me/2010549494-KRb0mn7U?page=market
 ```
 
 這樣使用者從 LINE 點按鈕時，會在 LINE 內頁開啟，不會跳成一般外部網頁。

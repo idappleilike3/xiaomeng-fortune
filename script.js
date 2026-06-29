@@ -303,6 +303,23 @@ function initializeRitualCursor() {
 
 initializeRitualCursor();
 
+function openRequestedPage() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedPage = params.get("page");
+  if (!requestedPage) return;
+
+  const allowedPages = new Set(["profile", "demo", "automation", "progress", "market", "admin", "setup"]);
+  if (!allowedPages.has(requestedPage)) return;
+
+  const target = document.querySelector(`#${requestedPage}`);
+  if (!target) return;
+
+  window.location.hash = requestedPage;
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 function setLiffStatus(message) {
   const badge = document.querySelector("#liffStatus");
   if (badge) badge.textContent = message;
@@ -350,10 +367,10 @@ function updateShareStatus(message) {
 function buildShareText() {
   const reading = latestTarotReading;
   if (!reading) {
-    return `我正在小夢老師抽今日指引。你也可以進來抽一張，看看感情、工作或財運的提醒：${LIFF_URL}#demo`;
+    return `我正在小夢老師抽今日指引。你也可以進來抽一張，看看感情、工作或財運的提醒：${LIFF_URL}?page=demo`;
   }
 
-  return `我剛在小夢老師抽到「${reading.name}｜${reading.position}」。${reading.meaning} 你也可以抽一張今日指引：${LIFF_URL}#demo`;
+  return `我剛在小夢老師抽到「${reading.name}｜${reading.position}」。${reading.meaning} 你也可以抽一張今日指引：${LIFF_URL}?page=demo`;
 }
 
 function storeBonusDraw() {
@@ -662,6 +679,7 @@ document.querySelectorAll("[data-track-product]").forEach((link) => {
 
 renderTarotDeck();
 initializeLiffProfile();
+openRequestedPage();
 updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
 loadWallet();
 loadAdminSummary();
