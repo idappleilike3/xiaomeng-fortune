@@ -1,0 +1,871 @@
+:root {
+  color-scheme: dark;
+  --ink: #fff8ee;
+  --soft: rgba(255, 248, 238, 0.74);
+  --muted: rgba(255, 248, 238, 0.58);
+  --dark: #10071d;
+  --panel: rgba(255, 255, 255, 0.1);
+  --panel-strong: rgba(255, 255, 255, 0.17);
+  --line: rgba(245, 211, 139, 0.28);
+  --gold: #f5d38b;
+  --rose: #ff8ab7;
+  --violet: #b780ff;
+  --teal: #78e0d5;
+  --green: #34d975;
+  --shadow: 0 30px 90px rgba(0, 0, 0, 0.36);
+  font-family:
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg, rgba(16, 7, 29, 0.42), rgba(16, 7, 29, 0.95) 62%),
+    url("./assets/cosmic-tarot-bg.png") center top / cover fixed,
+    var(--dark);
+  color: var(--ink);
+}
+
+body::before,
+body::after {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 138, 183, 0.2), transparent 26%),
+    radial-gradient(circle at 84% 12%, rgba(120, 224, 213, 0.2), transparent 28%),
+    radial-gradient(circle at 52% 88%, rgba(183, 128, 255, 0.18), transparent 32%);
+}
+
+body::after {
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(245, 211, 139, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 211, 139, 0.11) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(circle at center, black, transparent 70%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px clamp(18px, 5vw, 72px);
+  background: rgba(13, 7, 24, 0.68);
+  border-bottom: 1px solid rgba(245, 211, 139, 0.22);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(20px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 210px;
+}
+
+.brand-avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  background: linear-gradient(135deg, #19142e, #a65cff 54%, #f5d38b);
+  border: 1px solid rgba(245, 211, 139, 0.48);
+  border-radius: 50%;
+  box-shadow: 0 0 28px rgba(183, 128, 255, 0.48);
+  color: #fff;
+  font-weight: 900;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.nav {
+  display: flex;
+  gap: 18px;
+  color: var(--soft);
+  font-weight: 800;
+}
+
+.nav a:hover {
+  color: var(--gold);
+}
+
+main {
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+  gap: clamp(30px, 6vw, 84px);
+  align-items: center;
+  min-height: calc(100vh - 78px);
+  padding: 54px 0;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 760px;
+  margin-bottom: 20px;
+  font-size: clamp(42px, 7vw, 82px);
+  line-height: 1.02;
+  letter-spacing: 0;
+  text-shadow: 0 18px 42px rgba(0, 0, 0, 0.3);
+}
+
+.hero-copy p:not(.eyebrow),
+.section-heading p,
+.setup-list span,
+.product-card p {
+  color: var(--soft);
+  font-size: 17px;
+  line-height: 1.78;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.button,
+.panel-button,
+.product-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid rgba(245, 211, 139, 0.42);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.button:hover,
+.panel-button:hover,
+.product-card a:hover,
+.rich-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
+}
+
+.primary {
+  background: linear-gradient(135deg, #f5d38b, #ff8ab7 48%, #9f70ff);
+  color: #190d23;
+  box-shadow: 0 18px 44px rgba(255, 138, 183, 0.22);
+}
+
+.ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+  backdrop-filter: blur(14px);
+}
+
+.phone {
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(245, 211, 139, 0.42);
+  border-radius: 42px;
+  outline: 10px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+.phone-status,
+.line-header,
+.rich-menu {
+  display: flex;
+  align-items: center;
+}
+
+.phone-status {
+  justify-content: space-between;
+  padding: 14px 22px 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.line-header {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px 12px;
+  background: rgba(255, 255, 255, 0.93);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.82);
+  color: #111827;
+}
+
+.back,
+.menu {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.line-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.line-title strong,
+.line-title small {
+  display: block;
+}
+
+.line-title strong {
+  overflow: hidden;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-title small {
+  color: #7d8490;
+  font-size: 12px;
+}
+
+.chat-stage {
+  min-height: 620px;
+  padding: 18px;
+  background:
+    linear-gradient(rgba(90, 116, 168, 0.74), rgba(81, 105, 154, 0.86)),
+    url("./assets/cosmic-tarot-bg.png") center / cover;
+}
+
+.date-pill {
+  width: max-content;
+  margin: 0 auto 18px;
+  padding: 5px 16px;
+  background: rgba(22, 15, 39, 0.46);
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 900;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  margin-right: 8px;
+  place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  color: #9c4cff;
+  font-weight: 900;
+}
+
+.bubble {
+  max-width: 76%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 20px;
+  color: #111827;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.message.user .bubble {
+  background: #63e86a;
+}
+
+.carousel {
+  display: grid;
+  grid-auto-columns: minmax(280px, 86%);
+  grid-auto-flow: column;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 18px 0 8px;
+  scroll-snap-type: x mandatory;
+}
+
+.rich-card {
+  position: relative;
+  display: flex;
+  min-height: 420px;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid rgba(245, 211, 139, 0.34);
+  border-radius: 24px;
+  box-shadow: 0 22px 55px rgba(13, 9, 25, 0.34);
+  color: #fff;
+  scroll-snap-align: start;
+}
+
+.rich-card::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.moon-card::before {
+  background:
+    linear-gradient(to top, rgba(18, 10, 32, 0.92), rgba(18, 10, 32, 0.1) 58%),
+    radial-gradient(circle at 28% 23%, rgba(245, 211, 139, 0.9) 0 14%, transparent 15%),
+    url("./assets/cosmic-tarot-bg.png") center / cover;
+}
+
+.chart-card::before {
+  background:
+    linear-gradient(to top, rgba(18, 10, 32, 0.94), rgba(18, 10, 32, 0.2) 62%),
+    repeating-linear-gradient(90deg, rgba(245, 211, 139, 0.25) 0 1px, transparent 1px 38px),
+    repeating-linear-gradient(0deg, rgba(120, 224, 213, 0.18) 0 1px, transparent 1px 38px),
+    radial-gradient(circle at 70% 22%, rgba(183, 128, 255, 0.42), transparent 28%),
+    #1d2730;
+}
+
+.market-card::before {
+  background:
+    linear-gradient(to top, rgba(42, 23, 47, 0.92), rgba(42, 23, 47, 0.16) 58%),
+    radial-gradient(circle at 35% 24%, rgba(245, 211, 139, 0.86) 0 16%, transparent 17%),
+    radial-gradient(circle at 68% 38%, rgba(120, 224, 213, 0.84) 0 15%, transparent 16%),
+    linear-gradient(135deg, #3e2f5b, #b55283);
+}
+
+.badge,
+.card-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #ff8ab7, #b780ff);
+  border-radius: 999px;
+  box-shadow: 0 12px 26px rgba(255, 138, 183, 0.28);
+  font-weight: 900;
+}
+
+.card-copy {
+  width: 100%;
+  padding: 22px;
+  background: linear-gradient(to top, rgba(15, 8, 25, 0.88), rgba(15, 8, 25, 0.58));
+  backdrop-filter: blur(14px);
+}
+
+.card-copy h2 {
+  margin-bottom: 8px;
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.card-copy p {
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.55;
+}
+
+.rich-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(245, 211, 139, 0.72);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.rich-menu {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(245, 211, 139, 0.2);
+}
+
+.rich-menu button {
+  min-height: 62px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 0;
+  color: #111827;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.profile-section,
+.automation-section,
+.progress-section,
+.demo-section,
+.market-section,
+.setup-section {
+  padding: 76px 0;
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.section-heading h2,
+.setup-section h2 {
+  margin-bottom: 12px;
+  font-size: clamp(30px, 4.5vw, 52px);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.demo-grid,
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tool-panel,
+.automation-card,
+.product-card,
+.profile-card,
+.consent-card,
+.automation-preview,
+.progress-table,
+.setup-list li {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.07));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.profile-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 22px;
+}
+
+.consent-card,
+.automation-card,
+.automation-preview {
+  padding: 22px;
+}
+
+.reason-list {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason-list li {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(245, 211, 139, 0.18);
+}
+
+.reason-list strong {
+  color: var(--gold);
+}
+
+.reason-list span,
+.consent-card p,
+.automation-card p,
+.automation-preview p {
+  color: var(--soft);
+  line-height: 1.7;
+}
+
+.automation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.automation-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.automation-card .panel-button {
+  margin-top: 8px;
+}
+
+.premium-card {
+  border-color: rgba(255, 138, 183, 0.42);
+}
+
+.automation-preview {
+  margin-top: 16px;
+}
+
+.automation-preview strong {
+  color: var(--gold);
+}
+
+.progress-table {
+  overflow: hidden;
+}
+
+.progress-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.85fr) minmax(110px, 0.5fr) minmax(260px, 1.35fr);
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(245, 211, 139, 0.16);
+}
+
+.progress-row:last-child {
+  border-bottom: 0;
+}
+
+.progress-head {
+  background: rgba(245, 211, 139, 0.11);
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.progress-row span {
+  color: var(--soft);
+  line-height: 1.55;
+}
+
+.status {
+  width: max-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status.done {
+  background: rgba(52, 217, 117, 0.18);
+  color: #8df0b5;
+}
+
+.status.wait {
+  background: rgba(245, 211, 139, 0.18);
+  color: var(--gold);
+}
+
+.tool-panel {
+  padding: 18px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.panel-head span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  background: linear-gradient(135deg, #b780ff, #f5d38b);
+  border-radius: 50%;
+  color: #180d24;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.panel-head h3,
+.product-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.tarot-table {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tarot-table button {
+  min-height: 112px;
+  background:
+    linear-gradient(145deg, rgba(37, 36, 58, 0.9), rgba(164, 44, 157, 0.78)),
+    url("./assets/cosmic-tarot-bg.png") center / cover;
+  border: 1px solid rgba(245, 211, 139, 0.34);
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.oracle-card {
+  display: grid;
+  min-height: 142px;
+  margin-bottom: 14px;
+  padding: 18px;
+  place-items: center;
+  background:
+    linear-gradient(rgba(18, 10, 32, 0.38), rgba(18, 10, 32, 0.54)),
+    url("./assets/cosmic-tarot-bg.png") center / cover;
+  border: 1px solid rgba(245, 211, 139, 0.34);
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+}
+
+.oracle-card p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.panel-button {
+  width: 100%;
+  background: linear-gradient(135deg, #34d975, #78e0d5);
+  border-color: rgba(255, 255, 255, 0.36);
+  color: #0c1d1b;
+}
+
+.input-label {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: var(--soft);
+  font-weight: 900;
+}
+
+.input-label input,
+.input-label select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(245, 211, 139, 0.22);
+  border-radius: 8px;
+  color: #111827;
+}
+
+#tarotResult,
+#numberResult,
+#profileResult {
+  margin: 0;
+  color: var(--soft);
+  line-height: 1.65;
+}
+
+#saveBirthProfile,
+#profileResult {
+  grid-column: 1 / -1;
+}
+
+.market-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.product-card {
+  padding: 22px;
+}
+
+.product-tag {
+  display: inline-flex;
+  margin-bottom: 16px;
+  padding: 7px 12px;
+  background: rgba(245, 211, 139, 0.16);
+  border-radius: 999px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.product-card a {
+  width: 100%;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #f5d38b, #ff8ab7 52%, #8e5cf7);
+  color: #160b21;
+}
+
+.setup-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+  gap: clamp(24px, 5vw, 64px);
+}
+
+.setup-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setup-list li {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+}
+
+.setup-list strong {
+  color: var(--gold);
+  font-size: 18px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 24px clamp(18px, 5vw, 72px);
+  background: rgba(7, 4, 14, 0.88);
+  border-top: 1px solid rgba(245, 211, 139, 0.2);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer p {
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .setup-section,
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .phone {
+    width: min(430px, 100%);
+    margin: 0 auto;
+  }
+
+  .demo-grid,
+  .automation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hero {
+    padding-top: 34px;
+  }
+
+  .market-grid,
+  .demo-grid,
+  .automation-grid,
+  .profile-card,
+  .progress-row {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-stage {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 450px) {
+  main {
+    width: min(100% - 16px, 1180px);
+  }
+
+  .phone {
+    border-radius: 30px;
+    outline-width: 6px;
+  }
+
+  .carousel {
+    grid-auto-columns: 88%;
+  }
+
+  .rich-card {
+    min-height: 390px;
+  }
+
+  .rich-menu button {
+    min-height: 56px;
+    font-size: 14px;
+  }
+}

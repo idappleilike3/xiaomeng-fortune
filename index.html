@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小夢老師｜塔羅命盤療癒室</title>
+    <meta
+      name="description"
+      content="LINE 結合網頁的命理服務 MVP，包含塔羅、求籤、命盤、合盤、生命靈數、MBTI 與聯盟行銷入口。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#app">
+        <span class="brand-avatar">靈</span>
+        <span>
+          <strong>小夢老師</strong>
+          <small>塔羅命盤療癒室</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="主要導覽">
+        <a href="#demo">功能</a>
+        <a href="#automation">自動化</a>
+        <a href="#progress">進度</a>
+        <a href="#market">變現</a>
+        <a href="#setup">串接</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="app" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Tarot · Birth Chart · Fortune Commerce</p>
+          <h1>把小夢老師做進 LINE 裡，讓使用者一點就能算。</h1>
+          <p>
+            這個網站模擬 LINE 官方帳號結合網頁的體驗：使用者在聊天中點選選單或設定生日，
+            開啟塔羅、求籤、命盤、合盤、擇日與商品推薦頁，後續可串 LINE Messaging API 與 LIFF。
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#demo">看互動 Demo</a>
+            <a class="button ghost" href="#setup">看串接步驟</a>
+          </div>
+        </div>
+
+        <section class="phone" aria-label="LINE 命理服務預覽">
+          <div class="phone-status">
+            <span>6:29</span>
+            <span>5G 52%</span>
+          </div>
+          <div class="line-header">
+            <span class="back">‹</span>
+            <div class="line-title">
+              <strong>小夢老師</strong>
+              <small>此官方帳號正在自動回覆訊息</small>
+            </div>
+            <span class="menu">☰</span>
+          </div>
+          <div class="chat-stage">
+            <div class="date-pill">今天</div>
+            <div class="message bot">
+              <span class="avatar">靈</span>
+              <div class="bubble">歡迎光臨，我是小夢老師。先設定生日，就能開始看塔羅、求籤與命盤。</div>
+            </div>
+            <div class="message user">
+              <div class="bubble">我想算感情</div>
+            </div>
+
+            <div class="carousel" aria-label="命理功能卡片">
+              <article class="rich-card moon-card">
+                <span class="badge">熱門</span>
+                <div class="card-copy">
+                  <h2>未來兩週感情運提升</h2>
+                  <p>依照你的牌面與出生資料，找出適合告白、約會與溝通的時間點。</p>
+                  <button class="rich-button" type="button" data-action="love">快來算一下</button>
+                </div>
+              </article>
+              <article class="rich-card chart-card">
+                <span class="badge">命盤</span>
+                <div class="card-copy">
+                  <h2>八字・紫微・占星入口</h2>
+                  <p>輸入生日、時間與地點，產生個人命盤摘要與進階解析。</p>
+                  <button class="rich-button" type="button" data-action="chart">建立命盤</button>
+                </div>
+              </article>
+              <article class="rich-card market-card">
+                <span class="badge">選品</span>
+                <div class="card-copy">
+                  <h2>依照結果推薦商品</h2>
+                  <p>把香氛、牌卡、課程與諮詢服務接到聯盟行銷連結。</p>
+                  <button class="rich-button" type="button" data-action="market">看推薦</button>
+                </div>
+              </article>
+            </div>
+          </div>
+          <div class="rich-menu" aria-label="LINE 下方選單">
+            <button type="button" data-menu="chart">生日</button>
+            <button type="button" data-menu="tarot">塔羅</button>
+            <button type="button" data-menu="oracle">求籤</button>
+            <button type="button" data-menu="number">靈數</button>
+            <button type="button" data-menu="market">市集</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="profile" class="profile-section">
+        <div class="section-heading">
+          <p class="eyebrow">Birth Profile</p>
+          <h2>設定生日，之後自動帶入命盤</h2>
+          <p>使用者第一次進來先填出生資料，後續塔羅、八字、紫微斗數、生命靈數、合盤與擇日都能直接沿用。畫面會先說明用途，讓使用者安心選擇。</p>
+        </div>
+
+        <div class="profile-layout">
+          <article class="consent-card">
+            <span class="product-tag">安心說明</span>
+            <h3>為什麼小夢老師需要這些資料？</h3>
+            <ul class="reason-list">
+              <li><strong>出生日期</strong><span>用來計算生命靈數、流年與基本命盤。</span></li>
+              <li><strong>出生時間</strong><span>用來細分八字時辰與紫微斗數命宮；不知道也可以先略過。</span></li>
+              <li><strong>出生地</strong><span>用來校正時區與地點，讓命盤更貼近你的出生條件。</span></li>
+              <li><strong>暱稱與性別</strong><span>讓解析口吻更自然，也可用於合盤與關係分析。</span></li>
+            </ul>
+            <p>資料只用於命理解析與個人化提醒。正式上線後會提供刪除資料與取消提醒的入口。</p>
+          </article>
+
+          <div class="profile-card">
+            <label class="input-label">
+              暱稱
+              <input id="profileName" type="text" placeholder="例：小月" />
+            </label>
+            <label class="input-label">
+              性別
+              <select id="profileGender">
+                <option>女性</option>
+                <option>男性</option>
+                <option>其他 / 不透露</option>
+              </select>
+            </label>
+            <label class="input-label">
+              出生日期
+              <input id="profileBirthDate" type="date" />
+            </label>
+            <label class="input-label">
+              出生時間
+              <input id="profileBirthTime" type="time" />
+            </label>
+            <label class="input-label">
+              出生地
+              <input id="profileBirthPlace" type="text" placeholder="例：台北市、基隆市、台中市" />
+            </label>
+            <label class="input-label">
+              提醒頻率
+              <select id="profileReminder">
+                <option>每日一則提醒</option>
+                <option>每週一則提醒</option>
+                <option>只在我主動查詢時回覆</option>
+              </select>
+            </label>
+            <button class="panel-button" id="saveBirthProfile" type="button">同意並設定生日</button>
+            <p id="profileResult">資料會先存在你的瀏覽器，正式上線後會存進會員資料庫。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="demo-section">
+        <div class="section-heading">
+          <p class="eyebrow">Interactive Demo</p>
+          <h2>先做出可上線的核心功能</h2>
+          <p>這一版先把最容易導流與變現的流程做出來：抽牌、求籤、生命靈數、命盤資料收集與商品推薦。</p>
+        </div>
+
+        <div class="demo-grid">
+          <article class="tool-panel">
+            <div class="panel-head">
+              <span>01</span>
+              <h3>78 張塔羅抽牌</h3>
+            </div>
+            <div class="tarot-table" aria-hidden="true">
+              <button type="button" data-card="random">抽一張</button>
+              <button type="button" data-card="random">感情牌</button>
+              <button type="button" data-card="random">指引牌</button>
+            </div>
+            <p id="tarotResult">免費版提供簡易牌義。想看感情、事業、財運與行動建議，可解鎖完整解析。</p>
+          </article>
+
+          <article class="tool-panel">
+            <div class="panel-head">
+              <span>02</span>
+              <h3>求籤</h3>
+            </div>
+            <div class="oracle-card">
+              <p id="oraclePoem">心定則路明，事緩則局開。</p>
+            </div>
+            <button class="panel-button" id="drawOracle" type="button">再求一次</button>
+          </article>
+
+          <article class="tool-panel">
+            <div class="panel-head">
+              <span>03</span>
+              <h3>生命靈數</h3>
+            </div>
+            <label class="input-label">
+              生日
+              <input id="birthday" type="date" value="1996-08-18" />
+            </label>
+            <button class="panel-button" id="calcNumber" type="button">計算靈數</button>
+            <p id="numberResult">輸入生日後可計算主命數，後續可接會員解析。</p>
+          </article>
+
+          <article class="tool-panel form-panel">
+            <div class="panel-head">
+              <span>04</span>
+              <h3>命盤資料</h3>
+            </div>
+            <label class="input-label">
+              暱稱
+              <input type="text" placeholder="例：小月" />
+            </label>
+            <label class="input-label">
+              出生時間
+              <input type="datetime-local" />
+            </label>
+            <label class="input-label">
+              出生地
+              <input type="text" placeholder="例：台北市" />
+            </label>
+            <button class="panel-button" type="button">產生命盤摘要</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="automation" class="automation-section">
+        <div class="section-heading">
+          <p class="eyebrow">Message Automation</p>
+          <h2>每天與每週，自動把顧客帶回來</h2>
+          <p>用低壓力、可選擇的提醒讓使用者回來抽牌、看流年、解鎖完整解析或逛市集。</p>
+        </div>
+
+        <div class="automation-grid">
+          <article class="automation-card">
+            <span class="product-tag">每日 08:30</span>
+            <h3>今日一張牌</h3>
+            <p>早安，我是小夢老師。今天想知道感情、工作還是財運？回覆「抽牌」領取今日指引。</p>
+            <button class="panel-button" type="button" data-template="daily">預覽每日訊息</button>
+          </article>
+          <article class="automation-card">
+            <span class="product-tag">每週一 20:30</span>
+            <h3>本週運勢</h3>
+            <p>本週能量已更新。設定生日的人可以看流年提醒，完整週運可解鎖感情、事業與財運。</p>
+            <button class="panel-button" type="button" data-template="weekly">預覽每週訊息</button>
+          </article>
+          <article class="automation-card">
+            <span class="product-tag">資料未完成</span>
+            <h3>溫柔補資料</h3>
+            <p>你還差出生時間或出生地。補上後，小夢老師就能幫你看更細的命盤方向。</p>
+            <button class="panel-button" type="button" data-template="profile">預覽補資料訊息</button>
+          </article>
+          <article class="automation-card premium-card">
+            <span class="product-tag">消費引導</span>
+            <h3>完整解析解鎖</h3>
+            <p>免費版先給方向；當使用者連續互動後，再推「完整解析」與適合的聯盟商品。</p>
+            <button class="panel-button" type="button" data-template="premium">預覽解鎖訊息</button>
+          </article>
+        </div>
+
+        <div class="automation-preview">
+          <strong>訊息預覽</strong>
+          <p id="automationPreview">點上方按鈕，預覽可放進 LINE 推播或自動回覆的文案。</p>
+        </div>
+      </section>
+
+      <section id="progress" class="progress-section">
+        <div class="section-heading">
+          <p class="eyebrow">Build Progress</p>
+          <h2>目前製作進度</h2>
+          <p>Webhook 程式已完成，本機測試正常。正式上線只差把專案部署到公開 HTTPS 網址。</p>
+        </div>
+
+        <div class="progress-table" role="table" aria-label="製作進度表">
+          <div class="progress-row progress-head" role="row">
+            <span role="columnheader">項目</span>
+            <span role="columnheader">狀態</span>
+            <span role="columnheader">說明</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">LINE Webhook 程式</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">已建立 /api/line/webhook，會驗證 LINE 簽章並回覆訊息。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">Channel Secret / Token</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">已放入本機 .env，並加入 .gitignore 保護。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">本機預覽</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">請開 http://localhost:3001/ 看網站。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">本機 Webhook</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">http://localhost:3001/api/line/webhook 僅供本機測試。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">正式 Webhook</span>
+            <strong class="status wait" role="cell">待部署</strong>
+            <span role="cell">需要 Render / Railway / Vercel 產生公開 HTTPS 網址。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">LINE 後台貼上網址</span>
+            <strong class="status wait" role="cell">待正式網址</strong>
+            <span role="cell">正式格式會是 https://你的網域/api/line/webhook。</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="market" class="market-section">
+        <div class="section-heading">
+          <p class="eyebrow">Affiliate Funnel</p>
+          <h2>算完之後，接商品與付費服務</h2>
+          <p>每個命理結果都能對應一組商品：牌卡、香氛、課程、諮詢、開運小物，形成自然導購。</p>
+        </div>
+
+        <div class="market-grid">
+          <article class="product-card">
+            <span class="product-tag">塔羅結果推薦</span>
+            <h3>直覺塔羅入門組</h3>
+            <p>適合抽到「女祭司、月亮、星星」的使用者，主打直覺與自我對話。</p>
+            <a href="https://example.com/tarot?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看聯盟商品</a>
+          </article>
+          <article class="product-card">
+            <span class="product-tag">感情運推薦</span>
+            <h3>月光香氛蠟燭</h3>
+            <p>適合感情占卜後推薦，搭配睡前冥想、書寫與顯化儀式。</p>
+            <a href="https://example.com/candle?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看聯盟商品</a>
+          </article>
+          <article class="product-card">
+            <span class="product-tag">命盤進階</span>
+            <h3>一對一命盤諮詢</h3>
+            <p>免費命盤給摘要，完整解析導到付費諮詢、課程或會員訂閱。</p>
+            <a href="https://example.com/consulting?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener">查看合作方案</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="setup" class="setup-section">
+        <div>
+          <p class="eyebrow">LINE Setup</p>
+          <h2>之後真正串 LINE 需要這些東西</h2>
+        </div>
+        <ol class="setup-list">
+          <li><strong>LINE 官方帳號</strong><span>建立品牌帳號，設定歡迎訊息與圖文選單。</span></li>
+          <li><strong>LINE Developers</strong><span>啟用 Messaging API，取得 Channel secret 與 Channel access token。</span></li>
+          <li><strong>Webhook URL</strong><span>部署後填入 https://你的網址/api/line/webhook，讓 LINE 把訊息送到伺服器。</span></li>
+          <li><strong>LIFF App</strong><span>把這個網頁網址放進 LIFF，使用者可在 LINE 內開啟前台工具。</span></li>
+          <li><strong>Node Webhook</strong><span>目前已建立 server.js，可回覆塔羅、求籤、生命靈數、命盤、MBTI 與市集指令。</span></li>
+          <li><strong>資料庫</strong><span>用 Supabase 儲存會員、占卜紀錄、商品點擊與訂單狀態。</span></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 小夢老師</p>
+      <p>本頁為原創 MVP 示範，圖片與文案皆可替換成你的正式品牌素材。</p>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
