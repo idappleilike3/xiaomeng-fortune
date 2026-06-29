@@ -176,8 +176,9 @@ function renderTarotDeck() {
       (card, order) => `
         <button class="tarot-card" type="button" data-tarot-index="${order}" aria-label="選擇第 ${order + 1} 張塔羅牌">
           <span class="tarot-card-back">
-            <i>${String(order + 1).padStart(2, "0")}</i>
+            <i></i>
             <b>小夢</b>
+            <em></em>
           </span>
         </button>
       `
@@ -205,7 +206,7 @@ function drawTarotCard(order) {
     <p><strong>所問：</strong>${safeQuestion}</p>
     <p><strong>免費簡解：</strong>${selected.meaning}</p>
     <p><strong>${topic}提醒：</strong>${topicGuidance[topic]}</p>
-    <a class="premium-note premium-link" href="#market">深度解析可延伸：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</a>
+    <a class="premium-note premium-link" href="#market">解鎖深度解析：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</a>
   `;
 }
 
@@ -238,7 +239,7 @@ document.querySelector("#drawOracle").addEventListener("click", () => {
     <small>籤詩：${fortune.poem}</small>
     <strong>免費簡解：${fortune.summary}</strong>
     <small>注意事項：${fortune.advice}</small>
-    <span class="premium-note">深度解析可延伸：感情、事業、財運、未來 30 天提醒、下一步行動方案。</span>
+    <a class="premium-note premium-link" href="#market">解鎖深度解籤：感情、事業、財運、未來 30 天提醒、下一步行動方案。</a>
     <a class="oracle-product" href="${product.url}">推薦選品：${product.title}<small>${product.reason}</small></a>`;
 });
 
@@ -254,8 +255,9 @@ document.querySelector("#calcNumber").addEventListener("click", () => {
       .reduce((sum, number) => sum + number, 0);
   }
 
-  document.querySelector("#numberResult").textContent =
-    `你的生命靈數是 ${total}。免費版先看核心性格，完整版可延伸感情、事業、流年與開運建議。`;
+  document.querySelector("#numberResult").innerHTML =
+    `你的生命靈數是 <strong>${total}</strong>。免費版先看核心性格，完整版可延伸感情、事業、流年與開運建議。
+    <a class="premium-note premium-link" href="#market">解鎖生命靈數完整報告：人格優勢、感情模式、職場天賦、年度提醒與適合商品推薦。</a>`;
 });
 
 document.querySelector("#saveBirthProfile")?.addEventListener("click", () => {
@@ -269,8 +271,15 @@ document.querySelector("#saveBirthProfile")?.addEventListener("click", () => {
   };
 
   localStorage.setItem("birthProfile", JSON.stringify(profile));
-  document.querySelector("#profileResult").textContent =
-    `已暫存出生資料，提醒頻率：${profile.reminder}。正式串接會員系統後，會自動帶入八字、紫微斗數、生命靈數與合盤功能。`;
+  document.querySelector("#profileResult").innerHTML =
+    `已暫存出生資料，提醒頻率：${profile.reminder}。正式串接會員系統後，會自動帶入八字、紫微斗數、生命靈數與合盤功能。
+    <a class="premium-note premium-link" href="#market">解鎖命盤完整解析：八字時辰、紫微命宮、流年提醒、合盤方向與擇日建議。</a>`;
+});
+
+document.querySelector("#createChartSummary")?.addEventListener("click", () => {
+  document.querySelector("#chartResult").innerHTML =
+    `小夢老師已整理你的命盤資料。免費版會先看出生日期、時間與地點是否完整，並給一段命盤方向摘要。
+    <a class="premium-note premium-link" href="#market">解鎖完整命盤：八字時辰、紫微命宮、流年提醒、合盤方向、擇日建議與適合你的開運選品。</a>`;
 });
 
 document.querySelectorAll("[data-template]").forEach((button) => {
