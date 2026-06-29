@@ -543,18 +543,21 @@ async function shareFortune() {
         storeBonusDraw();
         rewardMemberPoints("分享今日運勢").catch((error) => console.warn("share reward failed", error));
         updateShareStatus("分享完成，已送你一次額外抽牌機會與 20 點。");
+        return true;
       } else {
         updateShareStatus("你剛剛取消分享，沒有增加次數。");
+        return false;
       }
-      return;
     }
 
     storeBonusDraw();
     rewardMemberPoints("測試分享獎勵").catch((error) => console.warn("share reward failed", error));
     updateShareStatus("目前不是 LINE 內頁，先用測試模式增加一次額外抽牌與 20 點。");
+    return true;
   } catch (error) {
     console.warn("shareTargetPicker failed", error);
     updateShareStatus("分享功能需要在 LINE 內頁開啟，也要在 LINE Developers 打開 shareTargetPicker。");
+    return false;
   }
 }
 
@@ -666,10 +669,11 @@ document.querySelector("#tarotDeckGrid")?.addEventListener("click", (event) => {
 
 document.querySelector("#shareFortune")?.addEventListener("click", shareFortune);
 
-document.querySelector("#bonusDraw")?.addEventListener("click", () => {
+document.querySelector("#bonusDraw")?.addEventListener("click", async () => {
   if (bonusDraws < 1) {
-    updateShareStatus("先分享今日運勢，就能多抽一次。");
-    return;
+    updateShareStatus("先幫你開啟分享，分享完成後會直接多抽一次。");
+    const shared = await shareFortune();
+    if (!shared || bonusDraws < 1) return;
   }
 
   bonusDraws -= 1;
