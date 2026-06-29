@@ -214,7 +214,7 @@ function buildReplyMessages(event) {
   if (event.type === "follow") {
     return [
       textMessage(
-        `歡迎光臨，我是小夢老師。\n\n先設定生日，就能幫你看塔羅、求籤、生命靈數與命盤方向。\n\n你可以輸入：\n設定生日\n塔羅\n求籤\n靈數 1996-08-18\n命盤\nMBTI\n市集\n\n設定生日入口：${publicBaseUrl}/#profile`
+        `嗨，歡迎你來找小夢老師。\n\n如果你心裡剛好有一件事想問，可以先回我「求籤」；想看最近的感情、工作或財運，也可以回「塔羅」。\n\n第一次來建議先設定生日，之後我就能幫你帶入命盤、生命靈數和每日提醒。\n\n設定生日：${publicBaseUrl}/#profile`
       ),
     ];
   }
