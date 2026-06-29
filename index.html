@@ -322,7 +322,7 @@
         <div class="section-heading">
           <p class="eyebrow">Build Progress</p>
           <h2>目前製作進度</h2>
-          <p>Webhook 程式已完成，Render 正式部署也已完成。下一步是把正式 Webhook 貼到 LINE Developers 後台並驗證。</p>
+          <p>目前已完成網站、Render 部署、LINE Webhook、求籤升級與 78 張塔羅抽牌。接下來會往 LINE 內頁、圖文選單、付費解鎖與後台前進。</p>
         </div>
 
         <div class="progress-table" role="table" aria-label="製作進度表">
@@ -342,14 +342,14 @@
             <span role="cell">已放入本機 .env，並加入 .gitignore 保護。</span>
           </div>
           <div class="progress-row" role="row">
-            <span role="cell">本機預覽</span>
+            <span role="cell">Render 正式部署</span>
             <strong class="status done" role="cell">完成</strong>
-            <span role="cell">請開 http://localhost:3001/ 看網站。</span>
+            <span role="cell">正式網站已上線：https://xiaomeng-fortune.onrender.com。</span>
           </div>
           <div class="progress-row" role="row">
-            <span role="cell">本機 Webhook</span>
+            <span role="cell">加入好友歡迎詞</span>
             <strong class="status done" role="cell">完成</strong>
-            <span role="cell">http://localhost:3001/api/line/webhook 僅供本機測試。</span>
+            <span role="cell">改由 LINE 官方後台負責，Webhook follow 回覆已關閉，避免重複訊息。</span>
           </div>
           <div class="progress-row" role="row">
             <span role="cell">正式 Webhook</span>
@@ -357,9 +357,29 @@
             <span role="cell">正式網址：https://xiaomeng-fortune.onrender.com/api/line/webhook。</span>
           </div>
           <div class="progress-row" role="row">
-            <span role="cell">LINE 後台貼上網址</span>
-            <strong class="status wait" role="cell">待貼上</strong>
-            <span role="cell">請貼上 https://xiaomeng-fortune.onrender.com/api/line/webhook 並按 Verify。</span>
+            <span role="cell">78 張塔羅抽牌</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">已可輸入問題、選領域、洗牌，並從 78 張牌牆自行抽牌。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">求籤流程</span>
+            <strong class="status done" role="cell">完成</strong>
+            <span role="cell">已支援問題、籤種、免費簡解、注意事項、深度解析引導與商品推薦。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">LIFF 內頁</span>
+            <strong class="status active" role="cell">進行中</strong>
+            <span role="cell">下一步把設定生日、塔羅、求籤做成更像 LINE 內視窗的流程。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">圖文選單</span>
+            <strong class="status active" role="cell">進行中</strong>
+            <span role="cell">準備六格按鈕配置與圖片設計：設定生日、塔羅、求籤、靈數、命盤、市集。</span>
+          </div>
+          <div class="progress-row" role="row">
+            <span role="cell">付費解鎖 / 商品推薦</span>
+            <strong class="status wait" role="cell">待製作</strong>
+            <span role="cell">會先做前台流程與點擊追蹤雛形，付款平台資料之後再接。</span>
           </div>
         </div>
       </section>

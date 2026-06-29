@@ -620,6 +620,11 @@ h1 {
   color: #8df0b5;
 }
 
+.status.active {
+  background: rgba(120, 224, 213, 0.18);
+  color: #9ff5ee;
+}
+
 .status.wait {
   background: rgba(245, 211, 139, 0.18);
   color: var(--gold);
