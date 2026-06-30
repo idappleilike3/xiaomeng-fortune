@@ -1501,3 +1501,319 @@ document.querySelectorAll("[data-unlock]").forEach((button) => {
 });
 
 
+
+// ============================================================
+// mobile-first tarot ritual refactor (Task 1+2)
+// New state machine: input -> collecting -> cutting -> spreading
+// -> ready -> picked -> revealed -> result.
+// The old #shuffleTarot + renderTarotDeck code stays as dead
+// code (its renderTarotDeck early-returns when #tarotDeckGrid
+// is missing, which it now is).
+// ============================================================
+
+const RITUAL_STATES = {
+  INPUT: 'input',
+  COLLECTING: 'collecting',
+  CUTTING: 'cutting',
+  SPREADING: 'spreading',
+  READY: 'ready',
+  PICKED: 'picked',
+  REVEALED: 'revealed',
+  RESULT: 'result',
+};
+
+let ritualState = RITUAL_STATES.INPUT;
+let ritualLock = false;
+let pickedCard = null;
+let spreadCardsArr = [];
+let currentSpread = 'three';
+let currentQuestion = '';
+let currentTopic = '感情';
+
+const SPREAD_LABELS = {
+  single: '單牌占卜',
+  three: '三張牌陣',
+  five: '五張聖甲蟲',
+};
+
+const CTA_LABELS = {
+  [RITUAL_STATES.INPUT]: '進入靜心占卜室',
+  [RITUAL_STATES.COLLECTING]: '洗牌中…',
+  [RITUAL_STATES.CUTTING]: '切牌中…',
+  [RITUAL_STATES.SPREADING]: '展開卡牌',
+  [RITUAL_STATES.READY]: '請從牌中選擇',
+  [RITUAL_STATES.PICKED]: '翻牌中…',
+  [RITUAL_STATES.REVEALED]: '查看結果',
+  [RITUAL_STATES.RESULT]: '再抽一張',
+};
+
+const STATE_LABELS = {
+  [RITUAL_STATES.COLLECTING]: '洗牌中…',
+  [RITUAL_STATES.CUTTING]: '切牌中…',
+  [RITUAL_STATES.SPREADING]: '展牌中…',
+  [RITUAL_STATES.READY]: '請選擇一張牌',
+  [RITUAL_STATES.PICKED]: '翻牌中…',
+};
+
+function stageForState(state) {
+  if (state === RITUAL_STATES.INPUT) return 'input';
+  if (state === RITUAL_STATES.RESULT) return 'result';
+  return 'draw';
+}
+
+function setRitualState(next) {
+  ritualState = next;
+  const flow = document.querySelector('.ritual-flow');
+  if (flow) flow.dataset.ritualState = next;
+
+  document.querySelectorAll('.ritual-stage').forEach((s) => {
+    s.hidden = s.dataset.stage !== stageForState(next);
+  });
+
+  const cta = document.getElementById('ritualCta');
+  if (cta) {
+    cta.textContent = CTA_LABELS[next] || '繼續';
+    cta.dataset.action = next;
+    cta.disabled = ritualLock || [
+      RITUAL_STATES.COLLECTING,
+      RITUAL_STATES.CUTTING,
+      RITUAL_STATES.PICKED,
+    ].includes(next);
+  }
+
+  const reset = document.getElementById('ritualReset');
+  if (reset) reset.hidden = next === RITUAL_STATES.INPUT;
+
+  const label = document.getElementById('ritualStateLabel');
+  if (label) label.textContent = STATE_LABELS[next] || '';
+
+  document.body.classList.toggle('ritual-active',
+    [RITUAL_STATES.COLLECTING, RITUAL_STATES.CUTTING, RITUAL_STATES.SPREADING, RITUAL_STATES.READY].includes(next));
+}
+
+function lockRitual(ms) {
+  ritualLock = true;
+  const cta = document.getElementById('ritualCta');
+  if (cta) cta.disabled = true;
+  setTimeout(() => {
+    ritualLock = false;
+    if (cta && ![
+      RITUAL_STATES.COLLECTING,
+      RITUAL_STATES.CUTTING,
+      RITUAL_STATES.PICKED,
+    ].includes(ritualState)) {
+      cta.disabled = false;
+    }
+  }, ms);
+}
+
+function waitRitual(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function shuffleDeckForRitual(deck) {
+  const arr = [...deck];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildDeckStack(stack, deck) {
+  stack.innerHTML = '';
+  stack.dataset.state = 'idle';
+  const n = Math.min(78, deck.length);
+  for (let i = 0; i < n; i++) {
+    const card = document.createElement('div');
+    card.className = 'deck-stack-card';
+    const angle = (i - n / 2) * 0.6;
+    const tx = (i - n / 2) * 1.4;
+    const ty = (i % 2 === 0 ? -1 : 1) * 4;
+    card.style.setProperty('--from-x', tx + 'px');
+    card.style.setProperty('--from-y', ty + 'px');
+    card.style.setProperty('--from-r', angle + 'deg');
+    card.style.transform = 'translate(' + tx + 'px,' + ty + 'px) rotate(' + angle + 'deg)';
+    card.style.zIndex = String(i);
+    stack.appendChild(card);
+  }
+}
+
+function buildSpreadRow(stack, deck) {
+  stack.innerHTML = '<div class="card-spread-row"></div>';
+  const row = stack.querySelector('.card-spread-row');
+  spreadCardsArr = deck.slice(0, 78);
+  for (let i = 0; i < spreadCardsArr.length; i++) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'spread-card';
+    el.dataset.cardIndex = String(i);
+    el.style.animationDelay = (i * 12) + 'ms';
+    el.setAttribute('aria-label', '第 ' + (i + 1) + ' 張');
+    el.addEventListener('click', () => onSpreadCardClick(i, el));
+    el.addEventListener('mouseenter', () => el.classList.add('is-hover'));
+    el.addEventListener('mouseleave', () => el.classList.remove('is-hover'));
+    el.addEventListener('touchstart', (e) => { e.preventDefault(); el.classList.add('is-hover'); }, { passive: false });
+    el.addEventListener('touchend', (e) => { e.preventDefault(); el.classList.remove('is-hover'); onSpreadCardClick(i, el); }, { passive: false });
+    row.appendChild(el);
+  }
+  stack.dataset.state = 'spreading';
+}
+
+async function startRitual() {
+  const ta = document.getElementById('tarotQuestion');
+  const topic = document.getElementById('tarotTopic');
+  currentQuestion = ((ta && ta.value) || '').trim();
+  currentTopic = (topic && topic.value) || '感情';
+  if (!currentQuestion) {
+    if (ta) {
+      ta.classList.add('is-shake');
+      setTimeout(() => ta.classList.remove('is-shake'), 500);
+    }
+    return;
+  }
+
+  const stack = document.getElementById('cardStack');
+  if (!stack) return;
+
+  // phase 1: collect to center
+  lockRitual(900);
+  setRitualState(RITUAL_STATES.COLLECTING);
+  buildDeckStack(stack, tarotDeck);
+  await waitRitual(900);
+
+  // phase 2: cut
+  setRitualState(RITUAL_STATES.CUTTING);
+  const cards = stack.querySelectorAll('.deck-stack-card');
+  cards.forEach((c, i) => {
+    c.style.setProperty('--from-x', ((i % 2 === 0 ? -1 : 1) * 60) + 'px');
+    c.style.setProperty('--from-y', ((i % 3) * 4) + 'px');
+    c.style.setProperty('--from-r', ((i % 2 === 0 ? -1 : 1) * 8) + 'deg');
+  });
+  await waitRitual(1200);
+
+  // phase 3: spread
+  setRitualState(RITUAL_STATES.SPREADING);
+  const deck = shuffleDeckForRitual(tarotDeck);
+  buildSpreadRow(stack, deck);
+  await waitRitual(2000);
+
+  // ready
+  setRitualState(RITUAL_STATES.READY);
+}
+
+function onSpreadCardClick(index, el) {
+  if (ritualLock) return;
+  if (ritualState !== RITUAL_STATES.READY) return;
+
+  pickedCard = spreadCardsArr[index];
+  lockRitual(900);
+  setRitualState(RITUAL_STATES.PICKED);
+  el.classList.add('is-selected');
+
+  setTimeout(() => showResult(pickedCard), 720);
+}
+
+function showResult(card) {
+  const name = document.getElementById('resultCardName');
+  const meaning = document.getElementById('resultMeaning');
+  const position = document.getElementById('resultCardPosition');
+  const spreadName = document.getElementById('resultSpreadName');
+
+  if (name) {
+    const english = (card && (card.name || card.id || '')) || '';
+    const chinese = (card && (card.chinese || card.cn || '')) || '';
+    name.textContent = (english.toUpperCase() ? english.toUpperCase() : '') + (chinese ? ' · ' + chinese : '');
+  }
+  if (meaning) meaning.textContent = (card && card.meaning) || '靜心感受這張牌帶來的訊息。';
+  if (position) position.textContent = '牌位 · ' + currentTopic;
+  if (spreadName) spreadName.textContent = SPREAD_LABELS[currentSpread] || '占卜結果';
+
+  setRitualState(RITUAL_STATES.REVEALED);
+  setTimeout(() => {
+    const resultCard = document.getElementById('resultCard');
+    if (resultCard) resultCard.classList.add('is-flipped');
+  }, 200);
+
+  setTimeout(() => {
+    setRitualState(RITUAL_STATES.RESULT);
+  }, 1100);
+}
+
+function resetRitual() {
+  const stack = document.getElementById('cardStack');
+  if (stack) {
+    stack.innerHTML = '';
+    stack.dataset.state = 'idle';
+  }
+  const resultCard = document.getElementById('resultCard');
+  if (resultCard) resultCard.classList.remove('is-flipped');
+  pickedCard = null;
+  document.body.classList.remove('ritual-active');
+  setRitualState(RITUAL_STATES.INPUT);
+}
+
+function wireRitual() {
+  const cta = document.getElementById('ritualCta');
+  if (cta) {
+    cta.addEventListener('click', () => {
+      if (ritualLock) return;
+      switch (ritualState) {
+        case RITUAL_STATES.INPUT:
+          startRitual();
+          break;
+        case RITUAL_STATES.SPREADING:
+          lockRitual(200);
+          setRitualState(RITUAL_STATES.READY);
+          break;
+        case RITUAL_STATES.REVEALED:
+        case RITUAL_STATES.RESULT:
+          resetRitual();
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  const reset = document.getElementById('ritualReset');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      if (ritualLock) return;
+      resetRitual();
+    });
+  }
+
+  document.querySelectorAll('.spread-pill').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (ritualState !== RITUAL_STATES.INPUT) return;
+      document.querySelectorAll('.spread-pill').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      currentSpread = btn.dataset.spread || 'three';
+    });
+  });
+
+  // Holographic effect tracks pointer on result card
+  const resultCard = document.getElementById('resultCard');
+  if (resultCard) {
+    const holo = resultCard.querySelector('.holographic-overlay');
+    if (holo) {
+      const onMove = (e) => {
+        const r = resultCard.getBoundingClientRect();
+        const cx = ((e.clientX - r.left) / r.width) * 100;
+        const cy = ((e.clientY - r.top) / r.height) * 100;
+        holo.style.background =
+          'radial-gradient(circle at ' + cx + '% ' + cy +
+          '%, rgba(255,232,166,0.62) 0%, rgba(255,138,183,0.42) 20%, rgba(120,224,213,0.42) 40%, transparent 70%)';
+      };
+      resultCard.addEventListener('mousemove', onMove);
+      resultCard.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) onMove(e.touches[0]);
+      }, { passive: true });
+    }
+  }
+
+  setRitualState(RITUAL_STATES.INPUT);
+}
+
+wireRitual();
