@@ -988,6 +988,10 @@ function tarotCardFrontMarkup(card, position) {
       <span class="tarot-card-title top">${english}</span>
       <span class="tarot-art-frame">
         <span class="tarot-art-sky"></span>
+        <span class="tarot-art-arch" aria-hidden="true">
+          <i></i>
+          <i></i>
+        </span>
         <span class="tarot-art-moon"></span>
         <span class="tarot-art-orbit"></span>
         <span class="tarot-art-halo"></span>
@@ -998,7 +1002,15 @@ function tarotCardFrontMarkup(card, position) {
           <i></i>
           <i></i>
         </span>
+        <span class="tarot-art-throne" aria-hidden="true"></span>
         <span class="tarot-art-crystal">
+          <i></i>
+          <i></i>
+          <i></i>
+        </span>
+        <span class="tarot-art-stars" aria-hidden="true">
+          <i></i>
+          <i></i>
           <i></i>
           <i></i>
           <i></i>
