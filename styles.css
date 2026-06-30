@@ -370,8 +370,24 @@ body::after {
   .star-field,
   .soft-veil,
   .ritual-cursor,
-  .click-spark {
+  .click-spark,
+  .tarot-table .tarot-card.is-revealing,
+  .tarot-table[data-state="shuffling"] .tarot-card,
+  .tarot-table[data-state="cutting"] .tarot-card,
+  .tarot-table[data-state="spreading"] .tarot-card,
+  .tarot-table[data-state="ready"] .tarot-card,
+  .tarot-shuffle-orb,
+  .tarot-shuffle-orb i,
+  .tarot-reveal-card.is-visible,
+  .tarot-reveal-card::before,
+  .tarot-reveal-card::after,
+  .tarot-spread-card {
     animation: none;
+  }
+
+  .tarot-flip-card-inner,
+  .tarot-table .tarot-card {
+    transition: none;
   }
 
   .star-field,
@@ -821,6 +837,72 @@ h1 {
   gap: 16px;
 }
 
+.demo-grid > .tool-panel:first-child {
+  position: relative;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 0.58fr);
+  gap: 18px;
+  overflow: hidden;
+  padding: 26px;
+  border-color: rgba(255, 224, 147, 0.32);
+  background:
+    radial-gradient(circle at 18% 20%, rgba(245, 211, 139, 0.2), transparent 22%),
+    radial-gradient(circle at 80% 38%, rgba(120, 224, 213, 0.1), transparent 24%),
+    linear-gradient(145deg, rgba(9, 5, 20, 0.94), rgba(55, 23, 75, 0.78));
+  box-shadow: inset 0 0 54px rgba(255, 255, 255, 0.055), 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.demo-grid > .tool-panel:first-child::before {
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(245, 211, 139, 0.14);
+  border-radius: 14px;
+  content: "";
+  pointer-events: none;
+}
+
+.demo-grid > .tool-panel:first-child::after {
+  position: absolute;
+  top: 44px;
+  right: 44px;
+  width: 340px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.12);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(245, 211, 139, 0.09), transparent 58%),
+    repeating-conic-gradient(from 0deg, rgba(245, 211, 139, 0.08) 0 2deg, transparent 2deg 16deg);
+  content: "";
+  pointer-events: none;
+}
+
+.demo-grid > .tool-panel:first-child .panel-head,
+.demo-grid > .tool-panel:first-child .tarot-form,
+.demo-grid > .tool-panel:first-child .tarot-toolbar,
+.demo-grid > .tool-panel:first-child .share-actions,
+.demo-grid > .tool-panel:first-child .share-status {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+}
+
+.demo-grid > .tool-panel:first-child .tarot-ritual-panel,
+.demo-grid > .tool-panel:first-child .tarot-table,
+.demo-grid > .tool-panel:first-child .tarot-result {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+}
+
+.demo-grid > .tool-panel:first-child .tarot-ritual-panel {
+  min-height: 170px;
+}
+
+.demo-grid > .tool-panel:first-child .tarot-result {
+  align-self: start;
+}
+
 .tool-panel,
 .automation-card,
 .product-card,
@@ -836,6 +918,14 @@ h1 {
   border-radius: 16px;
   box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(18px);
+}
+
+.tool-panel,
+.demo-grid > *,
+.tarot-result,
+.tarot-result-hero {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .profile-layout {
@@ -948,6 +1038,25 @@ h1 {
   margin-bottom: 16px;
 }
 
+.admin-section {
+  position: relative;
+}
+
+.admin-section::before {
+  position: absolute;
+  inset: 24px max(24px, calc((100vw - 1180px) / 2)) auto;
+  height: 260px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(245, 211, 139, 0.18), transparent 26%),
+    radial-gradient(circle at 86% 32%, rgba(120, 224, 213, 0.12), transparent 24%),
+    linear-gradient(135deg, rgba(9, 5, 20, 0.58), rgba(44, 22, 64, 0.38));
+  border: 1px solid rgba(245, 211, 139, 0.12);
+  border-radius: 22px;
+  content: "";
+  pointer-events: none;
+  z-index: -1;
+}
+
 .admin-metrics {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -956,12 +1065,26 @@ h1 {
 }
 
 .metric-card {
+  position: relative;
+  overflow: hidden;
   padding: 18px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07)),
-    radial-gradient(circle at 84% 18%, rgba(245, 211, 139, 0.16), transparent 34%);
-  border: 1px solid rgba(245, 211, 139, 0.22);
+    radial-gradient(circle at 84% 18%, rgba(245, 211, 139, 0.22), transparent 34%),
+    linear-gradient(145deg, rgba(28, 14, 45, 0.82), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(245, 211, 139, 0.28);
   border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 18px 42px rgba(0, 0, 0, 0.2);
+}
+
+.metric-card::after {
+  position: absolute;
+  right: -24px;
+  bottom: -24px;
+  width: 92px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.16);
+  border-radius: 50%;
+  content: "";
 }
 
 .metric-card span,
@@ -973,9 +1096,10 @@ h1 {
 .metric-card strong {
   display: block;
   margin: 6px 0;
-  color: var(--gold);
+  color: #fff4ca;
   font-size: clamp(28px, 4vw, 44px);
   line-height: 1;
+  text-shadow: 0 0 24px rgba(245, 211, 139, 0.2);
 }
 
 .metric-card small {
@@ -984,7 +1108,24 @@ h1 {
 }
 
 .admin-card {
+  position: relative;
+  overflow: hidden;
   padding: 22px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(245, 211, 139, 0.14), transparent 28%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055));
+}
+
+.admin-card::before {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 34px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.28), transparent 58%);
+  content: "";
 }
 
 .admin-card h3 {
@@ -1003,6 +1144,10 @@ h1 {
 
 .admin-table {
   overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(14, 8, 28, 0.72), rgba(255, 255, 255, 0.065)),
+    radial-gradient(circle at 86% 16%, rgba(120, 224, 213, 0.1), transparent 26%);
+  border-color: rgba(245, 211, 139, 0.22);
 }
 
 .admin-row {
@@ -1019,8 +1164,8 @@ h1 {
 }
 
 .admin-head {
-  background: rgba(245, 211, 139, 0.11);
-  color: var(--gold);
+  background: linear-gradient(90deg, rgba(245, 211, 139, 0.16), rgba(183, 128, 255, 0.1));
+  color: #fff4ca;
   font-weight: 900;
 }
 
@@ -1037,9 +1182,13 @@ h1 {
 }
 
 .admin-live-card {
+  position: relative;
+  overflow: hidden;
   padding: 20px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.07));
-  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(245, 211, 139, 0.16), transparent 28%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(245, 211, 139, 0.22);
   border-radius: 16px;
   box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
 }
@@ -1141,16 +1290,235 @@ h1 {
 }
 
 .tarot-table {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(42px, 1fr));
-  gap: 9px;
-  max-height: 360px;
-  overflow: auto;
-  padding: 10px;
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: clamp(430px, 54vw, 590px);
+  max-height: none;
+  overflow: hidden;
+  padding: 0;
   margin-bottom: 14px;
-  background: rgba(8, 5, 18, 0.34);
-  border: 1px solid rgba(245, 211, 139, 0.18);
+  background:
+    radial-gradient(ellipse at center 54%, rgba(245, 211, 139, 0.2), transparent 38%),
+    radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(245, 211, 139, 0.14) 30% 30.5%, transparent 31%),
+    repeating-conic-gradient(from -18deg at 50% 52%, rgba(245, 211, 139, 0.08) 0 1.2deg, transparent 1.2deg 12deg),
+    radial-gradient(circle at 20% 72%, rgba(120, 224, 213, 0.08), transparent 18%),
+    linear-gradient(180deg, rgba(8, 5, 18, 0.72), rgba(20, 10, 34, 0.52));
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 20px;
+  perspective: 1200px;
+  transition: filter 220ms ease, opacity 220ms ease, background 220ms ease;
+}
+
+.tarot-table::before {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: min(780px, 86%);
+  aspect-ratio: 1.58;
+  border: 1px solid rgba(245, 211, 139, 0.16);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 244, 202, 0.08), transparent 10%),
+    radial-gradient(circle at 50% 50%, transparent 0 46%, rgba(245, 211, 139, 0.18) 46% 46.5%, transparent 47%),
+    repeating-conic-gradient(from 0deg, rgba(255, 244, 202, 0.12) 0 1deg, transparent 1deg 15deg);
+  content: "";
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tarot-table::after {
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 244, 202, 0.12);
   border-radius: 16px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 244, 202, 0.42) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 28%, rgba(255, 244, 202, 0.36) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 78%, rgba(120, 224, 213, 0.32) 0 1px, transparent 2px),
+    radial-gradient(circle at 32% 74%, rgba(245, 211, 139, 0.34) 0 1px, transparent 2px);
+  content: "";
+  pointer-events: none;
+}
+
+.tarot-table-hud {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  z-index: 170;
+  display: grid;
+  width: min(520px, calc(100% - 32px));
+  gap: 6px;
+  justify-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(8, 5, 18, 0.78), rgba(29, 14, 46, 0.58));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24), inset 0 0 18px rgba(245, 211, 139, 0.08);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tarot-table-hud span {
+  color: #f5d38b;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.tarot-table-hud strong {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.tarot-cut-surface {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 220;
+  display: grid;
+  width: min(220px, 72%);
+  min-height: 104px;
+  padding: 14px 18px;
+  place-items: center;
+  border: 1px solid rgba(255, 232, 166, 0.62);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255, 244, 202, 0.32), transparent 30%),
+    radial-gradient(ellipse at center, rgba(245, 211, 139, 0.22), transparent 62%),
+    linear-gradient(135deg, rgba(24, 13, 38, 0.74), rgba(83, 36, 111, 0.58));
+  color: #fff4ca;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35), 0 0 28px rgba(245, 211, 139, 0.26);
+  cursor: pointer;
+  font-weight: 950;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.58);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  animation: cutSurfacePulse 1.5s ease-in-out infinite;
+}
+
+.tarot-cut-surface[hidden] {
+  display: none;
+}
+
+.tarot-table[data-state="idle"] {
+  opacity: 0.68;
+  filter: saturate(0.74);
+}
+
+.tarot-table[data-state="shuffling"] .tarot-card {
+  top: 50%;
+  left: 50%;
+  z-index: calc(120 - var(--shuffle-slot, 0));
+  animation: deckShuffle 1.62s cubic-bezier(0.2, 0.86, 0.16, 1) both;
+  animation-delay: calc(var(--shuffle-slot, 0) * 8ms);
+}
+
+.tarot-table[data-state="cutting"] .tarot-card {
+  top: 50%;
+  left: 50%;
+  animation: deckCut 760ms cubic-bezier(0.2, 0.84, 0.2, 1) both;
+  animation-delay: calc((var(--card-order) % 9) * 8ms);
+}
+
+.tarot-table[data-state="shuffled"] .tarot-card {
+  top: 50%;
+  left: 50%;
+  transform: translate(
+      calc(-50% + var(--shuffle-depth, 0) * 0.55px),
+      calc(-50% + var(--shuffle-slot, 0) * 0.38px - 4px)
+    )
+    rotate(calc(var(--shuffle-depth, 0) * 0.22deg))
+    scale(0.94);
+}
+
+.tarot-table[data-state="shuffled"] {
+  cursor: pointer;
+}
+
+.tarot-table[data-state="shuffled"] .tarot-card {
+  pointer-events: none;
+}
+
+.tarot-table[data-state="shuffled"] .tarot-table-hud {
+  top: calc(50% - 128px);
+  background: linear-gradient(180deg, rgba(8, 5, 18, 0.9), rgba(37, 16, 58, 0.72));
+  border-color: rgba(245, 211, 139, 0.38);
+}
+
+.tarot-table[data-state="cut"] .tarot-card {
+  top: 50%;
+  left: 50%;
+  transform: translate(
+      calc(-50% + var(--cut-side, 1) * 72px + (var(--card-order) % 6 - 3) * 1.1px),
+      calc(-50% + (var(--card-order) % 9 - 4) * 1px)
+    )
+    rotate(calc(var(--cut-side, 1) * 5deg))
+    scale(0.93);
+}
+
+.tarot-table[data-state="spreading"] .tarot-card {
+  animation: fanDeal 1.82s cubic-bezier(0.17, 0.82, 0.16, 1) both;
+  animation-delay: calc(var(--deal-delay, 0) * 1ms);
+  pointer-events: none;
+}
+
+.tarot-table[data-state="spreading"]::after {
+  opacity: 0.72;
+  background:
+    linear-gradient(105deg, transparent 0 28%, rgba(255, 244, 202, 0.22) 42%, rgba(245, 211, 139, 0.1) 52%, transparent 68%),
+    radial-gradient(ellipse at 50% 58%, rgba(245, 211, 139, 0.14), transparent 38%);
+  transform: translateX(-72%) rotate(-4deg);
+  animation: dealHandSweep 4.8s cubic-bezier(0.2, 0.78, 0.2, 1) both;
+}
+
+.tarot-table[data-state="ready"] .tarot-card {
+  animation: none;
+}
+
+.tarot-table[data-state="ready"] {
+  background:
+    radial-gradient(ellipse at center 42%, rgba(245, 211, 139, 0.2), transparent 48%),
+    radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(245, 211, 139, 0.16) 30% 30.5%, transparent 31%),
+    repeating-conic-gradient(from -18deg at 50% 52%, rgba(245, 211, 139, 0.09) 0 1.2deg, transparent 1.2deg 12deg),
+    radial-gradient(circle at 24% 68%, rgba(120, 224, 213, 0.1), transparent 22%),
+    rgba(8, 5, 18, 0.46);
+}
+
+.tarot-table[data-state="revealing"] .tarot-card:not(.is-selected),
+.tarot-table[data-state="completed"] .tarot-card:not(.is-selected) {
+  opacity: 0.18;
+  filter: saturate(0.42) blur(0.7px);
+  transform: translate(-50%, -50%) rotate(var(--fan-rotate, 0deg)) scale(calc(var(--card-scale, 1) * 0.9));
+}
+
+.tarot-table[data-state="revealing"] .tarot-card.is-selected,
+.tarot-table[data-state="completed"] .tarot-card.is-selected {
+  top: 50%;
+  left: 50%;
+  z-index: 260;
+  border-color: rgba(255, 232, 166, 0.96);
+  box-shadow:
+    0 34px 78px rgba(0, 0, 0, 0.54),
+    0 0 54px rgba(245, 211, 139, 0.38),
+    0 0 0 1px rgba(255, 244, 202, 0.32);
+  transform: translate(-50%, -52%) rotate(0deg) scale(2.12);
+}
+
+.tarot-reveal-particle {
+  position: absolute;
+  z-index: 250;
+  width: 6px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff4ca;
+  box-shadow: 0 0 12px rgba(245, 211, 139, 0.86), 0 0 24px rgba(255, 244, 202, 0.38);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: tarotSpark 920ms ease-out forwards;
+  animation-delay: var(--spark-delay, 0ms);
 }
 
 .tarot-form {
@@ -1177,12 +1545,161 @@ h1 {
   resize: vertical;
 }
 
+.tarot-ritual-panel {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  min-height: auto;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 12% 24%, rgba(245, 211, 139, 0.16), transparent 22%),
+    linear-gradient(145deg, rgba(20, 10, 34, 0.88), rgba(46, 22, 66, 0.62));
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.04), 0 12px 26px rgba(0, 0, 0, 0.18);
+}
+
+.tarot-ritual-panel::before {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(245, 211, 139, 0.16);
+  border-radius: 14px;
+  content: "";
+  pointer-events: none;
+}
+
+.ritual-stepper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ritual-stepper span {
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.ritual-stepper span.is-active {
+  background: rgba(245, 211, 139, 0.16);
+  border-color: rgba(245, 211, 139, 0.52);
+  color: #fff4ca;
+  box-shadow: 0 0 18px rgba(245, 211, 139, 0.16);
+}
+
+.ritual-stepper span.is-complete {
+  color: rgba(191, 232, 255, 0.88);
+}
+
+.tarot-shuffle-orb {
+  display: none;
+}
+
+.tarot-shuffle-orb::before,
+.tarot-shuffle-orb::after {
+  position: absolute;
+  content: "";
+}
+
+.tarot-shuffle-orb::before {
+  inset: 31%;
+  border: 1px solid rgba(255, 244, 202, 0.44);
+  border-radius: 50% 50% 12% 12%;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.38), transparent 42%),
+    linear-gradient(180deg, rgba(245, 211, 139, 0.62), rgba(183, 128, 255, 0.34));
+  clip-path: polygon(50% 0, 100% 24%, 76% 100%, 24% 100%, 0 24%);
+  filter: drop-shadow(0 0 22px rgba(245, 211, 139, 0.42));
+}
+
+.tarot-shuffle-orb::after {
+  top: 22%;
+  right: 24%;
+  width: 24px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 244, 202, 0.86);
+  box-shadow: -8px 0 0 rgba(33, 16, 52, 0.94) inset, 0 0 22px rgba(245, 211, 139, 0.48);
+}
+
+.tarot-shuffle-orb i {
+  position: absolute;
+  inset: 18%;
+  border: 1px solid rgba(255, 244, 202, 0.32);
+  border-radius: 999px;
+  transform: rotate(calc(var(--ring, 1) * 38deg));
+}
+
+.tarot-shuffle-orb i:nth-child(2) {
+  --ring: 2;
+  inset: 28%;
+}
+
+.tarot-shuffle-orb i:nth-child(3) {
+  --ring: 3;
+  inset: 40%;
+  background: radial-gradient(circle, rgba(255, 244, 202, 0.36), transparent 48%);
+}
+
+.tarot-shuffle-orb[data-state="shuffling"] {
+  animation: ritualShuffle 1.2s cubic-bezier(0.22, 0.9, 0.22, 1) both;
+}
+
+.tarot-shuffle-orb[data-state="shuffling"] i {
+  animation: ritualRing 900ms linear 1;
+}
+
+.tarot-shuffle-orb[data-state="cutting"] {
+  animation: ritualCut 720ms cubic-bezier(0.2, 0.84, 0.2, 1) both;
+}
+
+.tarot-shuffle-orb[data-state="spreading"],
+.tarot-shuffle-orb[data-state="ready"] {
+  transform: scale(0.9);
+  opacity: 0.76;
+}
+
+.tarot-ritual-panel p {
+  position: relative;
+  z-index: 1;
+  max-width: none;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.7;
+  text-align: left;
+}
+
 .tarot-toolbar {
   display: grid;
   grid-template-columns: 130px 1fr;
   gap: 12px;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.tarot-toolbar .panel-button {
+  min-height: 54px;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 244, 202, 0.34), transparent 24%),
+    linear-gradient(135deg, #f5d38b, #b780ff 58%, #44205d);
+  border: 1px solid rgba(255, 244, 202, 0.5);
+  color: #190d24;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24), 0 0 26px rgba(245, 211, 139, 0.18);
+}
+
+.tarot-toolbar .panel-button:disabled {
+  opacity: 0.78;
+  color: rgba(25, 13, 36, 0.78);
 }
 
 .tarot-toolbar span {
@@ -1192,31 +1709,43 @@ h1 {
 }
 
 .tarot-table .tarot-card {
-  position: relative;
-  min-height: 104px;
-  padding: 7px;
+  position: absolute;
+  top: var(--card-y, 50%);
+  left: var(--card-x, 50%);
+  z-index: var(--card-z, 1);
+  width: clamp(46px, 5.35vw, 74px);
+  aspect-ratio: 2 / 3;
+  min-height: 0;
+  padding: 4px;
   background:
     radial-gradient(circle at 28% 18%, rgba(245, 211, 139, 0.32), transparent 24%),
     radial-gradient(circle at 72% 76%, rgba(120, 224, 213, 0.18), transparent 28%),
     linear-gradient(145deg, rgba(23, 15, 48, 0.98), rgba(95, 34, 123, 0.9)),
     url("./assets/cosmic-tarot-bg.png") center / cover;
   border: 1px solid rgba(245, 211, 139, 0.56);
-  border-radius: 13px;
+  border-radius: 9px;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 0 18px rgba(245, 211, 139, 0.08),
-    0 10px 22px rgba(0, 0, 0, 0.22);
+    0 8px 18px rgba(0, 0, 0, 0.24);
   color: #fff;
+  contain: layout paint style;
   cursor: pointer;
   font-weight: 900;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transform: translate(-50%, -50%) rotate(var(--fan-rotate, 0deg)) scale(var(--card-scale, 1));
+  will-change: transform;
 }
 
 .tarot-table .tarot-card:hover,
 .tarot-table .tarot-card.is-selected {
-  transform: translateY(-4px);
+  z-index: 130;
+  transform: translate(-50%, -66%) rotate(var(--fan-rotate, 0deg)) rotateX(6deg) scale(1.34);
   border-color: rgba(255, 232, 166, 0.92);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3), 0 0 24px rgba(245, 211, 139, 0.18);
+  box-shadow:
+    0 24px 46px rgba(0, 0, 0, 0.42),
+    0 0 34px rgba(245, 211, 139, 0.3),
+    0 0 0 1px rgba(255, 244, 202, 0.28);
 }
 
 .tarot-table .tarot-card.is-revealing {
@@ -1224,53 +1753,243 @@ h1 {
 }
 
 .tarot-table .tarot-card.is-revealed {
-  min-height: 126px;
   background:
     radial-gradient(circle at 50% 24%, rgba(255, 244, 202, 0.24), transparent 28%),
     linear-gradient(145deg, rgba(43, 20, 66, 0.98), rgba(103, 48, 111, 0.92));
+}
+
+.tarot-flip-card {
+  perspective: 1100px;
+}
+
+.tarot-flip-card[disabled] {
+  cursor: default;
+}
+
+.tarot-flip-card-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--flip-delay, 0ms);
+  will-change: transform;
+}
+
+.tarot-flip-card[data-state="hover"] .tarot-flip-card-inner {
+  transform: translate3d(0, -7px, 18px) rotateX(5deg) rotateY(-5deg);
+}
+
+.tarot-flip-card[data-state="draw"] .tarot-flip-card-inner {
+  transform: translate3d(0, -8px, 0) rotateY(0deg) scale(1.02);
+}
+
+.tarot-flip-card[data-state="flip"] .tarot-flip-card-inner,
+.tarot-flip-card[data-state="reveal"] .tarot-flip-card-inner,
+.tarot-flip-card[data-state="completed"] .tarot-flip-card-inner,
+.tarot-flip-card.flipped .tarot-flip-card-inner {
+  transform: translate3d(0, -4px, 0) rotateY(180deg);
+}
+
+.tarot-flip-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.tarot-flip-front {
+  transform: rotateY(180deg);
+}
+
+.tarot-flip-card[data-state="reveal"],
+.tarot-flip-card[data-state="completed"] {
+  border-color: rgba(255, 232, 166, 0.92);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.42), 0 0 42px rgba(245, 211, 139, 0.32);
+  transform: translate(-50%, -66%) rotate(0deg) scale(1.52);
+}
+
+.tarot-table[data-state="revealing"] .tarot-flip-card[data-state="reveal"],
+.tarot-table[data-state="completed"] .tarot-flip-card[data-state="completed"] {
+  transform: translate(-50%, -52%) rotate(0deg) scale(2.12);
 }
 
 .tarot-card-back {
   position: relative;
   display: grid;
   height: 100%;
-  min-height: 90px;
+  min-height: 100%;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(255, 244, 202, 0.28);
-  border-radius: 9px;
+  border: 1px solid rgba(255, 224, 147, 0.72);
+  border-radius: 10px;
   background:
-    radial-gradient(circle at center, rgba(255, 244, 202, 0.2) 0 12%, transparent 13%),
-    radial-gradient(circle at center, transparent 0 29%, rgba(245, 211, 139, 0.42) 30% 31%, transparent 32%),
-    linear-gradient(90deg, transparent 47%, rgba(245, 211, 139, 0.24) 48%, rgba(245, 211, 139, 0.24) 52%, transparent 53%),
-    linear-gradient(0deg, transparent 47%, rgba(245, 211, 139, 0.2) 48%, rgba(245, 211, 139, 0.2) 52%, transparent 53%);
+    radial-gradient(circle at 50% 18%, rgba(255, 244, 202, 0.64) 0 1px, transparent 2px),
+    radial-gradient(circle at 22% 25%, rgba(255, 244, 202, 0.45) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 34%, rgba(245, 211, 139, 0.42) 0 1px, transparent 2px),
+    radial-gradient(circle at 50% 52%, rgba(245, 211, 139, 0.24), transparent 18%),
+    conic-gradient(from 180deg, rgba(245, 211, 139, 0.28), transparent 18%, rgba(183, 128, 255, 0.24), transparent 52%, rgba(245, 211, 139, 0.28)),
+    repeating-linear-gradient(90deg, transparent 0 17px, rgba(245, 211, 139, 0.08) 17px 18px, transparent 18px 34px),
+    linear-gradient(155deg, #070514, #27113b 45%, #4b1d63 58%, #090616);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 0 34px rgba(245, 211, 139, 0.18),
+    0 0 26px rgba(245, 211, 139, 0.12);
 }
 
-.tarot-card-back i {
+.tarot-back-stars {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  border: 1px solid rgba(255, 244, 202, 0.5);
+  inset: 13%;
+  display: block;
+  pointer-events: none;
+}
+
+.tarot-back-stars i {
+  position: absolute;
+  width: 4px;
+  aspect-ratio: 1;
   border-radius: 50%;
+  background: #fff4ca;
+  box-shadow: 0 0 12px rgba(245, 211, 139, 0.72);
+}
+
+.tarot-back-stars i:first-child {
+  top: 13%;
+  left: 50%;
+}
+
+.tarot-back-stars i:nth-child(2) {
+  top: 42%;
+  right: 7%;
+}
+
+.tarot-back-stars i:nth-child(3) {
+  bottom: 18%;
+  left: 19%;
+}
+
+.tarot-back-stars i:nth-child(4) {
+  right: 28%;
+  bottom: 7%;
+}
+
+.tarot-back-sigil {
+  position: absolute;
+  display: grid;
+  width: 74%;
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.tarot-back-sigil i {
+  position: absolute;
+  border: 1px solid rgba(255, 224, 147, 0.36);
+  border-radius: 50%;
+}
+
+.tarot-back-sigil i:first-child {
+  width: 100%;
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle, rgba(255, 244, 202, 0.48) 0 4%, transparent 5%),
+    repeating-conic-gradient(from 0deg, rgba(245, 211, 139, 0.2) 0 3deg, transparent 3deg 18deg);
   box-shadow:
-    0 0 18px rgba(245, 211, 139, 0.28),
-    inset -7px 0 0 rgba(255, 244, 202, 0.16);
+    0 0 24px rgba(245, 211, 139, 0.22),
+    inset 0 0 22px rgba(245, 211, 139, 0.12);
+}
+
+.tarot-back-sigil i:nth-child(2) {
+  width: 58%;
+  aspect-ratio: 1;
+  box-shadow: inset 0 0 18px rgba(245, 211, 139, 0.12);
+}
+
+.tarot-back-sigil i:nth-child(3) {
+  width: 24%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 224, 147, 0.78), rgba(245, 211, 139, 0.1) 56%, transparent 58%);
+  border-color: rgba(255, 244, 202, 0.72);
+  box-shadow: 0 0 24px rgba(245, 211, 139, 0.42);
+}
+
+.tarot-back-moons {
+  position: absolute;
+  inset: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.tarot-back-moons i {
+  display: block;
+  width: 18px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 224, 147, 0.86);
+  box-shadow: -7px 0 0 rgba(21, 9, 36, 0.92) inset, 0 0 16px rgba(245, 211, 139, 0.28);
+}
+
+.tarot-back-moons i:nth-child(2) {
+  width: 24px;
+  background: linear-gradient(90deg, rgba(245, 211, 139, 0.34), rgba(255, 224, 147, 0.92), rgba(245, 211, 139, 0.34));
+  border-radius: 999px;
+  box-shadow: 0 0 20px rgba(245, 211, 139, 0.34);
+}
+
+.tarot-back-moons i:nth-child(3) {
+  transform: scaleX(-1);
 }
 
 .tarot-card-back b {
   position: relative;
   z-index: 1;
-  padding-top: 38px;
+  align-self: end;
+  margin-bottom: 18px;
+  padding: 3px 8px;
+  border: 1px solid rgba(245, 211, 139, 0.26);
+  border-radius: 999px;
+  background: rgba(9, 5, 20, 0.46);
   color: #fff4ca;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.56);
 }
 
 .tarot-card-back em {
   position: absolute;
-  inset: 10px;
-  border: 1px solid rgba(245, 211, 139, 0.18);
-  border-radius: 7px;
+  inset: 8px;
+  border: 1px solid rgba(245, 211, 139, 0.42);
+  border-radius: 8px;
+}
+
+.tarot-card-back em {
+  background:
+    linear-gradient(90deg, transparent 0 8px, rgba(245, 211, 139, 0.3) 8px 9px, transparent 9px calc(100% - 9px), rgba(245, 211, 139, 0.3) calc(100% - 9px) calc(100% - 8px), transparent calc(100% - 8px)),
+    linear-gradient(180deg, transparent 0 8px, rgba(245, 211, 139, 0.3) 8px 9px, transparent 9px calc(100% - 9px), rgba(245, 211, 139, 0.3) calc(100% - 9px) calc(100% - 8px), transparent calc(100% - 8px));
+}
+
+.tarot-card-back em::before,
+.tarot-card-back em::after {
+  position: absolute;
+  color: rgba(255, 244, 202, 0.78);
+  font-style: normal;
+  content: "◆";
+}
+
+.tarot-card-back em::before {
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tarot-card-back em::after {
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .tarot-card-back::before,
@@ -1282,13 +2001,13 @@ h1 {
 }
 
 .tarot-card-back::before {
-  content: "✦";
+  content: "✥";
   top: 12px;
   left: 12px;
 }
 
 .tarot-card-back::after {
-  content: "☾";
+  content: "✥";
   right: 12px;
   bottom: 12px;
 }
@@ -1296,20 +2015,128 @@ h1 {
 .tarot-card-face {
   position: relative;
   display: grid;
-  min-height: 108px;
+  grid-template-rows: auto auto 1fr auto auto auto;
+  gap: 5px;
+  height: 100%;
+  min-height: 100%;
   place-items: center;
   overflow: hidden;
-  padding: 14px 10px;
-  border: 1px solid rgba(255, 244, 202, 0.34);
+  padding: 10px 9px 9px;
+  border: 1px solid rgba(255, 224, 147, 0.8);
   border-radius: 10px;
   background:
-    radial-gradient(circle at 50% 22%, rgba(245, 211, 139, 0.34), transparent 16%),
-    radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(245, 211, 139, 0.34) 35% 36%, transparent 37%),
-    linear-gradient(160deg, rgba(255, 255, 255, 0.09), transparent 40%),
-    rgba(16, 10, 31, 0.58);
+    radial-gradient(circle at 50% 16%, rgba(255, 244, 202, 0.32), transparent 15%),
+    radial-gradient(circle at 50% 42%, rgba(255, 244, 202, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 64%, rgba(88, 35, 123, 0.72), transparent 52%),
+    linear-gradient(90deg, rgba(245, 211, 139, 0.14), transparent 8% 92%, rgba(245, 211, 139, 0.14)),
+    linear-gradient(150deg, rgba(255, 244, 202, 0.2), transparent 22%),
+    linear-gradient(155deg, rgba(10, 6, 20, 0.98), rgba(64, 24, 86, 0.96) 52%, rgba(7, 5, 17, 0.99));
   color: #fff4ca;
   text-align: center;
-  box-shadow: inset 0 0 28px rgba(245, 211, 139, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 34px rgba(245, 211, 139, 0.2),
+    0 0 22px rgba(245, 211, 139, 0.12);
+}
+
+.tarot-card-foil {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255, 224, 147, 0.74);
+  border-radius: 7px;
+  background:
+    linear-gradient(135deg, rgba(255, 244, 202, 0.44), transparent 12% 88%, rgba(245, 211, 139, 0.38)),
+    linear-gradient(45deg, transparent 0 9px, rgba(245, 211, 139, 0.34) 9px 10px, transparent 10px calc(100% - 10px), rgba(245, 211, 139, 0.34) calc(100% - 10px) calc(100% - 9px), transparent calc(100% - 9px));
+  pointer-events: none;
+}
+
+.tarot-card-foil::before,
+.tarot-card-foil::after {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(245, 211, 139, 0.2);
+  border-radius: inherit;
+  content: "";
+}
+
+.tarot-card-foil::before {
+  background:
+    radial-gradient(circle at 0 0, transparent 0 13px, rgba(245, 211, 139, 0.45) 13px 14px, transparent 15px),
+    radial-gradient(circle at 100% 0, transparent 0 13px, rgba(245, 211, 139, 0.45) 13px 14px, transparent 15px),
+    radial-gradient(circle at 0 100%, transparent 0 13px, rgba(245, 211, 139, 0.45) 13px 14px, transparent 15px),
+    radial-gradient(circle at 100% 100%, transparent 0 13px, rgba(245, 211, 139, 0.45) 13px 14px, transparent 15px);
+}
+
+.tarot-card-foil::after {
+  inset: 12px 8px;
+  border-color: rgba(255, 244, 202, 0.14);
+}
+
+.tarot-card-corner {
+  position: absolute;
+  z-index: 2;
+  color: rgba(255, 224, 147, 0.82);
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(245, 211, 139, 0.46);
+}
+
+.tarot-card-corner.top-left {
+  top: 8px;
+  left: 8px;
+}
+
+.tarot-card-corner.top-right {
+  top: 8px;
+  right: 8px;
+}
+
+.tarot-card-corner.bottom-left {
+  bottom: 8px;
+  left: 8px;
+}
+
+.tarot-card-corner.bottom-right {
+  right: 8px;
+  bottom: 8px;
+}
+
+.tarot-card-roman {
+  position: relative;
+  z-index: 2;
+  min-width: 24px;
+  padding: 1px 7px;
+  border: 1px solid rgba(245, 211, 139, 0.34);
+  border-radius: 999px;
+  color: #ffe8a6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12px;
+  line-height: 1.25;
+  text-shadow: 0 0 10px rgba(245, 211, 139, 0.46);
+}
+
+.tarot-card-title {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  color: #ffe8a6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.62);
+}
+
+.tarot-card-title.bottom {
+  min-width: 82%;
+  padding: 3px 5px;
+  border: 1px solid rgba(245, 211, 139, 0.52);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(9, 5, 20, 0.92), rgba(31, 14, 39, 0.92));
+  color: #ffe8a6;
+  box-shadow: inset 0 0 12px rgba(245, 211, 139, 0.12), 0 0 12px rgba(0, 0, 0, 0.35);
 }
 
 .tarot-card-face::before,
@@ -1331,30 +2158,273 @@ h1 {
   content: "☾";
 }
 
-.tarot-card-face i {
-  width: 24px;
-  height: 24px;
-  border: 1px solid rgba(255, 244, 202, 0.5);
+.tarot-art-frame {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 94px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 244, 202, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 232, 166, 0.16), transparent 26% 72%, rgba(80, 37, 16, 0.28)),
+    radial-gradient(circle at 50% 75%, rgba(92, 46, 27, 0.44), transparent 15%),
+    radial-gradient(circle at 25% 24%, rgba(255, 244, 202, 0.5) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 18%, rgba(255, 244, 202, 0.5) 0 1px, transparent 2px),
+    radial-gradient(circle at 65% 70%, rgba(120, 224, 213, 0.36) 0 1px, transparent 2px),
+    linear-gradient(180deg, rgba(15, 8, 29, 0.1), rgba(5, 3, 12, 0.34));
+}
+
+.tarot-art-sky {
+  position: absolute;
+  inset: -24%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(245, 211, 139, 0.18), transparent 18%),
+    conic-gradient(from 180deg, rgba(245, 211, 139, 0.2), transparent 18%, rgba(183, 128, 255, 0.24), transparent 56%, rgba(120, 224, 213, 0.16));
+  opacity: 0.74;
+  transform: rotate(-18deg);
+}
+
+.tarot-art-sky::before,
+.tarot-art-sky::after {
+  position: absolute;
+  content: "";
+}
+
+.tarot-art-sky::before {
+  inset: 14% 17%;
+  border: 1px solid rgba(245, 211, 139, 0.2);
+  border-radius: 50% 50% 12% 12%;
+}
+
+.tarot-art-sky::after {
+  right: 7%;
+  bottom: 6%;
+  width: 42%;
+  height: 18%;
+  border-top: 1px solid rgba(245, 211, 139, 0.24);
   border-radius: 50%;
-  box-shadow: inset -8px 0 0 rgba(255, 244, 202, 0.18), 0 0 18px rgba(245, 211, 139, 0.24);
+}
+
+.tarot-art-moon {
+  position: absolute;
+  top: 12%;
+  right: 18%;
+  width: 22px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 244, 202, 0.85);
+  box-shadow:
+    -7px 0 0 rgba(37, 18, 56, 0.92) inset,
+    0 0 18px rgba(245, 211, 139, 0.5);
+}
+
+.tarot-art-orbit {
+  position: absolute;
+  width: 64%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.36);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 14px rgba(245, 211, 139, 0.08),
+    0 0 16px rgba(245, 211, 139, 0.12);
+}
+
+.tarot-art-orbit::before,
+.tarot-art-orbit::after {
+  position: absolute;
+  inset: 17%;
+  border: 1px solid rgba(255, 244, 202, 0.2);
+  border-radius: inherit;
+  content: "";
+}
+
+.tarot-art-orbit::after {
+  inset: 36%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.32), transparent 48%);
+}
+
+.tarot-art-halo {
+  position: absolute;
+  top: 23%;
+  width: 58px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.36);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.2), transparent 62%);
+  box-shadow: 0 0 28px rgba(245, 211, 139, 0.26);
+}
+
+.tarot-art-figure {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 68px;
+  height: 86px;
+  place-items: center;
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.5));
+}
+
+.tarot-art-figure i {
+  position: absolute;
+  display: block;
+}
+
+.tarot-art-figure i:first-child {
+  top: 8px;
+  width: 24px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 34%, rgba(255, 244, 202, 0.74), transparent 20%),
+    linear-gradient(145deg, #f5d38b, #7b4c7f 58%, #23142e);
+  box-shadow: 0 0 18px rgba(245, 211, 139, 0.34);
+}
+
+.tarot-art-figure i:nth-child(2) {
+  top: 30px;
+  width: 47px;
+  height: 50px;
+  border-radius: 32px 32px 8px 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 44%),
+    linear-gradient(160deg, #f5d38b, #7d326d 45%, #24142f);
+  clip-path: polygon(50% 0, 88% 28%, 76% 100%, 24% 100%, 12% 28%);
+}
+
+.tarot-art-figure i:nth-child(3) {
+  top: 38px;
+  width: 70px;
+  height: 38px;
+  border-top: 1px solid rgba(255, 244, 202, 0.5);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.tarot-art-figure i:nth-child(4) {
+  top: 0;
+  width: 36px;
+  height: 22px;
+  background:
+    radial-gradient(circle at 50% 0, rgba(255, 244, 202, 0.95) 0 3px, transparent 4px),
+    linear-gradient(135deg, transparent 0 22%, rgba(245, 211, 139, 0.92) 23% 34%, transparent 35% 45%, rgba(245, 211, 139, 0.92) 46% 58%, transparent 59% 68%, rgba(245, 211, 139, 0.92) 69% 80%, transparent 81%),
+    linear-gradient(180deg, transparent 0 62%, rgba(245, 211, 139, 0.8) 63% 100%);
+  clip-path: polygon(0 100%, 15% 34%, 31% 78%, 50% 10%, 69% 78%, 85% 34%, 100% 100%);
+  filter: drop-shadow(0 0 8px rgba(245, 211, 139, 0.48));
+}
+
+.tarot-art-figure i:nth-child(5) {
+  bottom: 0;
+  width: 54px;
+  height: 18px;
+  border-radius: 50% 50% 10px 10px;
+  background: linear-gradient(180deg, rgba(245, 211, 139, 0.52), rgba(50, 21, 42, 0.84));
+  box-shadow: 0 -8px 18px rgba(245, 211, 139, 0.14);
+}
+
+.tarot-art-figure[data-figure="1"] i:nth-child(2),
+.tarot-card-face[data-suit="cups"] .tarot-art-figure i:nth-child(2) {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 44%), linear-gradient(160deg, #dfeaff, #5d5f99 46%, #1d1734);
+}
+
+.tarot-art-figure[data-figure="2"] i:nth-child(2),
+.tarot-card-face[data-suit="pentacles"] .tarot-art-figure i:nth-child(2) {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 44%), linear-gradient(160deg, #ffe8a6, #796238 45%, #1e1424);
+}
+
+.tarot-art-figure[data-figure="3"] i:nth-child(2),
+.tarot-card-face[data-suit="swords"] .tarot-art-figure i:nth-child(2) {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 44%), linear-gradient(160deg, #c8fff7, #405e75 45%, #15172a);
+}
+
+.tarot-art-figure[data-figure="4"] i:nth-child(2),
+.tarot-card-face[data-suit="wands"] .tarot-art-figure i:nth-child(2) {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 44%), linear-gradient(160deg, #ffccb0, #873f50 45%, #24111d);
+}
+
+.tarot-art-crystal {
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 4px;
+  min-height: 52px;
+}
+
+.tarot-art-crystal i {
+  display: block;
+  width: 14px;
+  height: 42px;
+  clip-path: polygon(50% 0, 100% 26%, 78% 100%, 22% 100%, 0 26%);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.52), transparent 36%),
+    linear-gradient(180deg, rgba(245, 211, 139, 0.84), rgba(183, 128, 255, 0.68));
+  box-shadow: 0 0 18px rgba(245, 211, 139, 0.34);
+}
+
+.tarot-art-crystal i:nth-child(2) {
+  width: 18px;
+  height: 54px;
+}
+
+.tarot-art-crystal i:nth-child(3) {
+  height: 34px;
+}
+
+.tarot-art-runes {
+  position: absolute;
+  inset: 8px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  color: rgba(255, 244, 202, 0.72);
+  font-size: 12px;
+}
+
+.tarot-art-runes em {
+  font-style: normal;
+  text-shadow: 0 0 10px rgba(245, 211, 139, 0.4);
 }
 
 .tarot-card-face b {
-  font-size: 16px;
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  font-size: 15px;
   line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.46);
 }
 
 .tarot-card-face small {
+  position: relative;
+  z-index: 1;
   color: rgba(255, 255, 255, 0.74);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .tarot-card-face.is-reversed {
   background:
-    radial-gradient(circle at 50% 78%, rgba(120, 224, 213, 0.24), transparent 18%),
-    radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(120, 224, 213, 0.26) 35% 36%, transparent 37%),
-    linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 40%),
-    rgba(16, 10, 31, 0.64);
+    linear-gradient(150deg, rgba(120, 224, 213, 0.13), transparent 22%),
+    radial-gradient(circle at 50% 78%, rgba(120, 224, 213, 0.28), transparent 18%),
+    radial-gradient(circle at 50% 50%, rgba(31, 20, 67, 0.76), transparent 52%),
+    linear-gradient(155deg, rgba(16, 10, 31, 0.98), rgba(46, 29, 89, 0.95) 52%, rgba(13, 9, 30, 0.98));
+}
+
+.tarot-card-face[data-accent="1"] .tarot-art-crystal i {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), transparent 36%), linear-gradient(180deg, rgba(120, 224, 213, 0.84), rgba(183, 128, 255, 0.62));
+}
+
+.tarot-card-face[data-accent="2"] .tarot-art-crystal i {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), transparent 36%), linear-gradient(180deg, rgba(255, 138, 183, 0.78), rgba(245, 211, 139, 0.72));
+}
+
+.tarot-card-face[data-accent="3"] .tarot-art-crystal i {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), transparent 36%), linear-gradient(180deg, rgba(191, 232, 255, 0.82), rgba(245, 211, 139, 0.64));
+}
+
+.tarot-card-face[data-accent="4"] .tarot-art-crystal i {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), transparent 36%), linear-gradient(180deg, rgba(245, 211, 139, 0.82), rgba(255, 138, 183, 0.6));
 }
 
 .tarot-result {
@@ -1382,6 +2452,78 @@ h1 {
   font-weight: 900;
 }
 
+.tarot-spread-result {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.tarot-spread-card {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  min-height: 118px;
+  padding: 14px 14px 14px 102px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 211, 139, 0.26);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 14% 36%, rgba(245, 211, 139, 0.22), transparent 20%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  animation: revealGlow 520ms ease both;
+}
+
+.tarot-spread-card::before {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 66px;
+  height: calc(100% - 28px);
+  min-height: 84px;
+  border: 1px solid rgba(255, 244, 202, 0.42);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(255, 244, 202, 0.72) 0 8%, transparent 9%),
+    radial-gradient(circle at 52% 56%, transparent 0 31%, rgba(245, 211, 139, 0.38) 32% 33%, transparent 34%),
+    conic-gradient(from 180deg, rgba(245, 211, 139, 0.24), rgba(120, 224, 213, 0.12), rgba(183, 128, 255, 0.24), rgba(245, 211, 139, 0.24)),
+    linear-gradient(160deg, #1a0e2b, #51266a 56%, #10091d);
+  box-shadow:
+    inset 0 0 24px rgba(245, 211, 139, 0.12),
+    0 12px 24px rgba(0, 0, 0, 0.24);
+  content: "";
+}
+
+.tarot-spread-card::after {
+  position: absolute;
+  top: 30px;
+  left: 35px;
+  color: rgba(255, 244, 202, 0.72);
+  content: "☾";
+  font-size: 22px;
+  text-shadow: 0 0 16px rgba(245, 211, 139, 0.44);
+}
+
+.tarot-spread-card span {
+  color: #bfe8ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.tarot-spread-card strong {
+  color: #fff4ca;
+  font-size: 18px;
+}
+
+.tarot-spread-card em {
+  color: rgba(255, 255, 255, 0.74);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.tarot-spread-card p {
+  margin: 0;
+}
+
 .tarot-ritual-state {
   display: grid;
   gap: 8px;
@@ -1407,34 +2549,78 @@ h1 {
 }
 
 .tarot-reveal-card {
+  position: relative;
   display: grid;
   gap: 6px;
   min-height: 156px;
   margin-bottom: 14px;
   place-items: center;
+  overflow: hidden;
   border: 1px solid rgba(255, 244, 202, 0.4);
   border-radius: 16px;
   background:
-    radial-gradient(circle at 50% 28%, rgba(245, 211, 139, 0.34), transparent 18%),
-    radial-gradient(circle at 50% 50%, transparent 0 35%, rgba(245, 211, 139, 0.26) 36% 37%, transparent 38%),
+    radial-gradient(circle at 50% 24%, rgba(255, 244, 202, 0.42), transparent 14%),
+    radial-gradient(circle at 50% 54%, transparent 0 32%, rgba(245, 211, 139, 0.3) 33% 34%, transparent 35%),
+    conic-gradient(from 220deg, rgba(245, 211, 139, 0.18), transparent 16%, rgba(120, 224, 213, 0.14), transparent 38%, rgba(245, 211, 139, 0.2)),
     linear-gradient(145deg, rgba(53, 22, 75, 0.98), rgba(110, 48, 119, 0.92));
   color: #fff4ca;
   text-align: center;
   box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.08), 0 16px 36px rgba(0, 0, 0, 0.22);
 }
 
+.tarot-reveal-card.is-visible {
+  animation: revealGlow 620ms ease both;
+}
+
+.tarot-reveal-card::before {
+  position: absolute;
+  width: min(220px, 62vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 244, 202, 0.28);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 244, 202, 0.76) 0 3px, transparent 4px),
+    radial-gradient(circle at 22% 50%, rgba(245, 211, 139, 0.5) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 62%, rgba(120, 224, 213, 0.44) 0 2px, transparent 3px);
+  content: "";
+  opacity: 0.82;
+  animation: revealOrbit 8s linear infinite;
+}
+
+.tarot-reveal-card::after {
+  position: absolute;
+  bottom: -34px;
+  width: 92px;
+  height: 118px;
+  border: 1px solid rgba(255, 244, 202, 0.44);
+  border-radius: 18px 18px 8px 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 38%),
+    linear-gradient(180deg, rgba(245, 211, 139, 0.7), rgba(183, 128, 255, 0.62));
+  clip-path: polygon(50% 0, 100% 20%, 82% 100%, 18% 100%, 0 20%);
+  content: "";
+  filter: drop-shadow(0 0 26px rgba(245, 211, 139, 0.42));
+}
+
 .tarot-reveal-card span {
+  position: relative;
+  z-index: 1;
   color: rgba(255, 255, 255, 0.72);
   font-size: 13px;
   font-weight: 900;
 }
 
 .tarot-reveal-card strong {
+  position: relative;
+  z-index: 1;
   font-size: clamp(28px, 6vw, 42px);
   letter-spacing: 0;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.52), 0 0 28px rgba(245, 211, 139, 0.28);
 }
 
 .tarot-reveal-card em {
+  position: relative;
+  z-index: 1;
   color: #bfe8ff;
   font-style: normal;
   font-weight: 900;
@@ -1447,6 +2633,187 @@ h1 {
     linear-gradient(145deg, rgba(33, 24, 70, 0.98), rgba(78, 50, 112, 0.92));
 }
 
+.tarot-result-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(160px, 0.72fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  min-height: 380px;
+  margin-bottom: 16px;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 224, 147, 0.32);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 28% 46%, rgba(245, 211, 139, 0.2), transparent 22%),
+    radial-gradient(circle at 72% 26%, rgba(120, 224, 213, 0.08), transparent 26%),
+    linear-gradient(145deg, rgba(11, 6, 22, 0.94), rgba(56, 23, 75, 0.82));
+  box-shadow: inset 0 0 42px rgba(255, 255, 255, 0.06), 0 22px 54px rgba(0, 0, 0, 0.28);
+}
+
+.tarot-result-hero::before,
+.tarot-result-hero::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.tarot-result-hero::before {
+  left: 8%;
+  width: 240px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 211, 139, 0.16);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 244, 202, 0.22), transparent 36%),
+    repeating-conic-gradient(from 0deg, rgba(245, 211, 139, 0.18) 0 2deg, transparent 2deg 18deg);
+  filter: blur(0.2px);
+  animation: revealOrbit 14s linear infinite;
+}
+
+.tarot-result-hero::after {
+  inset: 12px;
+  border: 1px solid rgba(255, 224, 147, 0.12);
+  border-radius: 14px;
+}
+
+.tarot-result-card-shell {
+  position: relative;
+  z-index: 1;
+  width: min(280px, 100%);
+  aspect-ratio: 2 / 3;
+  justify-self: center;
+  padding: 9px;
+  border: 1px solid rgba(255, 224, 147, 0.64);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 244, 202, 0.32), transparent 22%),
+    linear-gradient(145deg, #12081f, #4e1f67 58%, #090616);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.42),
+    0 0 54px rgba(245, 211, 139, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.tarot-result-card-shell .tarot-card-face {
+  min-height: 100%;
+  border-radius: 12px;
+}
+
+.tarot-result-card-shell .tarot-art-frame {
+  min-height: 230px;
+}
+
+.tarot-result-card-shell .tarot-card-roman {
+  font-size: 18px;
+}
+
+.tarot-result-card-shell .tarot-card-title {
+  font-size: 13px;
+}
+
+.tarot-result-card-shell .tarot-card-face b {
+  font-size: 30px;
+}
+
+.tarot-result-card-shell .tarot-card-face small {
+  font-size: 13px;
+}
+
+.tarot-result-card-shell .tarot-art-halo {
+  width: 122px;
+}
+
+.tarot-result-card-shell .tarot-art-figure {
+  width: 142px;
+  height: 184px;
+}
+
+.tarot-result-card-shell .tarot-art-figure i:first-child {
+  top: 14px;
+  width: 48px;
+}
+
+.tarot-result-card-shell .tarot-art-figure i:nth-child(2) {
+  top: 66px;
+  width: 94px;
+  height: 104px;
+}
+
+.tarot-result-card-shell .tarot-art-figure i:nth-child(3) {
+  top: 78px;
+  width: 142px;
+  height: 70px;
+}
+
+.tarot-result-card-shell .tarot-art-figure i:nth-child(4) {
+  width: 70px;
+  height: 38px;
+}
+
+.tarot-result-card-shell .tarot-art-figure i:nth-child(5) {
+  width: 110px;
+  height: 28px;
+}
+
+.tarot-result-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  align-content: center;
+}
+
+.tarot-result-copy span {
+  color: #bfe8ff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.tarot-result-copy strong {
+  color: #fff4ca;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.62), 0 0 34px rgba(245, 211, 139, 0.24);
+}
+
+.tarot-result-copy em {
+  width: fit-content;
+  padding: 6px 12px;
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 244, 202, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.reveal-line {
+  opacity: 0;
+  animation: readingLineIn 680ms ease forwards;
+}
+
+.reveal-line:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.reveal-line:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.tarot-result > .reveal-line:nth-of-type(1) {
+  animation-delay: 260ms;
+}
+
+.tarot-result > .reveal-line:nth-of-type(2) {
+  animation-delay: 420ms;
+}
+
+.tarot-result > .reveal-line:nth-of-type(3) {
+  animation-delay: 580ms;
+}
+
 @keyframes cardPulse {
   0% {
     transform: translateY(-4px) rotateY(0deg) scale(1);
@@ -1456,6 +2823,253 @@ h1 {
   }
   100% {
     transform: translateY(-4px) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes deckShuffle {
+  0% {
+    opacity: 1;
+    transform: translate(
+        calc(-50% + var(--shuffle-depth, 0) * 0.4px),
+        calc(-50% + var(--shuffle-slot, 0) * 0.26px)
+      )
+      rotate(calc(var(--shuffle-depth, 0) * 0.16deg))
+      scale(0.94);
+  }
+  18% {
+    transform: translate(
+        calc(-50% + var(--shuffle-side, 1) * 118px + var(--shuffle-depth, 0) * 3px),
+        calc(-50% + var(--shuffle-slot, 0) * 1.7px - 18px)
+      )
+      rotate(calc(var(--shuffle-side, 1) * -18deg))
+      scale(0.95);
+  }
+  38% {
+    transform: translate(
+        calc(-50% + var(--shuffle-side, 1) * 54px + var(--shuffle-depth, 0) * 2px),
+        calc(-50% + var(--riffle-lane, 1) * 17px + var(--shuffle-slot, 0) * 0.9px)
+      )
+      rotate(calc(var(--shuffle-side, 1) * -10deg))
+      scale(0.97);
+  }
+  56% {
+    transform: translate(
+        calc(-50% + var(--shuffle-side, 1) * 12px + var(--shuffle-depth, 0) * 1.5px),
+        calc(-50% + var(--riffle-lane, 1) * 9px + var(--shuffle-slot, 0) * 0.5px)
+      )
+      rotate(calc(var(--shuffle-side, 1) * 3deg))
+      scale(1);
+  }
+  72% {
+    transform: translate(
+        calc(-50% + var(--shuffle-side, 1) * 5px),
+        calc(-50% - 34px + var(--shuffle-slot, 0) * 0.22px)
+      )
+      rotate(calc(var(--shuffle-side, 1) * -4deg))
+      scaleX(1.1)
+      scaleY(0.9);
+  }
+  86% {
+    transform: translate(
+        calc(-50% + var(--shuffle-depth, 0) * 0.75px),
+        calc(-50% + var(--shuffle-slot, 0) * 0.52px + 8px)
+      )
+      rotate(calc(var(--shuffle-depth, 0) * -0.2deg))
+      scaleX(0.96)
+      scaleY(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(
+        calc(-50% + var(--shuffle-depth, 0) * 0.55px),
+        calc(-50% + var(--shuffle-slot, 0) * 0.38px - 4px)
+      )
+      rotate(calc(var(--shuffle-depth, 0) * 0.22deg))
+      scale(0.94);
+  }
+}
+
+@keyframes deckCut {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.92);
+  }
+  44% {
+    transform: translate(
+        calc(-50% + var(--cut-side, 1) * 78px),
+        calc(-50% + (var(--card-order) % 9 - 4) * 2px)
+      )
+      rotate(calc(var(--cut-side, 1) * 9deg)) scale(0.94);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.9);
+  }
+}
+
+@keyframes fanDeal {
+  0% {
+    top: 50%;
+    left: 50%;
+    opacity: 0.92;
+    transform:
+      translate(calc(-50% + var(--deal-start-x, 0px)), calc(-50% + var(--deal-start-y, 0px)))
+      rotateX(62deg)
+      rotateZ(var(--deal-start-rotate, 0deg))
+      scale(0.86);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 7px 14px rgba(0, 0, 0, 0.22);
+  }
+  36% {
+    top: 50%;
+    left: 50%;
+    opacity: 1;
+    transform:
+      translate(calc(-50% + var(--deal-mid-x, 0px)), calc(-50% - 22px))
+      rotateX(42deg)
+      rotateZ(calc(var(--deal-start-rotate, 0deg) * 0.45))
+      scale(0.92);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 18px 28px rgba(0, 0, 0, 0.3),
+      0 0 18px rgba(245, 211, 139, 0.12);
+  }
+  72% {
+    top: var(--card-y, 50%);
+    left: var(--card-x, 50%);
+    transform:
+      translate(-50%, -57%)
+      rotateX(12deg)
+      rotateZ(calc(var(--fan-rotate, 0deg) + var(--deal-sway, 0deg)))
+      scale(var(--deal-pop-scale, 1));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 20px 34px rgba(0, 0, 0, 0.32),
+      0 0 22px rgba(245, 211, 139, 0.16);
+  }
+  100% {
+    top: var(--card-y, 50%);
+    left: var(--card-x, 50%);
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      rotateX(0deg)
+      rotateZ(var(--fan-rotate, 0deg))
+      scale(var(--card-scale, 1));
+  }
+}
+
+@keyframes dealHandSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-82%) rotate(-5deg);
+  }
+  12% {
+    opacity: 0.62;
+  }
+  58% {
+    opacity: 0.78;
+    transform: translateX(18%) rotate(3deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(74%) rotate(5deg);
+  }
+}
+
+@keyframes ritualShuffle {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  45% {
+    transform: rotate(170deg) scale(1.06);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes ritualCut {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  42% {
+    transform: translate3d(-18px, 0, 0) scale(0.96) rotate(-12deg);
+  }
+  72% {
+    transform: translate3d(18px, 0, 0) scale(1.02) rotate(10deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.95) rotate(0deg);
+  }
+}
+
+@keyframes ritualRing {
+  to {
+    transform: rotate(calc(var(--ring, 1) * 38deg + 360deg));
+  }
+}
+
+@keyframes revealGlow {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes tarotSpark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--spark-x, 0px)), calc(-50% + var(--spark-y, 0px))) scale(0.12);
+  }
+}
+
+@keyframes readingLineIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(7px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes cutSurfacePulse {
+  0%,
+  100% {
+    box-shadow:
+      0 18px 34px rgba(0, 0, 0, 0.35),
+      0 0 0 0 rgba(245, 211, 139, 0.28),
+      0 0 28px rgba(245, 211, 139, 0.24);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    box-shadow:
+      0 22px 42px rgba(0, 0, 0, 0.38),
+      0 0 0 12px rgba(245, 211, 139, 0),
+      0 0 38px rgba(245, 211, 139, 0.38);
+    transform: translate(-50%, -50%) scale(1.035);
+  }
+}
+
+@keyframes revealOrbit {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -1911,6 +3525,21 @@ h1 {
   .automation-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .demo-grid > .tool-panel:first-child {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-grid > .tool-panel:first-child .panel-head,
+  .demo-grid > .tool-panel:first-child .tarot-form,
+  .demo-grid > .tool-panel:first-child .tarot-toolbar,
+  .demo-grid > .tool-panel:first-child .share-actions,
+  .demo-grid > .tool-panel:first-child .share-status,
+  .demo-grid > .tool-panel:first-child .tarot-ritual-panel,
+  .demo-grid > .tool-panel:first-child .tarot-table,
+  .demo-grid > .tool-panel:first-child .tarot-result {
+    grid-column: 1;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1948,11 +3577,47 @@ h1 {
   }
 
   .tarot-table {
-    grid-template-columns: repeat(4, minmax(48px, 1fr));
+    display: block;
+    max-height: none;
+    overflow: hidden;
+    min-height: 470px;
+    padding: 0;
+  }
+
+  .tarot-table::before {
+    display: block;
+    width: min(420px, 92%);
+    height: auto;
+  }
+
+  .tarot-table .tarot-card {
+    width: clamp(34px, 9.2vw, 50px);
+  }
+
+  .tarot-table[data-state="revealing"] .tarot-card.is-selected,
+  .tarot-table[data-state="completed"] .tarot-card.is-selected,
+  .tarot-table[data-state="revealing"] .tarot-flip-card[data-state="reveal"],
+  .tarot-table[data-state="completed"] .tarot-flip-card[data-state="completed"] {
+    transform: translate(-50%, -52%) rotate(0deg) scale(1.82);
   }
 
   .tarot-toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .tarot-result-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .tarot-result-card-shell {
+    width: min(240px, 74vw);
+  }
+
+  .tarot-result-copy {
+    justify-items: center;
+    text-align: center;
   }
 }
 
@@ -1967,8 +3632,43 @@ h1 {
   }
 
   .tarot-table {
-    grid-template-columns: repeat(3, minmax(54px, 1fr));
-    max-height: 420px;
+    min-height: 430px;
+  }
+
+  .tarot-table .tarot-card {
+    width: clamp(30px, 9vw, 42px);
+    padding: 3px;
+  }
+
+  .tarot-table[data-state="revealing"] .tarot-card.is-selected,
+  .tarot-table[data-state="completed"] .tarot-card.is-selected,
+  .tarot-table[data-state="revealing"] .tarot-flip-card[data-state="reveal"],
+  .tarot-table[data-state="completed"] .tarot-flip-card[data-state="completed"] {
+    transform: translate(-50%, -52%) rotate(0deg) scale(1.68);
+  }
+
+  .tarot-result-card-shell {
+    width: min(220px, 72vw);
+  }
+
+  .tarot-result-card-shell .tarot-art-frame {
+    min-height: 132px;
+  }
+
+  .tarot-result-card-shell .tarot-card-face b {
+    font-size: 21px;
+  }
+
+  .tarot-spread-card {
+    padding-left: 86px;
+  }
+
+  .tarot-spread-card::before {
+    width: 56px;
+  }
+
+  .tarot-spread-card::after {
+    left: 32px;
   }
 
   .carousel {
