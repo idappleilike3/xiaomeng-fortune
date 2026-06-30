@@ -792,6 +792,7 @@ function setTarotExperienceState(state, message) {
   const steps = document.querySelectorAll("#tarotRitualSteps [data-step]");
   const activeStep = {
     idle: "focus",
+    collecting: "shuffle",
     shuffling: "shuffle",
     cutting: "cut",
     shuffled: "cut",
@@ -818,6 +819,7 @@ function setTarotExperienceState(state, message) {
       message ||
       {
         idle: "先把問題放在心裡，準備好後按下開始探索。",
+        collecting: "牌正在從桌面慢慢收回中央，聚成一疊厚牌。",
         shuffling: "請看著桌面，牌正在你面前洗開。",
         shuffled: "洗牌完成。下一步由你親手切牌。",
         cutting: "正在切牌，把這一次提問收束成兩段能量。",
@@ -831,6 +833,7 @@ function setTarotExperienceState(state, message) {
 
   const stateLabels = {
     idle: "靜心",
+    collecting: "收牌中",
     shuffling: "洗牌中",
     shuffled: "等待切牌",
     cutting: "切牌中",
@@ -842,6 +845,7 @@ function setTarotExperienceState(state, message) {
   };
   const stateMessages = {
     idle: "按下開始洗牌，牌會直接在這張桌面上完成儀式。",
+    collecting: "散落的牌正在慢慢收回中央牌堆。",
     shuffling: "牌正在桌面中央分成兩疊，交錯洗入後收齊。",
     shuffled: "請在牌堆上點一下，由你親手完成切牌。",
     cutting: "牌堆正在依照你的切點左右分開，再合回來。",
@@ -860,9 +864,11 @@ function setTarotExperienceState(state, message) {
   }
 
   if (button) {
-    button.disabled = ["shuffling", "cutting", "spreading", "revealing"].includes(state);
+    button.disabled = ["collecting", "shuffling", "cutting", "spreading", "revealing"].includes(state);
     button.textContent =
-      state === "shuffling"
+      state === "collecting"
+        ? "收牌中"
+        : state === "shuffling"
         ? "洗牌中"
         : state === "shuffled"
           ? "請點牌堆"
@@ -1131,6 +1137,10 @@ function renderTarotDeck() {
     button.style.setProperty("--shuffle-slot", String(order % 18));
     button.style.setProperty("--shuffle-depth", String((order % 13) - 6));
     button.style.setProperty("--riffle-lane", order % 4 < 2 ? "-1" : "1");
+    button.style.setProperty("--collect-delay", String(order * 9 + layout.row * 42));
+    button.style.setProperty("--collect-x", `${layout.cutSide * ((order % 8) + 1) * 0.8}px`);
+    button.style.setProperty("--collect-y", `${(order % 10) * 0.45}px`);
+    button.style.setProperty("--collect-mid-rotate", `${parseFloat(layout.rotate) * 0.36}deg`);
     button.style.setProperty("--deal-delay", String(order * 34 + layout.row * 120));
     button.style.setProperty("--deal-start-x", `${layout.cutSide * (58 + (order % 7) * 2)}px`);
     button.style.setProperty("--deal-mid-x", `${layout.cutSide * (20 + (order % 7))}px`);
@@ -1270,21 +1280,40 @@ document.querySelector("#shuffleTarot")?.addEventListener("click", () => {
 
   if (tarotExperienceState === "idle") {
     vibrateRitual(50);
-    setTarotExperienceState("shuffling");
+    playRitualTone("soft");
     renderTarotDeck();
+    setTarotExperienceState("collecting");
     focusTarotTable();
     if (result) {
       result.innerHTML =
-        `<div class="tarot-ritual-state"><span>手動洗牌</span><strong>請默念你的問題。牌會先分成左右兩疊，交錯入牌，再像真人洗牌一樣拱橋收齊。</strong></div>`;
+        `<div class="tarot-ritual-state"><span>慢速收牌</span><strong>請默念你的問題。牌會先從桌面慢慢收回中央，再自動進入交叉切牌。</strong></div>`;
     }
     window.setTimeout(() => {
-      setTarotExperienceState("shuffled");
+      playRitualTone("card");
+      vibrateRitual(28);
+      setTarotExperienceState("shuffling");
+      if (result) {
+        result.innerHTML =
+          `<div class="tarot-ritual-state"><span>交叉洗牌</span><strong>牌堆正在左右分疊、交錯洗入，像真人洗牌一樣重新收齊。</strong></div>`;
+      }
+    }, 1450);
+    window.setTimeout(() => {
+      playRitualTone("unlock");
+      vibrateRitual(36);
+      setTarotExperienceState("cutting");
+      if (result) {
+        result.innerHTML =
+          `<div class="tarot-ritual-state"><span>自動切牌</span><strong>牌堆正在分成左右兩段，短暫停留後再合回這次提問。</strong></div>`;
+      }
+    }, 3080);
+    window.setTimeout(() => {
+      setTarotExperienceState("cut");
       focusTarotTable();
       if (result) {
         result.innerHTML =
-          `<div class="tarot-ritual-state"><span>洗牌完成</span><strong>請在牌桌中央的牌堆上點一下，由你親手切牌。</strong></div>`;
+          `<div class="tarot-ritual-state"><span>切牌完成</span><strong>牌堆已安靜回到中央。請按下「展牌」，讓牌陣慢慢鋪開。</strong></div>`;
       }
-    }, 1720);
+    }, 4300);
     return;
   }
 
@@ -1295,6 +1324,7 @@ document.querySelector("#shuffleTarot")?.addEventListener("click", () => {
 
   if (tarotExperienceState === "cut") {
     vibrateRitual(36);
+    playRitualTone("card");
     setTarotExperienceState("spreading");
     focusTarotTable();
     if (result) {

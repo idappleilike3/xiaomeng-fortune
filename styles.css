@@ -843,6 +843,8 @@ h1 {
   display: grid;
   grid-template-columns: minmax(260px, 0.42fr) minmax(0, 0.58fr);
   gap: 18px;
+  width: min(100%, 1040px);
+  margin: 0 auto;
   overflow: hidden;
   padding: 26px;
   border-color: rgba(255, 224, 147, 0.32);
@@ -1408,6 +1410,12 @@ h1 {
   filter: saturate(0.74);
 }
 
+.tarot-table[data-state="collecting"] .tarot-card {
+  animation: deckCollect 1.34s cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation-delay: calc(var(--collect-delay, 0) * 1ms);
+  pointer-events: none;
+}
+
 .tarot-table[data-state="shuffling"] .tarot-card {
   top: 50%;
   left: 50%;
@@ -1685,6 +1693,22 @@ h1 {
   gap: 12px;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.tarot-action-dock {
+  position: sticky;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 230;
+  padding: 10px;
+  border: 1px solid rgba(245, 211, 139, 0.24);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(245, 211, 139, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(15, 8, 29, 0.92), rgba(8, 5, 18, 0.82));
+  box-shadow:
+    0 -12px 32px rgba(0, 0, 0, 0.26),
+    inset 0 0 22px rgba(245, 211, 139, 0.06);
+  backdrop-filter: blur(16px);
 }
 
 .tarot-toolbar .panel-button {
@@ -3023,6 +3047,39 @@ h1 {
         calc(-50% + var(--shuffle-slot, 0) * 0.38px - 4px)
       )
       rotate(calc(var(--shuffle-depth, 0) * 0.22deg))
+      scale(0.94);
+  }
+}
+
+@keyframes deckCollect {
+  0% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--fan-rotate, 0deg))
+      scale(var(--card-scale, 1));
+  }
+  38% {
+    top: 50%;
+    left: 50%;
+    transform:
+      translate(-50%, -54%)
+      rotate(var(--collect-mid-rotate, 0deg))
+      rotateX(18deg)
+      scale(0.96);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 18px 34px rgba(0, 0, 0, 0.34),
+      0 0 18px rgba(245, 211, 139, 0.14);
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    opacity: 1;
+    transform:
+      translate(calc(-50% + var(--collect-x, 0px)), calc(-50% + var(--collect-y, 0px)))
+      rotate(0deg)
+      rotateX(0deg)
       scale(0.94);
   }
 }
