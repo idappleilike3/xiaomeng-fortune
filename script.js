@@ -2092,12 +2092,13 @@ function openLetterEntryModal() {
   document.getElementById('entry-modal-title').textContent = '深夜靈性信件解答';
   document.getElementById('entry-modal-body').innerHTML =
     '<div class="letter-form">' +
-      '<p class="letter-form__intro">請告訴老師,此刻困擾你的具體人生困境是什麼。寫得越真實,信越能命中你。</p>' +
+      '<h4 class="letter-form__title">傾訴你的困惑</h4>' +
+      '<p class="letter-form__intro">文字是能量的延伸。請在下方靜心寫下你目前面臨的具體困境(如感情卡關、迷茫焦慮、轉職決策),小夢老師將於深夜調頻,親自為你撰寫命運指引信。</p>' +
       '<label class="letter-form__label">你的暱稱<input type="text" id="letterName" placeholder="例如:小月" /></label>' +
       '<label class="letter-form__label">你想傾訴的困惑' +
-        '<textarea id="letterDilemma" rows="8" placeholder="例如:我和伴侶最近半年頻繁爭吵,不知道這段關係該繼續還是放手。工作上同時面臨升遷與轉換跑道的抉擇。"></textarea>' +
+        '<textarea id="letterDilemma" rows="8" placeholder="請至少輸入 50 字以上的詳細困境描繪,讓老師能更精準感應你的能量狀態……&#10;(例如:我與交往三年的對象最近頻繁爭吵,對方態度變得冷淡,我很想挽回但不知該如何破冰……)"></textarea>' +
       '</label>' +
-      '<button type="button" class="letter-form__submit" id="letterFormSubmit">交付老師</button>' +
+      '<button type="button" class="letter-form__submit" id="letterFormSubmit">封存能量・寄出信件</button>' +
     '</div>';
   const submitBtn = document.getElementById('letterFormSubmit');
   if (submitBtn) submitBtn.addEventListener('click', handleLetterFormSubmit);
@@ -2120,7 +2121,7 @@ function handleLetterFormSubmit() {
   const submitBtn = document.getElementById('letterFormSubmit');
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.textContent = '老師正在接收…';
+    submitBtn.textContent = '正在為你的信件進行能量封印與星軌調頻…';
   }
   // Simulate the network + 延遲 feel
   setTimeout(function () {
@@ -2145,7 +2146,8 @@ function showLetterSuccessState(letter) {
     '<div class="letter-success">' +
       '<div class="letter-success__emblem" aria-hidden="true">✦</div>' +
       '<p class="letter-success__name">' + letter.name + '</p>' +
-      '<p class="letter-success__message">你的困惑小夢老師已經收到。<br>老師將於今夜靜心時為你調頻解惑,你的專屬『命運指引信』將於 24 小時內自動發送到你的 LINE 聊天室,請稍作等待。</p>' +
+      '<p class="letter-success__message">你的困惑小夢老師已經收到。<br>老師將於今夜靜心時為你調頻解惑,你的專屬『命運指引信』將於 <strong>24 小時內</strong>自動發送到你的 <strong>LINE 聊天室</strong>與下方<strong>靈性信箱</strong>,請稍作等待。</p>' +
+      '<p class="letter-success__hint">(註:24h 為行銷話術,後端實際透過 setTimeout 延遲 2-4 小時即自動推送,以營造老師挪出時間親寫的真實感)</p>' +
       '<button type="button" class="star-results__btn star-results__btn--primary" data-action="close-letter">知道了</button>' +
     '</div>';
   body.querySelector('[data-action="close-letter"]').addEventListener('click', closeEntryModal);
@@ -2178,7 +2180,7 @@ function showPendingLetterNotification(letter) {
       '<div class="letter-notification__body">' +
         '<p class="letter-notification__paragraph">' + (letter.dilemma || '').slice(0, 80) + (letter.dilemma && letter.dilemma.length > 80 ? '…' : '') + '</p>' +
         '<p class="letter-notification__paragraph letter-notification__letter">' +
-          letter.name + ',老師讀完了你的信。<br>你說的那段關係,真正的答案不在對方身上,而在你自己允許自己自由的程度。今夜把窗打開,讓風進來,你會聽到答案。<br><br>——小夢老師' +
+                      '展信悅,' + letter.name + '。<br>孩子,看著你在信中傾訴的掙扎,老師能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌,當前的卡關只是星象短暫的逆行——<br>願你今夜把窗打開,讓風進來,答案會自己走到你面前。<br><br>——小夢老師' +
         '</p>' +
       '</div>' +
       '<button type="button" class="star-results__btn star-results__btn--primary" data-action="ack-letter">收下了</button>' +
