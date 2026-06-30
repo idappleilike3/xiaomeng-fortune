@@ -154,8 +154,17 @@ const topicGuidance = {
   個人成長: "個人成長題看的是內在課題，這張牌會指出你目前最需要調整的信念與行動。",
 };
 
+const tarotSpreads = {
+  daily: { label: "今日一張", count: 1, resultLabel: "今日提醒" },
+  single: { label: "單張指引", count: 1, resultLabel: "核心指引" },
+  three: { label: "三張牌陣", count: 3, resultLabel: "過去｜現在｜下一步", positions: ["過去", "現在", "下一步"] },
+  five: { label: "五張牌陣", count: 5, resultLabel: "現況｜阻礙｜資源｜建議｜走勢", positions: ["現況", "阻礙", "資源", "建議", "走勢"] },
+};
+
 let currentTarotDeck = [];
 let latestTarotReading = null;
+let currentTarotSpread = "daily";
+let currentTarotSelections = [];
 let bonusDraws = Number(localStorage.getItem("bonusDraws") || 0);
 let activeMemberId = localStorage.getItem("memberId") || DEFAULT_MEMBER_ID;
 let audioContext;
@@ -691,25 +700,102 @@ function tarotCardBackMarkup() {
   `;
 }
 
+function tarotCardFrontMarkup(card, position) {
+  return `
+    <span class="tarot-card-face ${position === "逆位" ? "is-reversed" : ""}">
+      <i></i>
+      <b>${card.name}</b>
+      <small>${position}</small>
+    </span>
+  `;
+}
+
+function setFlipState(element, state) {
+  element.dataset.state = state;
+}
+
+function TarotFlipCard({ front, back, revealed = false, disabled = false, delay = 0, onFlip, onFlipStart, onFlipEnd }) {
+  const button = document.createElement("button");
+  button.className = "tarot-card tarot-flip-card";
+  button.type = "button";
+  button.disabled = disabled;
+  button.style.setProperty("--flip-delay", `${delay}ms`);
+  button.dataset.state = revealed ? "completed" : "idle";
+  button.dataset.revealed = String(revealed);
+  button.innerHTML = `
+    <span class="tarot-flip-card-inner">
+      <span class="tarot-flip-face tarot-flip-back">${back}</span>
+      <span class="tarot-flip-face tarot-flip-front">${front}</span>
+    </span>
+  `;
+
+  button.addEventListener("mouseenter", () => {
+    if (button.dataset.state === "idle") setFlipState(button, "hover");
+  });
+
+  button.addEventListener("mouseleave", () => {
+    if (button.dataset.state === "hover") setFlipState(button, "idle");
+  });
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (button.disabled || button.dataset.revealed === "true") return;
+    onFlip?.(button);
+  });
+
+  button.flip = () => {
+    if (button.dataset.revealed === "true") return Promise.resolve();
+    button.disabled = true;
+    onFlipStart?.(button);
+    setFlipState(button, "draw");
+
+    return new Promise((resolve) => {
+      window.setTimeout(() => setFlipState(button, "flip"), delay + 80);
+      window.setTimeout(() => setFlipState(button, "reveal"), delay + 520);
+      window.setTimeout(() => {
+        button.dataset.revealed = "true";
+        setFlipState(button, "completed");
+        onFlipEnd?.(button);
+        resolve();
+      }, delay + 760);
+    });
+  };
+
+  return button;
+}
+
 function renderTarotDeck() {
   const grid = document.querySelector("#tarotDeckGrid");
   if (!grid) return;
 
+  const spreadInput = document.querySelector("#tarotSpread");
+  currentTarotSpread = spreadInput?.value || currentTarotSpread;
+  currentTarotSelections = [];
   currentTarotDeck = shuffleCards(tarotDeck);
-  grid.innerHTML = currentTarotDeck
-    .map(
-      (card, order) => `
-        <button class="tarot-card" type="button" data-tarot-index="${order}" aria-label="選擇第 ${order + 1} 張塔羅牌">
-          ${tarotCardBackMarkup()}
-        </button>
-      `
-    )
-    .join("");
+  grid.innerHTML = "";
+  currentTarotDeck.forEach((card, order) => {
+    const button = TarotFlipCard({
+      front: tarotCardFrontMarkup(card, "正位"),
+      back: tarotCardBackMarkup(),
+      revealed: false,
+      disabled: false,
+      delay: 0,
+      onFlip: () => drawTarotCard(order),
+      onFlipStart: () => {},
+      onFlipEnd: () => {},
+    });
+    button.dataset.tarotIndex = String(order);
+    button.setAttribute("aria-label", `選擇第 ${order + 1} 張塔羅牌`);
+    grid.appendChild(button);
+  });
 }
 
 function drawTarotCard(order) {
   const selected = currentTarotDeck[order];
   if (!selected) return;
+
+  const spread = tarotSpreads[currentTarotSpread] || tarotSpreads.daily;
+  if (currentTarotSelections.length >= spread.count) return;
 
   const isReversed = Math.random() > 0.62;
   const topic = document.querySelector("#tarotTopic").value;
@@ -718,66 +804,82 @@ function drawTarotCard(order) {
   const position = isReversed ? "逆位" : "正位";
   const result = document.querySelector("#tarotResult");
   const selectedButton = document.querySelector(`[data-tarot-index="${order}"]`);
-  latestTarotReading = {
+  const reading = {
     name: selected.name,
     position,
+    spread: spread.label,
+    spreadPosition: spread.positions?.[currentTarotSelections.length] || spread.resultLabel,
     topic,
     question: question || "今天我需要知道的提醒是什麼？",
     meaning: selected.meaning,
   };
+  currentTarotSelections.push(reading);
+  latestTarotReading = {
+    ...reading,
+    cards: [...currentTarotSelections],
+  };
 
-  document.querySelectorAll(".tarot-card").forEach((button) => {
-    button.classList.remove("is-selected", "is-revealed");
-    button.innerHTML = tarotCardBackMarkup();
-  });
-  selectedButton?.classList.add("is-selected", "is-revealing");
-  playRitualTone(540, 0.16, "triangle");
+  if (selectedButton) {
+    selectedButton.querySelector(".tarot-flip-front").innerHTML = tarotCardFrontMarkup(selected, position);
+    selectedButton.classList.add("is-selected");
+    selectedButton.flip?.();
+  }
+
   result.innerHTML = `
     <div class="tarot-ritual-state">
-      <span>小夢老師正在替你翻牌</span>
-      <strong>請先深呼吸一次，把問題放在心裡。</strong>
+      <span>${spread.label}｜已選 ${currentTarotSelections.length}/${spread.count}</span>
+      <strong>${currentTarotSelections.length < spread.count ? "繼續選下一張牌，讓牌陣完整。" : "牌陣已完成，正在整理指引。"}</strong>
     </div>
   `;
 
   window.setTimeout(() => {
-    selectedButton?.classList.remove("is-revealing");
-    selectedButton?.classList.add("is-revealed");
-    if (selectedButton) {
-      selectedButton.innerHTML = `
-        <span class="tarot-card-face ${isReversed ? "is-reversed" : ""}">
-          <i></i>
-          <b>${selected.name}</b>
-          <small>${position}</small>
-        </span>
-      `;
-    }
+    const cardsHtml = currentTarotSelections
+      .map(
+        (card) => `
+          <article class="tarot-spread-card">
+            <span>${escapeHtml(card.spreadPosition)}</span>
+            <strong>${escapeHtml(card.name)}</strong>
+            <em>${escapeHtml(card.position)}</em>
+            <p>${escapeHtml(card.meaning)}</p>
+          </article>
+        `
+      )
+      .join("");
 
     result.innerHTML = `
     <div class="tarot-reveal-card ${isReversed ? "is-reversed" : ""}">
-      <span>翻開的牌</span>
+      <span>${spread.label}</span>
       <strong>${selected.name}</strong>
       <em>${position}</em>
     </div>
-    <span class="tarot-kicker">${topic}｜${position}</span>
-    <h4>${selected.name}</h4>
+    <span class="tarot-kicker">${topic}｜${spread.resultLabel}</span>
+    <h4>${currentTarotSelections.length < spread.count ? `還差 ${spread.count - currentTarotSelections.length} 張` : "牌陣完成"}</h4>
     <p><strong>所問：</strong>${safeQuestion}</p>
-    <p><strong>免費簡解：</strong>${selected.meaning}</p>
+    <div class="tarot-spread-result">${cardsHtml}</div>
     <p><strong>${topic}提醒：</strong>${topicGuidance[topic]}</p>
     <a class="premium-note premium-link" href="#market">解鎖深度解析：對方想法、阻礙來源、未來 14 到 30 天走勢、注意事項、行動建議與適合你的開運選品。</a>
   `;
-  }, 850);
+  }, 820);
 }
 
 document.querySelector("#shuffleTarot")?.addEventListener("click", () => {
   renderTarotDeck();
+  const spread = tarotSpreads[currentTarotSpread] || tarotSpreads.daily;
   document.querySelector("#tarotResult").innerHTML =
-    "<p>牌已洗好。請看著你的問題，從 78 張牌裡選一張最有感覺的牌。</p>";
+    `<p>牌已洗好。請看著你的問題，從 78 張牌裡選 ${spread.count} 張最有感覺的牌。</p>`;
 });
 
 document.querySelector("#tarotDeckGrid")?.addEventListener("click", (event) => {
   const cardButton = event.target.closest("[data-tarot-index]");
   if (!cardButton) return;
   drawTarotCard(Number(cardButton.dataset.tarotIndex));
+});
+
+document.querySelector("#tarotSpread")?.addEventListener("change", () => {
+  renderTarotDeck();
+  const spread = tarotSpreads[currentTarotSpread] || tarotSpreads.daily;
+  document.querySelector("#tarotResult").innerHTML =
+    `<p>${spread.label} 已準備好。請看著你的問題，從 78 張牌裡選 ${spread.count} 張。</p>`;
 });
 
 document.querySelector("#shareFortune")?.addEventListener("click", shareFortune);
