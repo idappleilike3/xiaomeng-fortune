@@ -3684,3 +3684,134 @@ h1 {
     font-size: 14px;
   }
 }
+
+
+/* === 蝦董接手 F22 升級 — 2026-07-01 === */
+/* 神秘學 Glow 底部 + 月亮星盤裝飾 + fadeIn 動畫 */
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes revealFadeIn {
+  0% { opacity: 0; filter: blur(8px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+@keyframes stardustRise {
+  0% { opacity: 0; transform: translateY(0) scale(0.4); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-80px) scale(1.1); }
+}
+
+@keyframes glowBreathe {
+  0%, 100% { opacity: 0.65; }
+  50%      { opacity: 1; }
+}
+
+/* === 神秘學 Glow 底部(整頁底部發光) === */
+body::before {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 280px;
+  background:
+    radial-gradient(ellipse 60% 100% at 50% 100%,
+      rgba(180, 130, 230, 0.22) 0%,
+      rgba(212, 175, 55, 0.10) 40%,
+      transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowBreathe 5s ease-in-out infinite;
+}
+
+/* === 神秘符文底紋(整頁背景) === */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, rgba(212, 175, 55, 0.6), transparent),
+    radial-gradient(1.2px 1.2px at 88% 18%, rgba(180, 130, 230, 0.6), transparent),
+    radial-gradient(1.4px 1.4px at 25% 75%, rgba(212, 175, 55, 0.4), transparent),
+    radial-gradient(1.2px 1.2px at 75% 80%, rgba(180, 130, 230, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 50% 50%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1.8px 1.8px at 33% 33%, rgba(212, 175, 55, 0.3), transparent),
+    radial-gradient(1.6px 1.6px at 66% 66%, rgba(180, 130, 230, 0.4), transparent);
+  background-size: 100% 100%;
+  background-position: 0 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* === 解讀淡入 === */
+.tarot-result, .tarot-poem, .tarot-reading, #tarotResult, .tarot-reading-card {
+  animation: revealFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* === 神秘學選中 glow 加強(已有 .is-selected,加深金黃陰影)=== */
+.tarot-card.is-selected {
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.55),
+    0 0 30px rgba(212, 175, 55, 0.55),
+    0 0 70px rgba(180, 130, 230, 0.35),
+    0 30px 80px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* === 神祕學卡背精品化(深紫 + 黑金 + 神祕符文)=== */
+.tarot-card .tarot-card-back,
+.tarot-flip-card .tarot-flip-back {
+  background:
+    radial-gradient(ellipse at center, rgba(212, 175, 55, 0.10) 0%, transparent 60%),
+    radial-gradient(circle at 30% 20%, rgba(180, 130, 230, 0.30), transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(180, 130, 230, 0.25), transparent 50%),
+    linear-gradient(135deg, #1a0a2e 0%, #0d0419 50%, #1a0a2e 100%) !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+  box-shadow:
+    inset 0 0 25px rgba(0, 0, 0, 0.5),
+    0 8px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.tarot-card .tarot-card-back::before,
+.tarot-flip-card .tarot-flip-back::before {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at center, rgba(212, 175, 55, 0.12), transparent 50%);
+}
+
+/* === 神祕學卡面精品化(深紫底 + 金色框)=== */
+.tarot-card .tarot-card-face,
+.tarot-flip-card .tarot-flip-front {
+  background:
+    linear-gradient(135deg, #2a1a4a 0%, #1a0a3a 50%, #2a1a4a 100%) !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.7) !important;
+  color: #f5e8b8 !important;
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(180, 130, 230, 0.3) !important;
+}
+
+/* === RWD:小螢幕防擠 + 字型大小 === */
+@media (max-width: 450px) {
+  .tarot-card, .tarot-flip-card {
+    transform: scale(0.85) !important;
+  }
+  .tarot-card-name, .tarot-card-title {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* === 整體深紫背景(神祕學品質)= === */
+body, html {
+  background: linear-gradient(180deg, #0a0418 0%, #1a0a2e 50%, #0a0418 100%) !important;
+  color: #f5e8b8;
+}
+
