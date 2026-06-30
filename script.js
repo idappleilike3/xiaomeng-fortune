@@ -195,17 +195,6 @@ const menuTargets = {
   market: "#market",
 };
 
-const automationTemplates = {
-  daily:
-    "早安，我是小夢老師。今天想知道感情、工作還是財運？回覆「抽牌」，我替你抽今日一張牌。免費看方向，完整解析可看今日行動建議。",
-  weekly:
-    "本週運勢已更新。設定生日的人可以看本週流年提醒。回覆「週運」查看免費摘要，想看感情、事業、財運完整解析可再解鎖。",
-  profile:
-    "你還差一點資料就能完成命盤。補上出生時間與出生地後，小夢老師就能幫你看八字時辰、紫微命宮與合盤方向。若不知道時間，也可以先選「不確定」。",
-  premium:
-    "你今天的牌面有明顯提醒。免費版先給你方向；如果想知道對方想法、未來 14 天走勢與下一步行動，可以解鎖完整解析。",
-};
-
 const oracleProductMap = {
   love: {
     title: "月光關係修復香氛",
@@ -419,7 +408,7 @@ function openRequestedPage() {
   const requestedPage = params.get("page");
   if (!requestedPage) return;
 
-  const allowedPages = new Set(["profile", "demo", "automation", "market", "admin", "setup"]);
+  const allowedPages = new Set(["profile", "demo", "market", "admin", "setup"]);
   if (!allowedPages.has(requestedPage)) return;
   const opsOnlyPages = new Set(["admin", "setup"]);
   if (opsOnlyPages.has(requestedPage) && document.body.dataset.ops !== "true") return;
@@ -1510,13 +1499,6 @@ document.querySelector("#createChartSummary")?.addEventListener("click", () => {
   document.querySelector("#chartResult").innerHTML =
     `小夢老師已整理你的命盤資料。免費版會先看出生日期、時間與地點是否完整，並給一段命盤方向摘要。
     <a class="premium-note premium-link" href="#market">解鎖完整命盤：八字時辰、紫微命宮、流年提醒、合盤方向、擇日建議與適合你的開運選品。</a>`;
-});
-
-document.querySelectorAll("[data-template]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const template = automationTemplates[button.dataset.template];
-    document.querySelector("#automationPreview").textContent = template;
-  });
 });
 
 document.querySelectorAll("[data-unlock]").forEach((button) => {
