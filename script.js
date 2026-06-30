@@ -1956,3 +1956,269 @@ function closeEntryModal() {
   if (overlay) overlay.classList.remove('is-open');
   document.body.style.overflow = '';
 }
+
+// ============================================================
+// Phase 2: 探尋・星盤流年解碼 (entry 2 — birthday form + chart summary)
+// Phase 4: 深夜靈性信件解答 (entry 3 — letter writing form + mock submit)
+// Mock backend for entry 4 (Phase 5): `localStorage` queues a fake
+// "老師已收到" success, surfaced as an in-app notification the next
+// time the LIFF page opens.
+// ============================================================
+
+function openStarEntryModal() {
+  const overlay = document.getElementById('entry-modal-overlay');
+  if (!overlay) return;
+  document.getElementById('entry-modal-title').textContent = '探尋・星盤流年解碼';
+  document.getElementById('entry-modal-body').innerHTML =
+    '<div class="star-form">' +
+      '<p class="star-form__intro">請輸入你的出生資料,小夢老師會為你計算生命靈數並解讀流年。</p>' +
+      '<label class="star-form__label">暱稱<input type="text" id="starName" placeholder="例如:小月" /></label>' +
+      '<label class="star-form__label">性別' +
+        '<select id="starGender"><option value="female">女性</option><option value="male">男性</option><option value="other">其他 / 不透露</option></select>' +
+      '</label>' +
+      '<label class="star-form__label">出生日期<input type="date" id="starBirthDate" /></label>' +
+      '<label class="star-form__label">出生時間 (選填,影響時辰)' +
+        '<input type="time" id="starBirthTime" />' +
+      '</label>' +
+      '<button type="button" class="star-form__submit" id="starFormSubmit">開始解碼</button>' +
+    '</div>';
+  const submitBtn = document.getElementById('starFormSubmit');
+  if (submitBtn) submitBtn.addEventListener('click', handleStarFormSubmit);
+
+  // Pre-fill if there's a saved profile
+  try {
+    const saved = localStorage.getItem('birthProfile');
+    if (saved) {
+      const p = JSON.parse(saved);
+      if (p.name) document.getElementById('starName').value = p.name;
+      if (p.gender) document.getElementById('starGender').value = p.gender;
+      if (p.birthDate) document.getElementById('starBirthDate').value = p.birthDate;
+      if (p.birthTime) document.getElementById('starBirthTime').value = p.birthTime;
+    }
+  } catch (e) {}
+  overlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function handleStarFormSubmit() {
+  const nameEl = document.getElementById('starName');
+  const genderEl = document.getElementById('starGender');
+  const dateEl = document.getElementById('starBirthDate');
+  const timeEl = document.getElementById('starBirthTime');
+  const name = (nameEl && nameEl.value.trim()) || '旅人';
+  const gender = (genderEl && genderEl.value) || 'other';
+  const birthDate = dateEl && dateEl.value;
+  const birthTime = timeEl && timeEl.value;
+
+  if (!birthDate) {
+    if (dateEl) {
+      dateEl.classList.add('is-shake');
+      setTimeout(function () { dateEl.classList.remove('is-shake'); }, 500);
+    }
+    return;
+  }
+
+  const lifeNum = calculateLifeNumber(birthDate);
+  const chartText = generateChartSummary(lifeNum, gender);
+
+  const profile = { name: name, gender: gender, birthDate: birthDate, birthTime: birthTime, lifeNum: lifeNum, chartText: chartText };
+  try { localStorage.setItem('birthProfile', JSON.stringify(profile)); } catch (e) {}
+
+  displayStarResults(profile);
+}
+
+function calculateLifeNumber(dateStr) {
+  const digits = String(dateStr).replace(/[^0-9]/g, '').split('').map(Number);
+  if (!digits.length) return 0;
+  let sum = digits.reduce(function (a, b) { return a + b; }, 0);
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    sum = String(sum).split('').map(Number).reduce(function (a, b) { return a + b; }, 0);
+  }
+  return sum;
+}
+
+const LIFE_SUMMARIES = {
+  1: '天生的開拓者。獨立、果斷,適合走自己的路。今年關鍵字是「啟動」。',
+  2: '天生的協調者。細膩、善於合作,適合團隊與關係。今年關鍵字是「連結」。',
+  3: '天生的創意者。表達力強,適合藝術、寫作與溝通。今年關鍵字是「綻放」。',
+  4: '天生的建設者。穩健踏實,適合長期規劃與結構化工作。今年關鍵字是「深根」。',
+  5: '天生的冒險家。渴望自由與新體驗。今年關鍵字是「啟程」。',
+  6: '天生的療癒者。責任心強,適合照顧、教養與服務。今年關鍵字是「回家」。',
+  7: '天生的思考者。智慧深邃,適合研究與心靈探索。今年關鍵字是「內觀」。',
+  8: '天生的執行者。務實高效,適合商業與領導。今年關鍵字是「豐盛」。',
+  9: '天生的完成者。具有大愛精神,適合公益與奉獻。今年關鍵字是「放手」。',
+  11: '大師號碼。直覺敏銳,具有靈性天賦,適合教化與啟發他人。今年關鍵字是「覺醒」。',
+  22: '大師號碼。能將理想化為實相,具有建設大業的能力。今年關鍵字是「建造」。',
+  33: '大師號碼。慈悲與智慧兼具,具有療癒他人的天賦。今年關鍵字是「奉獻」。',
+};
+
+function generateChartSummary(lifeNum, gender) {
+  return LIFE_SUMMARIES[lifeNum] || '你的生命靈數充滿了無限可能,等老師於靜心時為你書寫一份完整解讀。';
+}
+
+function displayStarResults(profile) {
+  const body = document.getElementById('entry-modal-body');
+  if (!body) return;
+  document.getElementById('entry-modal-title').textContent = '你的星盤解析';
+  body.innerHTML =
+    '<div class="star-results">' +
+      '<div class="star-results__hero">' +
+        '<p class="star-results__label">生命靈數</p>' +
+        '<p class="star-results__life-num">' + profile.lifeNum + '</p>' +
+        '<p class="star-results__name">' + profile.name + ',你好</p>' +
+      '</div>' +
+      '<div class="star-results__chart">' +
+        '<p class="star-results__label">流年解讀</p>' +
+        '<p class="star-results__chart-text">' + profile.chartText + '</p>' +
+      '</div>' +
+      '<div class="star-results__actions">' +
+        '<button type="button" class="star-results__btn" data-action="reopen">重新輸入</button>' +
+        '<button type="button" class="star-results__btn star-results__btn--primary" data-action="close">關閉視窗</button>' +
+      '</div>' +
+    '</div>';
+  body.querySelector('[data-action="close"]').addEventListener('click', closeEntryModal);
+  body.querySelector('[data-action="reopen"]').addEventListener('click', openStarEntryModal);
+}
+
+// ============================================================
+// Phase 4: 深夜靈性信件解答 (entry 3 — letter writing form)
+// Mock submit shows the 24h 內送達 message, queues an in-app
+// notification (Phase 5) for next page load.
+// ============================================================
+
+function openLetterEntryModal() {
+  const overlay = document.getElementById('entry-modal-overlay');
+  if (!overlay) return;
+  document.getElementById('entry-modal-title').textContent = '深夜靈性信件解答';
+  document.getElementById('entry-modal-body').innerHTML =
+    '<div class="letter-form">' +
+      '<p class="letter-form__intro">請告訴老師,此刻困擾你的具體人生困境是什麼。寫得越真實,信越能命中你。</p>' +
+      '<label class="letter-form__label">你的暱稱<input type="text" id="letterName" placeholder="例如:小月" /></label>' +
+      '<label class="letter-form__label">你想傾訴的困惑' +
+        '<textarea id="letterDilemma" rows="8" placeholder="例如:我和伴侶最近半年頻繁爭吵,不知道這段關係該繼續還是放手。工作上同時面臨升遷與轉換跑道的抉擇。"></textarea>' +
+      '</label>' +
+      '<button type="button" class="letter-form__submit" id="letterFormSubmit">交付老師</button>' +
+    '</div>';
+  const submitBtn = document.getElementById('letterFormSubmit');
+  if (submitBtn) submitBtn.addEventListener('click', handleLetterFormSubmit);
+  overlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function handleLetterFormSubmit() {
+  const nameEl = document.getElementById('letterName');
+  const dilemmaEl = document.getElementById('letterDilemma');
+  const name = (nameEl && nameEl.value.trim()) || '旅人';
+  const dilemma = (dilemmaEl && dilemmaEl.value.trim()) || '';
+  if (dilemma.length < 10) {
+    if (dilemmaEl) {
+      dilemmaEl.classList.add('is-shake');
+      setTimeout(function () { dilemmaEl.classList.remove('is-shake'); }, 500);
+    }
+    return;
+  }
+  const submitBtn = document.getElementById('letterFormSubmit');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = '老師正在接收…';
+  }
+  // Simulate the network + 延遲 feel
+  setTimeout(function () {
+    const letter = {
+      name: name,
+      dilemma: dilemma,
+      submittedAt: new Date().toISOString(),
+    };
+    try {
+      localStorage.setItem('pendingLetter', JSON.stringify(letter));
+      localStorage.setItem('letterSubmittedAt', String(Date.now()));
+    } catch (e) {}
+    showLetterSuccessState(letter);
+  }, 1800);
+}
+
+function showLetterSuccessState(letter) {
+  const body = document.getElementById('entry-modal-body');
+  if (!body) return;
+  document.getElementById('entry-modal-title').textContent = '信已交付老師';
+  body.innerHTML =
+    '<div class="letter-success">' +
+      '<div class="letter-success__emblem" aria-hidden="true">✦</div>' +
+      '<p class="letter-success__name">' + letter.name + '</p>' +
+      '<p class="letter-success__message">你的困惑小夢老師已經收到。<br>老師將於今夜靜心時為你調頻解惑,你的專屬『命運指引信』將於 24 小時內自動發送到你的 LINE 聊天室,請稍作等待。</p>' +
+      '<button type="button" class="star-results__btn star-results__btn--primary" data-action="close-letter">知道了</button>' +
+    '</div>';
+  body.querySelector('[data-action="close-letter"]').addEventListener('click', closeEntryModal);
+}
+
+// In-app notification — surfaces the pending letter on next page load (Phase 5 mock)
+function checkPendingLetterNotification() {
+  try {
+    const pending = localStorage.getItem('pendingLetter');
+    const submittedAt = parseInt(localStorage.getItem('letterSubmittedAt') || '0', 10);
+    if (!pending || !submittedAt) return;
+    const hoursSince = (Date.now() - submittedAt) / (1000 * 60 * 60);
+    // For demo: surface immediately after 30 seconds (instead of 2-4 hours)
+    const readyAfterHours = 0.5; // demo threshold; production = 2
+    if (hoursSince < readyAfterHours) return;
+    const letter = JSON.parse(pending);
+    showPendingLetterNotification(letter);
+  } catch (e) {}
+}
+
+function showPendingLetterNotification(letter) {
+  const overlay = document.createElement('div');
+  overlay.className = 'letter-notification';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.innerHTML =
+    '<div class="letter-notification__panel">' +
+      '<p class="letter-notification__eyebrow">老師的命運指引信</p>' +
+      '<h3 class="letter-notification__title">' + letter.name + ',你的信到了</h3>' +
+      '<div class="letter-notification__body">' +
+        '<p class="letter-notification__paragraph">' + (letter.dilemma || '').slice(0, 80) + (letter.dilemma && letter.dilemma.length > 80 ? '…' : '') + '</p>' +
+        '<p class="letter-notification__paragraph letter-notification__letter">' +
+          letter.name + ',老師讀完了你的信。<br>你說的那段關係,真正的答案不在對方身上,而在你自己允許自己自由的程度。今夜把窗打開,讓風進來,你會聽到答案。<br><br>——小夢老師' +
+        '</p>' +
+      '</div>' +
+      '<button type="button" class="star-results__btn star-results__btn--primary" data-action="ack-letter">收下了</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function () { overlay.classList.add('is-open'); });
+  overlay.querySelector('[data-action="ack-letter"]').addEventListener('click', function () {
+    overlay.classList.remove('is-open');
+    setTimeout(function () { overlay.remove(); }, 280);
+    try {
+      localStorage.removeItem('pendingLetter');
+      localStorage.removeItem('letterSubmittedAt');
+    } catch (e) {}
+  });
+}
+
+// Update wireHeroEntries to call real modals
+(function () {
+  if (typeof wireHeroEntries === 'function') {
+    wireHeroEntries = function () {
+      document.querySelectorAll('.hero-entry').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const entry = btn.getAttribute('data-entry');
+          if (entry === 'tarot') {
+            const demo = document.querySelector('#demo');
+            if (demo) demo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (entry === 'star') {
+            openStarEntryModal();
+          } else if (entry === 'letter') {
+            openLetterEntryModal();
+          }
+        });
+      });
+    };
+  }
+})();
+
+// Show pending letter notification on page load (Phase 5 in-app notification)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', checkPendingLetterNotification);
+} else {
+  setTimeout(checkPendingLetterNotification, 1500);
+}
