@@ -6,6 +6,30 @@ const LINE_ADD_FRIEND_URL = "https://line.me/R/ti/p/@471cptxk";
 const API_BASE = window.location.protocol === "file:" ? "https://xiaomeng-fortune.onrender.com" : "";
 const DEFAULT_MEMBER_ID = "demo-member-001";
 
+// === operator mode (?ops=1) ===
+// Default customer view hides 後台/串接 sections. Visiting the page with
+// ?ops=1 reveals them and re-injects the nav links. Trigger value is a single
+// string compare; change to a token later if you want it less guessable.
+function applyOpsMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("ops") !== "1") return;
+  document.body.dataset.ops = "true";
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+  const opsLinks = [
+    { href: "#admin", label: "後台" },
+    { href: "#setup", label: "串接" }
+  ];
+  for (const { href, label } of opsLinks) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.dataset.opsLink = "true";
+    nav.appendChild(link);
+  }
+}
+applyOpsMode();
+
 const rawTarotDeck = [
   ["愚者", "新的旅程正在展開，先讓心保持開放，別急著替未知下定論。"],
   ["魔術師", "你手上已有資源，適合主動出擊，把想法變成具體行動。"],
@@ -397,6 +421,8 @@ function openRequestedPage() {
 
   const allowedPages = new Set(["profile", "demo", "automation", "market", "admin", "setup"]);
   if (!allowedPages.has(requestedPage)) return;
+  const opsOnlyPages = new Set(["admin", "setup"]);
+  if (opsOnlyPages.has(requestedPage) && document.body.dataset.ops !== "true") return;
 
   const target = document.querySelector(`#${requestedPage}`);
   if (!target) return;
