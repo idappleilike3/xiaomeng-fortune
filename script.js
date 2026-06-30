@@ -1848,3 +1848,48 @@ function wireShareButtons() {
   });
   refreshAllShareCounts();
 }
+
+// ============================================================
+// Atropos.js 3D parallax setup for the result card
+// Wraps the result-card-wrap with Atropos tilt + multi-layer
+// parallax. The holographic overlay is a parallax front layer.
+// Re-initialized each time the result stage becomes visible,
+// because Atropos needs the element to be visible/laid out.
+// ============================================================
+
+let resultAtropos = null;
+
+function setupResultAtropos() {
+  if (typeof Atropos === 'undefined') return; // CDN not loaded yet
+  const wrap = document.querySelector('.result-card-wrap[data-atropos]');
+  if (!wrap) return;
+  // If already initialized, refresh (e.g., after stage toggle)
+  if (resultAtropos) {
+    try { resultAtropos.destroy(); } catch (e) {}
+    resultAtropos = null;
+  }
+  resultAtropos = new Atropos({
+    el: wrap,
+    activeOffset: 24,
+    shadowScale: 0.94,
+    rotateX: true,
+    rotateY: true,
+    duration: 480,
+    onEnter: function () {},
+    onLeave: function () {},
+    onRotate: function (x, y) {
+      const overlay = wrap.querySelector('.holographic-overlay');
+      if (!overlay) return;
+      const cx = 50 + (y * 0.5);
+      const cy = 50 - (x * 0.5);
+      overlay.style.background =
+        'radial-gradient(circle at ' + cx + '% ' + cy +
+        '%, rgba(255,232,166,0.62) 0%, rgba(255,138,183,0.42) 20%, rgba(120,224,213,0.42) 40%, transparent 70%)';
+    }
+  });
+}
+
+function refreshResultAtropos() {
+  // called when result stage becomes visible
+  setTimeout(setupResultAtropos, 60);
+}

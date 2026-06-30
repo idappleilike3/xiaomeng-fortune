@@ -9,6 +9,7 @@
       content="LINE 結合網頁的命理服務 MVP，包含塔羅、求籤、命盤、合盤、生命靈數、MBTI 與聯盟行銷入口。"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
   <body>
     <div class="ritual-background" aria-hidden="true">
@@ -164,18 +165,20 @@
           <section class="ritual-stage ritual-stage--result" data-stage="result" hidden>
             <p class="stage-eyebrow">YOUR GUIDANCE</p>
             <h3 class="stage-title" id="resultSpreadName">單牌占卜</h3>
-            <div class="result-card-wrap">
-              <div class="result-card" id="resultCard">
-                <div class="result-card-inner" id="resultCardInner">
-                  <div class="result-card-front">
-                    <p class="result-card-position" id="resultCardPosition">牌位：現在</p>
-                    <h4 class="result-card-name" id="resultCardName">THE MOON · 月亮</h4>
-                    <p class="result-meaning" id="resultMeaning">靜心聆聽直覺，探索未知深處。</p>
+            <div class="result-card-wrap" data-atropos data-atropos-rotate="true" data-atropos-scale="true">
+              <div class="result-card-base" data-atropos-layer="base">
+                <div class="result-card" id="resultCard">
+                  <div class="result-card-inner" id="resultCardInner">
+                    <div class="result-card-front">
+                      <p class="result-card-position" id="resultCardPosition">牌位：現在</p>
+                      <h4 class="result-card-name" id="resultCardName">THE MOON · 月亮</h4>
+                      <p class="result-meaning" id="resultMeaning">靜心聆聽直覺，探索未知深處。</p>
+                    </div>
                   </div>
+                  <div class="result-card-back" aria-hidden="true"></div>
                 </div>
-                <div class="result-card-back" aria-hidden="true"></div>
-                <div class="holographic-overlay" aria-hidden="true"></div>
               </div>
+              <div class="holographic-overlay" data-atropos-layer="front" data-atropos-offset="30" aria-hidden="true"></div>
             </div>
             <div class="result-actions">
               <button class="ritual-cta ritual-cta--secondary" id="viewFullBtn" type="button">查看完整解讀</button>
@@ -454,5 +457,6 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script type="module" src="./script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.js"></script>
   </body>
 </html>
