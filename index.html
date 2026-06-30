@@ -39,21 +39,39 @@
     </header>
 
     <main>
-      <section id="app" class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Tarot · Birth Chart · Fortune Commerce</p>
-          <h1>把小夢老師做進 LINE 裡，讓使用者一點就能算。</h1>
-          <p>
-            這個網站模擬 LINE 官方帳號結合網頁的體驗：使用者在聊天中點選選單或設定生日，
-            開啟塔羅、求籤、命盤、合盤、擇日與商品推薦頁，後續可串 LINE Messaging API 與 LIFF。
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#demo">看互動 Demo</a>
-            <a class="button ghost" href="#setup" data-ops-only>看串接步驟</a>
+      <section id="app" class="hero hero-cover">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-bg-overlay" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="hero-eyebrow">小夢老師 · Tarot Ritual</p>
+          <h1 class="hero-quote">
+            萬物皆有星軌，靈魂皆有歸處。<br />
+            我是小夢，今夜，讓我為你解讀命運的預言。
+          </h1>
+          <div class="hero-entries" role="navigation" aria-label="三大入口">
+            <button type="button" class="hero-entry" data-entry="tarot">
+              <span class="hero-entry__num">I</span>
+              <h3 class="hero-entry__title">啟動・塔羅儀式</h3>
+              <p class="hero-entry__desc">靜心、洗牌、抽牌、解讀。讓星圖為你指路。</p>
+            </button>
+            <button type="button" class="hero-entry" data-entry="star">
+              <span class="hero-entry__num">II</span>
+              <h3 class="hero-entry__title">探尋・星盤流年解碼</h3>
+              <p class="hero-entry__desc">以你的生日為鑰，解開生命密碼與流年。</p>
+            </button>
+            <button type="button" class="hero-entry" data-entry="letter">
+              <span class="hero-entry__num">III</span>
+              <h3 class="hero-entry__title">深夜靈性信件解答</h3>
+              <p class="hero-entry__desc">寫下你的困惑，老師於今夜靜心時為你親自回信。</p>
+            </button>
           </div>
         </div>
-
+        <div class="hero-scroll-indicator" aria-hidden="true">
+          <span class="hero-scroll-indicator__label">向下探索</span>
+          <span class="hero-scroll-indicator__line"></span>
+        </div>
       </section>
+      
 
       <section id="profile" class="profile-section">
         <div class="section-heading">

@@ -1770,6 +1770,7 @@ function wireRitual() {
 }
 
 wireRitual();
+wireHeroEntries();
 
 // ============================================================
 // per-tool share buttons (share-row data-tool="...")
@@ -1892,4 +1893,66 @@ function setupResultAtropos() {
 function refreshResultAtropos() {
   // called when result stage becomes visible
   setTimeout(setupResultAtropos, 60);
+}
+
+// ============================================================
+// Phase 1: 3 entry cards → scroll to demo / placeholder modals
+// Full modals + form + mock backend come in phases 2-5.
+// ============================================================
+
+function wireHeroEntries() {
+  document.querySelectorAll('.hero-entry').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const entry = btn.getAttribute('data-entry');
+      if (entry === 'tarot') {
+        // entry 1: scroll to demo section (existing tarot ritual flow)
+        const demo = document.querySelector('#demo');
+        if (demo) {
+          demo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // bring the ritual out of reset state if it was result
+          // (state machine handles this naturally)
+        }
+      } else if (entry === 'star') {
+        // entry 2: open birthday popup (Phase 2 will fill content)
+        openEntryModal('star', '探尋・星盤流年解碼', '請稍候，' + '\u5c0f\u5922\u8001\u5e2b' + '正在為你準備星盤輸入介面。');
+      } else if (entry === 'letter') {
+        // entry 3: open letter form popup (Phase 4 will fill content)
+        openEntryModal('letter', '深夜靈性信件解答', '請稍候，' + '\u5c0f\u5922\u8001\u5e2b' + '正在為你準備書信表單。');
+      }
+    });
+  });
+}
+
+function openEntryModal(entry, title, placeholder) {
+  // Minimal placeholder modal — phases 2/4 will fill in real content
+  let overlay = document.getElementById('entry-modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'entry-modal-overlay';
+    overlay.className = 'entry-modal-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML =
+      '<div class="entry-modal" role="dialog" aria-modal="true">' +
+        '<button class="entry-modal__close" type="button" aria-label="關閉">&times;</button>' +
+        '<h3 class="entry-modal__title" id="entry-modal-title"></h3>' +
+        '<div class="entry-modal__body" id="entry-modal-body"></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay || e.target.classList.contains('entry-modal__close')) {
+        closeEntryModal();
+      }
+    });
+  }
+  document.getElementById('entry-modal-title').textContent = title;
+  document.getElementById('entry-modal-body').innerHTML =
+    '<p style="margin:0;color:var(--muted);line-height:1.7;">' + placeholder + '</p>';
+  overlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEntryModal() {
+  const overlay = document.getElementById('entry-modal-overlay');
+  if (overlay) overlay.classList.remove('is-open');
+  document.body.style.overflow = '';
 }
