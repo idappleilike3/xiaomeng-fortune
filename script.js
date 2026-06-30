@@ -1132,6 +1132,7 @@ function renderTarotDeck() {
     button.dataset.tarotIndex = String(order);
     button.dataset.tableRow = String(layout.row);
     button.style.setProperty("--card-order", String(order));
+    button.style.setProperty("--card-index", String(order));
     button.style.setProperty("--fan-offset", String(fanOffset));
     button.style.setProperty("--card-x", layout.x);
     button.style.setProperty("--card-y", layout.y);
