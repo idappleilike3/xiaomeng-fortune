@@ -4487,3 +4487,65 @@ body.ritual-active .card-stack,
 body.ritual-active .card-spread-row {
   overscroll-behavior: contain;
 }
+
+/* ============================================================
+   per-tool share row (green gradient, matching the design spec)
+   ============================================================ */
+
+.share-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  background: rgba(245, 211, 139, 0.04);
+  border: 1px solid rgba(245, 211, 139, 0.12);
+  border-radius: 14px;
+}
+
+.share-row__buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.share-btn {
+  flex: 1;
+  min-height: 52px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border: 0;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  white-space: nowrap;
+  font-family: "Noto Sans TC", system-ui, sans-serif;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.42);
+  filter: brightness(1.05);
+}
+
+.share-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+.share-row__status {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.share-row__status [data-share-count] {
+  color: #34d399;
+  font-weight: 900;
+}

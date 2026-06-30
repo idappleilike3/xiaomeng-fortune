@@ -1817,3 +1817,81 @@ function wireRitual() {
 }
 
 wireRitual();
+
+// ============================================================
+// per-tool share buttons (share-row data-tool="...")
+// Each of the 4 divination tools has its own share-row. All share
+// buttons call the same shareFortuneForTool(tool) which uses
+// liff.shareTargetPicker + increments the global bonusDraws counter.
+// On success, every share-row's [data-share-count] is refreshed.
+// ============================================================
+
+const SHARE_TOOL_LABELS = {
+  tarot: '塔羅占卜',
+  oracle: '籤詩小幫手',
+  lifeNumber: '生命靈數',
+  chart: '命盤資料',
+};
+
+function findShareRow(tool) {
+  return document.querySelector('.share-row[data-tool="' + tool + '"]');
+}
+
+function refreshAllShareCounts(message) {
+  document.querySelectorAll('.share-row').forEach(function (row) {
+    const counter = row.querySelector('[data-share-count]');
+    if (counter) counter.textContent = String(bonusDraws);
+    const status = row.querySelector('.share-row__status');
+    if (status && message) {
+      status.innerHTML =
+        message + ' 目前可用額外抽牌：<span data-share-count="' + bonusDraws + '">' + bonusDraws + '</span> 次';
+    }
+  });
+}
+
+async function shareFortuneForTool(toolName) {
+  const toolLabel = SHARE_TOOL_LABELS[toolName] || '占卜';
+  const textMessage = '小夢老師・' + toolLabel + ' · 看看我今天的運勢！';
+  const flexMessage = (typeof buildShareFlexMessage === 'function')
+    ? buildShareFlexMessage()
+    : null;
+
+  try {
+    if (window.liff && window.liff.isApiAvailable && window.liff.isApiAvailable('shareTargetPicker')) {
+      const messages = flexMessage ? [flexMessage] : [{ type: 'text', text: textMessage }];
+      const result = await window.liff.shareTargetPicker(messages);
+      if (result) {
+        bonusDraws += 1;
+        try { localStorage.setItem('bonusDraws', String(bonusDraws)); } catch (e) {}
+        refreshAllShareCounts('分享完成，已送你一次額外抽牌機會。');
+        if (typeof rewardMemberPoints === 'function') {
+          rewardMemberPoints('分享今日運勢').catch(function (e) { console.warn('share reward failed', e); });
+        }
+        return true;
+      } else {
+        refreshAllShareCounts('你剛剛取消分享，沒有增加次數。');
+        return false;
+      }
+    }
+    // Test mode (not in LIFF)
+    bonusDraws += 1;
+    try { localStorage.setItem('bonusDraws', String(bonusDraws)); } catch (e) {}
+    refreshAllShareCounts('目前不是 LINE 內頁，先用測試模式增加一次額外抽牌。文案：' + textMessage);
+    return true;
+  } catch (error) {
+    console.warn('shareTargetPicker failed', error);
+    refreshAllShareCounts('分享功能需要在 LINE 內頁開啟，並在 LINE Developers 後台啟用 shareTargetPicker。');
+    return false;
+  }
+}
+
+function wireShareButtons() {
+  document.querySelectorAll('.share-row .share-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const row = btn.closest('.share-row');
+      const tool = (row && row.dataset && row.dataset.tool) ? row.dataset.tool : '';
+      shareFortuneForTool(tool);
+    });
+  });
+  refreshAllShareCounts();
+}
