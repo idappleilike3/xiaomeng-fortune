@@ -2224,3 +2224,195 @@ if (document.readyState === 'loading') {
 } else {
   setTimeout(checkPendingLetterNotification, 1500);
 }
+
+// ============================================================
+// Phase 6: Hero multi-layer parallax
+//   - Canvas 1 (deep): twinkling starfield, very slow scroll speed
+//   - Atropos tilt parallax on .hero-parallax (subtle, no rotate/scale)
+//   - Scroll-based layered transforms (different speeds per layer)
+//   - Canvas 2 (front): glowing particles, breath pulse animation
+// ============================================================
+
+function initHeroStarfield(canvas) {
+  if (!canvas || !canvas.getContext) return null;
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const STAR_COUNT = 220;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(dpr, dpr);
+  }
+
+  function makeStars() {
+    stars = [];
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 1.4 + 0.3,
+        baseAlpha: Math.random() * 0.6 + 0.2,
+        twinkle: Math.random() * Math.PI * 2,
+        twinkleSpeed: Math.random() * 0.012 + 0.004,
+        hue: Math.random() < 0.85 ? '#fff4ca' : '#9fc6ff',
+      });
+    }
+  }
+
+  function draw(scrollY) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const offsetY = scrollY * 0.12; // deep layer scrolls slowly
+    const h = window.innerHeight;
+    stars.forEach(function (s) {
+      s.twinkle += s.twinkleSpeed;
+      const alpha = s.baseAlpha * (0.5 + 0.5 * Math.sin(s.twinkle));
+      const yPos = ((s.y - offsetY) % (h + 20) + h + 20) % (h + 20) - 10;
+      ctx.beginPath();
+      ctx.arc(s.x, yPos, s.size, 0, Math.PI * 2);
+      ctx.fillStyle = s.hue;
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      // soft glow for brighter stars
+      if (s.size > 1) {
+        ctx.beginPath();
+        ctx.arc(s.x, yPos, s.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = s.hue;
+        ctx.globalAlpha = alpha * 0.12;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    });
+  }
+
+  resize();
+  makeStars();
+  return { draw: draw, resize: resize, makeStars: makeStars };
+}
+
+function initHeroParticles(canvas) {
+  if (!canvas || !canvas.getContext) return null;
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const PARTICLE_COUNT = 80;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(dpr, dpr);
+  }
+
+  function makeParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 2.5 + 0.5,
+        speed: Math.random() * 0.6 + 0.2,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: Math.random() * 0.018 + 0.006,
+        hue: Math.random() < 0.5 ? '245, 211, 139' : (Math.random() < 0.5 ? '255, 232, 166' : '255, 138, 183'),
+      });
+    }
+  }
+
+  function draw(scrollY) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const offsetY = scrollY * 0.5; // foreground scrolls faster
+    const h = window.innerHeight;
+    particles.forEach(function (p) {
+      p.pulse += p.pulseSpeed;
+      const glow = 0.45 + 0.45 * Math.sin(p.pulse);
+      const yPos = ((p.y - offsetY * p.speed) % (h + 20) + h + 20) % (h + 20) - 10;
+
+      // soft halo
+      ctx.beginPath();
+      ctx.arc(p.x, yPos, p.size * 6, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + p.hue + ', ' + (glow * 0.05) + ')';
+      ctx.fill();
+      // core
+      ctx.beginPath();
+      ctx.arc(p.x, yPos, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + p.hue + ', ' + (glow * 0.85) + ')';
+      ctx.fill();
+    });
+  }
+
+  resize();
+  makeParticles();
+  return { draw: draw, resize: resize, makeParticles: makeParticles };
+}
+
+function initHeroParallax() {
+  const starfieldCanvas = document.getElementById('heroStarsCanvas');
+  const particlesCanvas = document.getElementById('heroParticlesCanvas');
+  if (!starfieldCanvas || !particlesCanvas) return;
+
+  const starfield = initHeroStarfield(starfieldCanvas);
+  const particles = initHeroParticles(particlesCanvas);
+
+  // rAF-throttled scroll tracker
+  let currentScrollY = 0;
+  let targetScrollY = 0;
+  let ticking = false;
+  window.addEventListener('scroll', function () {
+    targetScrollY = window.scrollY || window.pageYOffset || 0;
+    if (!ticking) {
+      requestAnimationFrame(function () {
+        currentScrollY += (targetScrollY - currentScrollY) * 0.12;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // animation loop
+  function frame() {
+    if (starfield) starfield.draw(currentScrollY);
+    if (particles) particles.draw(currentScrollY);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // resize on viewport change
+  let resizeTicking = false;
+  window.addEventListener('resize', function () {
+    if (resizeTicking) return;
+    resizeTicking = true;
+    requestAnimationFrame(function () {
+      if (starfield) { starfield.resize(); starfield.makeStars(); }
+      if (particles) { particles.resize(); particles.makeParticles(); }
+      resizeTicking = false;
+    });
+  });
+
+  // Atropos tilt parallax on the hero layer stack (subtle, no rotate/scale)
+  const parallaxEl = document.querySelector('.hero-parallax');
+  if (typeof Atropos !== 'undefined' && parallaxEl) {
+    try {
+      new Atropos({
+        el: parallaxEl,
+        activeOffset: 14,
+        rotateX: false,
+        rotateY: false,
+        scale: false,
+        shadow: false,
+        duration: 480
+      });
+    } catch (e) { /* Atropos init failure is non-fatal */ }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeroParallax);
+} else {
+  setTimeout(initHeroParallax, 200);
+}

@@ -40,8 +40,16 @@
 
     <main>
       <section id="app" class="hero hero-cover">
-        <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-bg-overlay" aria-hidden="true"></div>
+        <div class="hero-parallax" data-atropos data-atropos-rotate-x="false" data-atropos-rotate-y="false" data-atropos-scale="false">
+          <div class="hero-layer hero-layer--sky" data-atropos-layer="base">
+            <canvas id="heroStarsCanvas" aria-hidden="true"></canvas>
+          </div>
+          <div class="hero-layer hero-layer--master" data-atropos-layer="mid" data-atropos-offset="20" aria-hidden="true"></div>
+          <div class="hero-layer hero-layer--overlay" data-atropos-layer="mid" data-atropos-offset="25" aria-hidden="true"></div>
+          <div class="hero-layer hero-layer--particles" data-atropos-layer="front" data-atropos-offset="45" aria-hidden="true">
+            <canvas id="heroParticlesCanvas" aria-hidden="true"></canvas>
+          </div>
+        </div>
         <div class="hero-content">
           <p class="hero-eyebrow">小夢老師 · Tarot Ritual</p>
           <h1 class="hero-quote">
@@ -66,6 +74,7 @@
             </button>
           </div>
         </div>
+        </div><!-- /.hero-parallax -->
         <div class="hero-scroll-indicator" aria-hidden="true">
           <span class="hero-scroll-indicator__label">向下探索</span>
           <span class="hero-scroll-indicator__line"></span>
