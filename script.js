@@ -1,4 +1,3 @@
-import { oracleFortunes } from "./oracle-data.js";
 
 const LIFF_ID = "2010549494-KRb0mn7U";
 const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
@@ -187,28 +186,6 @@ const tarotDeck = rawTarotDeck.map(([name, meaning]) => ({
 }));
 const majorArcanaDeck = tarotDeck.filter((card) => card.suit === "major");
 
-const oracleProductMap = {
-  love: {
-    title: "月光關係修復香氛",
-    reason: "適合感情卡關、想穩定溝通與提升柔和能量時使用。",
-    url: "#market",
-  },
-  career: {
-    title: "晨星專注筆記組",
-    reason: "適合工作轉換、考試、創業規劃與整理下一步行動。",
-    url: "#market",
-  },
-  wealth: {
-    title: "豐盛水晶小物",
-    reason: "適合財務整理、開源規劃與提醒自己穩定累積。",
-    url: "#market",
-  },
-  general: {
-    title: "小夢老師開運選品",
-    reason: "依照籤意挑選療癒、提醒與日常儀式感商品。",
-    url: "#market",
-  },
-};
 
 const unlockMessages = {
   free:
@@ -219,12 +196,6 @@ const unlockMessages = {
     "點數制適合提高回訪率：使用者一次購買點數，之後抽牌、求籤、週運、合盤都可扣點。這會比單次付款更適合長期經營。",
 };
 
-function getOracleProduct(question) {
-  if (/感情|愛情|復合|曖昧|交往|分手|對方|桃花/.test(question)) return oracleProductMap.love;
-  if (/工作|事業|轉職|創業|考試|升遷|合作|客戶/.test(question)) return oracleProductMap.career;
-  if (/財|錢|投資|收入|業績|賺|負債/.test(question)) return oracleProductMap.wealth;
-  return oracleProductMap.general;
-}
 
 const topicGuidance = {
   感情: "感情題請先看互動是否真誠，再看自己是不是把期待放得太前面。",
@@ -336,7 +307,7 @@ document.addEventListener("pointerdown", (event) => {
   const interactive = event.target.closest("button, a, .tarot-card, input, select, textarea");
   if (!interactive) return;
   createClickSpark(event);
-  if (interactive.matches(".tarot-card, #drawOracle, #shuffleTarot")) {
+  if (interactive.matches(".tarot-card, #shuffleTarot")) {
     playRitualTone("card");
   } else if (interactive.matches("#unlockWithPoints, [data-plan-id], #rewardPoints, #shareFortune")) {
     playRitualTone("unlock");
@@ -1436,24 +1407,6 @@ updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
 loadWallet();
 loadAdminSummary();
 
-document.querySelector("#drawOracle").addEventListener("click", () => {
-  const fortune = oracleFortunes[Math.floor(Math.random() * oracleFortunes.length)];
-  const question = document.querySelector("#oracleQuestion").value.trim();
-  const oracleType = document.querySelector("#oracleType").value;
-  const gender = document.querySelector("input[name='oracleGender']:checked")?.value || "不透露";
-  const product = getOracleProduct(question);
-  const questionText = question || "目前心中尚未寫下問題，系統以今日整體指引解讀。";
-  document.querySelector("#oraclePoem").innerHTML =
-    `<span class="oracle-meta">${oracleType}｜${gender}</span>
-    <br>第 ${fortune.no} 籤｜${fortune.level}
-    <br>${fortune.title}
-    <small>所問：${questionText}</small>
-    <small>籤詩：${fortune.poem}</small>
-    <strong>免費簡解：${fortune.summary}</strong>
-    <small>注意事項：${fortune.advice}</small>
-    <a class="premium-note premium-link" href="#market">解鎖深度解籤：感情、事業、財運、未來 30 天提醒、下一步行動方案。</a>
-    <a class="oracle-product" href="${product.url}">推薦選品：${product.title}<small>${product.reason}</small></a>`;
-});
 
 document.querySelector("#calcNumber").addEventListener("click", () => {
   const birthday = document.querySelector("#birthday").value;

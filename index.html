@@ -181,6 +181,13 @@
               <button class="ritual-cta ritual-cta--secondary" id="viewFullBtn" type="button">查看完整解讀</button>
               <button class="ritual-cta ritual-cta--secondary" id="bookSessionBtn" type="button">預約深度占卜</button>
             </div>
+            <div class="share-row" data-tool="tarot">
+              <div class="share-row__buttons">
+                <button class="share-btn" type="button" data-share="fortune">分享今日運勢</button>
+                <button class="share-btn" type="button" data-share="bonus">分享後多抽一次</button>
+              </div>
+              <p class="share-row__status">分享給朋友，可獲得一次額外抽牌機會。目前可用額外抽牌：<span data-share-count>0</span> 次</p>
+            </div>
           </section>
 
           <div class="ritual-cta-bar" id="ritualCtaBar">
@@ -192,36 +199,8 @@
         </article>
 
         <div class="demo-secondary">
-          <article class="tool-card" id="oracleTool">
-            <div class="tool-card__head">
-              <span class="tool-card__num">02</span>
-              <h3 class="tool-card__title">籤詩小幫手</h3>
-            </div>
-            <fieldset class="oracle-gender">
-              <legend>您的性別</legend>
-              <label><input type="radio" name="oracleGender" value="男" /> 男</label>
-              <label><input type="radio" name="oracleGender" value="女" /> 女</label>
-              <label><input type="radio" name="oracleGender" value="不透露" checked /> 不透露</label>
-            </fieldset>
-            <label class="stage-label">
-              您的問題
-              <textarea id="oracleQuestion" rows="3" placeholder="請輸入您想求籤的問題"></textarea>
-            </label>
-            <label class="stage-label">
-              選擇籤詩
-              <select id="oracleType">
-                <option value="系統選擇">系統選擇</option>
-                <option value="六十甲子籤詩">六十甲子籤詩</option>
-                <option value="觀音靈籤">觀音靈籤</option>
-                <option value="雷雨師">雷雨師</option>
-                <option value="地藏靈籤">地藏靈籤</option>
-              </select>
-            </label>
-            <div class="oracle-card" id="oraclePoem">按下求籤後，小夢老師會給你籤號、吉凶、詩文與簡易解籤。</div>
-            <button class="ritual-cta ritual-cta--secondary" id="drawOracle" type="button">求籤</button>
-          </article>
 
-          <article class="tool-card" id="lifeNumberTool">
+        <article class="tool-card" id="lifeNumberTool">
             <div class="tool-card__head">
               <span class="tool-card__num">03</span>
               <h3 class="tool-card__title">生命靈數</h3>
@@ -232,7 +211,14 @@
             </label>
             <button class="ritual-cta ritual-cta--secondary" id="calcNumber" type="button">計算靈數</button>
             <p id="numberResult" class="tool-card__result">輸入生日後可計算主命數。<a class="premium-link" href="#market">深度解析可延伸：人格優勢、感情模式、職場天賦、流年提醒與商品推薦。</a></p>
-          </article>
+          <div class="share-row" data-tool="lifeNumber">
+            <div class="share-row__buttons">
+              <button class="share-btn" type="button" data-share="fortune">分享今日運勢</button>
+              <button class="share-btn" type="button" data-share="bonus">分享後多抽一次</button>
+            </div>
+            <p class="share-row__status">分享給朋友，可獲得一次額外抽牌機會。目前可用額外抽牌：<span data-share-count>0</span> 次</p>
+          </div>
+        </article>
 
           <article class="tool-card" id="chartTool">
             <div class="tool-card__head">
@@ -253,14 +239,16 @@
             </label>
             <button class="ritual-cta ritual-cta--secondary" id="createChartSummary" type="button">產生命盤摘要</button>
             <p id="chartResult" class="tool-card__result">免費版先整理出生資料摘要。<a class="premium-link" href="#market">深度解析可延伸：八字時辰、紫微命宮、流年提醒、合盤方向與擇日建議。</a></p>
-          </article>
+          <div class="share-row" data-tool="chart">
+            <div class="share-row__buttons">
+              <button class="share-btn" type="button" data-share="fortune">分享今日運勢</button>
+              <button class="share-btn" type="button" data-share="bonus">分享後多抽一次</button>
+            </div>
+            <p class="share-row__status">分享給朋友，可獲得一次額外抽牌機會。目前可用額外抽牌：<span data-share-count>0</span> 次</p>
+          </div>
+        </article>
         </div>
 
-        <div class="share-row">
-          <button class="panel-button" id="shareFortune" type="button">分享今日運勢</button>
-          <button class="panel-button ghost-button" id="bonusDraw" type="button">分享後多抽一次</button>
-        </div>
-        <p class="share-status" id="shareStatus">分享給朋友後，可獲得一次額外抽牌機會。正式會員制上線後會改為點數入帳。</p>
       </section>
 
       <section id="market" class="market-section">
@@ -377,7 +365,6 @@
             <ul>
               <li>78 張塔羅牌義</li>
               <li>正位 / 逆位解析</li>
-              <li>籤號、吉凶、詩文、解曰</li>
               <li>免費版與深度版分層</li>
             </ul>
           </article>
