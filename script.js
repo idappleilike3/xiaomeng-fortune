@@ -187,14 +187,6 @@ const tarotDeck = rawTarotDeck.map(([name, meaning]) => ({
 }));
 const majorArcanaDeck = tarotDeck.filter((card) => card.suit === "major");
 
-const menuTargets = {
-  chart: "#profile",
-  tarot: "#demo",
-  oracle: "#demo",
-  number: "#demo",
-  market: "#market",
-};
-
 const oracleProductMap = {
   love: {
     title: "月光關係修復香氛",
@@ -1507,17 +1499,4 @@ document.querySelectorAll("[data-unlock]").forEach((button) => {
   });
 });
 
-document.querySelectorAll("[data-menu]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const target = menuTargets[button.dataset.menu];
-    document.querySelector(target).scrollIntoView({ behavior: "smooth" });
-  });
-});
 
-document.querySelectorAll("[data-action]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const action = button.dataset.action;
-    const target = action === "market" ? "#market" : action === "chart" ? "#profile" : "#demo";
-    document.querySelector(target).scrollIntoView({ behavior: "smooth" });
-  });
-});
