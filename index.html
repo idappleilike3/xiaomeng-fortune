@@ -34,7 +34,6 @@
       <nav class="nav" aria-label="主要導覽">
         <a href="#demo">功能</a>
         <a href="#automation">自動化</a>
-        <a href="#progress">進度</a>
         <a href="#market">變現</a>
         <a href="#admin">後台</a>
         <a href="#setup">串接</a>
@@ -367,82 +366,6 @@
         <div class="automation-preview">
           <strong>訊息預覽</strong>
           <p id="automationPreview">點上方按鈕，預覽可放進 LINE 推播或自動回覆的文案。</p>
-        </div>
-      </section>
-
-      <section id="progress" class="progress-section">
-        <div class="section-heading">
-          <p class="eyebrow">Build Progress</p>
-          <h2>目前製作進度</h2>
-          <p>目前已完成網站、Render 部署、LINE Webhook、求籤升級與 78 張塔羅抽牌。接下來會往 LINE 內頁、圖文選單、付費解鎖與後台前進。</p>
-        </div>
-
-        <div class="progress-table" role="table" aria-label="製作進度表">
-          <div class="progress-row progress-head" role="row">
-            <span role="columnheader">項目</span>
-            <span role="columnheader">狀態</span>
-            <span role="columnheader">說明</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">LINE Webhook 程式</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">已建立 /api/line/webhook，會驗證 LINE 簽章並回覆訊息。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">Channel Secret / Token</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">已放入本機 .env，並加入 .gitignore 保護。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">Render 正式部署</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">正式網站已上線：https://xiaomeng-fortune.onrender.com。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">加入好友歡迎詞</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">已整理正式歡迎詞，不貼網址，改引導使用者點下方圖文選單。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">正式 Webhook</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">正式網址：https://xiaomeng-fortune.onrender.com/api/line/webhook。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">78 張塔羅抽牌</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">已可輸入問題、選領域、洗牌，並從 78 張牌牆自行抽牌。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">求籤流程</span>
-            <strong class="status done" role="cell">完成</strong>
-            <span role="cell">已支援問題、籤種、免費簡解、注意事項、深度解析引導與商品推薦。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">LIFF 內頁</span>
-            <strong class="status done" role="cell">已取得</strong>
-            <span role="cell">LIFF URL 已建立：https://liff.line.me/2010549494-KRb0mn7U，前台與圖文選單設定已改用 LINE 內頁入口。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">圖文選單</span>
-            <strong class="status done" role="cell">素材完成</strong>
-            <span role="cell">已建立六格按鈕設定、LIFF 連結、圖文選單圖片與 API 建立工具。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">付費解鎖 / 商品推薦</span>
-            <strong class="status done" role="cell">雛形完成</strong>
-            <span role="cell">已建立免費、單次深度解析、點數包方案，以及商品推薦入口。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">管理後台雛形</span>
-            <strong class="status done" role="cell">儀表板完成</strong>
-            <span role="cell">已可讀取 API 顯示會員、點數、解析解鎖與商品點擊。</span>
-          </div>
-          <div class="progress-row" role="row">
-            <span role="cell">資料庫</span>
-            <strong class="status active" role="cell">API 雛形</strong>
-            <span role="cell">目前為伺服器記憶體資料；正式上線需接 PostgreSQL 或 Firebase。</span>
-          </div>
         </div>
       </section>
 

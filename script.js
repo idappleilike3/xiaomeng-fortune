@@ -395,7 +395,7 @@ function openRequestedPage() {
   const requestedPage = params.get("page");
   if (!requestedPage) return;
 
-  const allowedPages = new Set(["profile", "demo", "automation", "progress", "market", "admin", "setup"]);
+  const allowedPages = new Set(["profile", "demo", "automation", "market", "admin", "setup"]);
   if (!allowedPages.has(requestedPage)) return;
 
   const target = document.querySelector(`#${requestedPage}`);
