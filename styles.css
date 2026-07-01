@@ -7397,3 +7397,25 @@ a:active::after {
   .share-row__buttons { flex-direction: column; }
   .share-row__buttons .share-btn { width: 100%; }
 }
+
+/* 平板(381-720px)只用 2 欄、按鈕調小 */
+@media (max-width: 720px) and (min-width: 381px) {
+  .share-row__buttons { gap: 6px; }
+  .share-row__buttons .share-btn { padding: 8px 8px; font-size: 11px; }
+  .share-row__buttons .share-btn__icon { font-size: 10px; }
+}
+
+/* 横屏手機/小平板 hero 內容限制 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero { min-height: auto; padding: 24px 16px; }
+  .hero-copy h1 { font-size: 22px; }
+  .eyebrow { font-size: 11px; }
+}
+
+/* 桌面默認確保 body 內容不会超過 100vw */
+html, body { overflow-x: hidden; }
+
+/* 大桌面 (>=1200px) 內容主體置中並最多 1200px */
+@media (min-width: 1200px) {
+  main, .setup-section, .hero { max-width: 1200px; margin-left: auto; margin-right: auto; }
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>跨裝置同步測試 - iPhone 14 / iPad / Laptop / Desktop</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Noto Sans TC", system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #0a0612;
+    color: #fff5d8;
+  }
+  h1 { color: #f5d38b; margin: 0 0 8px; font-size: 20px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .device {
+    border: 1px solid rgba(245, 211, 139, 0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1024;
+  }
+  .device-head {
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(245, 211, 139, 0.15), transparent);
+    border-bottom: 1px solid rgba(245, 211, 139, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .device-name { font-weight: 900; color: #f5d38b; font-size: 14px; }
+  .device-size { font-size: 11px; color: #c9b88a; }
+  .device-frame {
+    padding: 16px;
+    background: #0f0820;
+  }
+  .device-iframe {
+    width: 100%;
+    border: 1px solid rgba(245, 211, 139, 0.2);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .device-actions { padding: 8px 16px; display: flex; gap: 8px; }
+  .device-actions a {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(245, 211, 139, 0.15);
+    color: #f5d38b;
+    text-decoration: none;
+    font-size: 12px;
+    border: 1px solid rgba(245, 211, 139, 0.3);
+  }
+  .device-actions a:hover { background: rgba(245, 211, 139, 0.3); }
+  .checklist {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(38, 22, 64, 0.6), rgba(13, 7, 24, 0.6));
+    border-radius: 8px;
+    margin-top: 16px;
+    border: 1px solid rgba(245, 211, 139, 0.2);
+  }
+  .checklist li { margin: 6px 0; font-size: 13px; }
+  .checklist strong { color: #f5d38b; }
+</style>
+</head>
+<body>
+<h1>📱 跨裝置同步驗證</h1>
+<p style="color:#c9b88a;font-size:13px">每個裝置獨立 iframe 載入 <code style="color:#fff5d8;background:#3b2856;padding:2px 6px;border-radius:4px">https://xiaomeng-fortune.onrender.com/</code> — 同步檢查 Hero / F22 / F30 / 分享按鈕 / Footer / 隱私法律頁是否一致</p>
+
+<div class="grid">
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">📱 iPhone 14 Pro</span>
+      <span class="device-size">393 × 852 px</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/" width="360" height="780" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">📱 iPhone 14 横屏</span>
+      <span class="device-size">852 × 393 px</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/" width="852" height="393" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">📱 iPad Mini</span>
+      <span class="device-size">768 × 1024 px</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/" width="768" height="900" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">💻 MacBook 14"</span>
+      <span class="device-size">1512 × 982 px</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/" width="1280" height="900" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">🖥️ Desktop 4K</span>
+      <span class="device-size">1920 × 1080 px</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/" width="1920" height="900" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+
+  <div class="device">
+    <div class="device-head">
+      <span class="device-name">🔐 後台 (Desktop)</span>
+      <span class="device-size">需密碼 tarot2026</span>
+    </div>
+    <div class="device-frame">
+      <iframe class="device-iframe" src="https://xiaomeng-fortune.onrender.com/admin.html?admin=1" width="1280" height="900" loading="lazy"></iframe>
+    </div>
+    <div class="device-actions">
+      <a href="https://xiaomeng-fortune.onrender.com/admin.html?admin=1" target="_blank" rel="noopener">↗ 開新分頁</a>
+    </div>
+  </div>
+</div>
+
+<div class="checklist">
+  <h2 style="color:#f5d38b;margin-top:0">✅ 4 個尺寸同步檢查清單</h2>
+  <ul>
+    <li><strong>Hero 大底圖</strong> — 在所有尺寸填滿視窗,不切邊、不留白</li>
+    <li><strong>F22 大舞台</strong> — 牌弧在所有尺寸漂亮展開(+/- 透過 9 個 media query)</li>
+    <li><strong>F30 三系統卡</strong> — 手機 1 欄,平板 2 欄,桌機 3 欄(已設 grid-template-columns)</li>
+    <li><strong>分享按鈕</strong> — 手機上下排,平板 2x2 縮小,桌機 3 顆並排</li>
+    <li><strong>Footer</strong> — 法律 / 隱私 / 後台入口 在所有尺寸都可點</li>
+    <li><strong>OG meta</strong> — 分享到 LINE/FB 看見 Magician 卡 + 「萬物皆有星軌」標題(已驗證)</li>
+    <li><strong>後台密碼</strong> — `tarot2026`,8 小時內有效</li>
+  </ul>
+  <p style="color:#c9b88a;font-size:12px;margin-bottom:0">🔄 之後每次改 UI 都會跑 <code>_sync_check.py</code> 確認所有裝置同步</p>
+</div>
+
+</body>
+</html>
