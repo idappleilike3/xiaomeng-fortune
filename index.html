@@ -122,19 +122,24 @@
 
         <article class="ritual-flow" data-ritual-state="input">
           <section class="ritual-stage ritual-stage--input" data-stage="input">
-            <div class="stage-card">
-              <p class="stage-eyebrow">Step 1</p>
-              <h3 class="stage-title">設定你的問題</h3>
-              <label class="stage-label">
-                你想問的問題
+            <div class="stage-card stage-card--hero">
+              <div class="stage-logo" aria-hidden="true">
+                <span class="stage-logo__eye">◉</span>
+              </div>
+              <p class="stage-brand">小夢老師</p>
+              <p class="stage-brand-en">TAROT RITUAL</p>
+
+              <h3 class="stage-title stage-title--giant">設定你的問題…</h3>
+
+              <label class="stage-label stage-label--ritual">
                 <textarea
                   id="tarotQuestion"
                   rows="3"
-                  placeholder="例如：我和對方未來三個月的關係會怎麼發展？目前是否適合轉職？"
+                  placeholder="請輸入你想問的問題…（例如：我與他的未來?）"
                 ></textarea>
               </label>
-              <label class="stage-label">
-                問題領域
+
+              <label class="stage-label stage-label--ritual">
                 <select id="tarotTopic">
                   <option value="感情">感情</option>
                   <option value="工作">工作</option>
@@ -144,12 +149,38 @@
                   <option value="個人成長">個人成長</option>
                 </select>
               </label>
-              <p class="stage-label stage-label--inline">抽牌方式</p>
-              <div class="spread-pills" role="radiogroup" aria-label="抽牌方式">
+
+              <p class="stage-label stage-label--inline stage-label--ritual">抽牌方式</p>
+              <div class="spread-pills spread-pills--ritual" role="radiogroup" aria-label="抽牌方式">
                 <button type="button" class="spread-pill" data-spread="single">單張解牌</button>
                 <button type="button" class="spread-pill is-active" data-spread="three">三張牌陣</button>
                 <button type="button" class="spread-pill" data-spread="five">五張聖甲蟲</button>
               </div>
+
+              <button type="button" class="ritual-start-btn" id="ritualStartBtn">
+                <span class="ritual-start-btn__inner">
+                  <span class="ritual-start-btn__label">開始洗牌（啟動儀式）</span>
+                </span>
+              </button>
+
+              <div class="ritual-table-preview" aria-hidden="true">
+                <span class="ritual-table-preview__glow ritual-table-preview__glow--left"></span>
+                <span class="ritual-table-preview__glow ritual-table-preview__glow--right"></span>
+                <div class="ritual-card-stack">
+                  <span class="ritual-card-stack__card"></span>
+                  <span class="ritual-card-stack__card"></span>
+                  <span class="ritual-card-stack__card"></span>
+                  <span class="ritual-card-stack__card"></span>
+                  <span class="ritual-card-stack__card ritual-card-stack__card--top">
+                    <span class="ritual-card-constellation"></span>
+                  </span>
+                </div>
+              </div>
+
+              <button type="button" class="ritual-reshuffle-btn" id="ritualReshuffleBtn" hidden>
+                <span class="ritual-reshuffle-btn__label">重新洗牌</span>
+                <span class="ritual-reshuffle-btn__icon">↻</span>
+              </button>
             </div>
           </section>
 
@@ -193,7 +224,7 @@
             </div>
           </section>
 
-          <div class="ritual-cta-bar" id="ritualCtaBar">
+          <div class="ritual-cta-bar" id="ritualCtaBar" hidden>
             <button class="ritual-cta" id="ritualCta" data-action="enter" type="button">
               <span class="ritual-cta__label">進入靜心占卜室</span>
             </button>

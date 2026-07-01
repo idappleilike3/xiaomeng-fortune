@@ -3536,3 +3536,50 @@ if (document.readyState === 'loading') {
     }, 120);
   });
 })();
+
+
+// =====================================================================
+// Phase 35-38: ritualStartBtn + ritualReshuffleBtn wiring
+// (start btn clicks the same ritualCta, reshuffle btn clicks the same ritualReset)
+// =====================================================================
+(function startReshuffleWire() {
+  // Hook: ritualStartBtn (in-stage) clicks #ritualCta
+  const startBtn = document.getElementById("ritualStartBtn");
+  const cta = document.getElementById("ritualCta");
+  if (startBtn && cta) {
+    startBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      cta.click();
+    });
+  }
+
+  // Hook: ritualReshuffleBtn (in-stage) clicks #ritualReset, then shows itself on result stage
+  const reshuffleBtn = document.getElementById("ritualReshuffleBtn");
+  const reset = document.getElementById("ritualReset");
+  if (reshuffleBtn && reset) {
+    reshuffleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      reset.click();
+    });
+  }
+
+  // Toggle reshuffle button visibility based on ritual state
+  // Watch the ritualCtaBar to mirror the original reset button's hidden state
+  const observer = new MutationObserver(() => {
+    if (!reshuffleBtn || !reset) return;
+    reshuffleBtn.hidden = reset.hidden;
+  });
+  const ctaBar = document.getElementById("ritualCtaBar");
+  if (ctaBar && reshuffleBtn) {
+    observer.observe(ctaBar, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
+    // Also show when result stage is active
+    const flow = document.querySelector(".ritual-flow");
+    if (flow) {
+      const flowObserver = new MutationObserver(() => {
+        const resultActive = flow.querySelector(".ritual-stage--result.is-active");
+        reshuffleBtn.hidden = !resultActive;
+      });
+      flowObserver.observe(flow, { attributes: true, subtree: true, attributeFilter: ["class"] });
+    }
+  }
+})();
