@@ -4692,3 +4692,199 @@ if (document.readyState === 'loading') {
   fixLineFabLabel();
   initSystemThemeAuto();
 }
+
+
+/* ====================================================================
+ * 🌟 Opening Experience Choreographer(§21.1 八步編舞)
+ * ==================================================================== */
+window.__xiaomengOpening = (function () {
+  const ROOT_ID = 'opening-sequence';
+  const SKIP_FLAG = 'xm_opening_seen';
+  const SKIP_FLAG_TTL_DAYS = 7; // 7 天內回訪直接略過
+
+  let stages = null;
+  let skipBtn = null;
+  let timers = [];
+
+  function init() {
+    const root = document.getElementById(ROOT_ID);
+    if (!root) return;
+    stages = Array.from(root.querySelectorAll('[data-stage-id]'));
+    skipBtn = document.getElementById('skipOpening');
+
+    // 略過邏輯
+    if (shouldSkip()) {
+      completeOpening(true);
+      return;
+    }
+
+    // 顯示 skip 按鈕
+    setTimeout(() => {
+      if (skipBtn) {
+        skipBtn.hidden = false;
+        setTimeout(() => skipBtn.classList.add('opening-skip--visible'), 50);
+        skipBtn.addEventListener('click', () => {
+          completeOpening(false);
+        }, { once: true });
+      }
+    }, 2000);
+
+    // 編舞 §21.1
+    scheduleStage(2, 800);
+    scheduleStage(3, 1800);
+    scheduleStage(4, 3000);
+    scheduleStage(5, 4500);
+    scheduleStage(6, 5500);
+    scheduleStage(7, 7000);
+    scheduleStage(8, 8500);
+    scheduleComplete(10500);
+  }
+
+  function shouldSkip() {
+    try {
+      const raw = localStorage.getItem(SKIP_FLAG);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      const ageDays = (Date.now() - data.ts) / 86400000;
+      return ageDays < SKIP_FLAG_TTL_DAYS;
+    } catch {
+      return false;
+    }
+  }
+
+  function markSeen() {
+    try {
+      localStorage.setItem(SKIP_FLAG, JSON.stringify({ ts: Date.now() }));
+    } catch {}
+  }
+
+  function scheduleStage(stageId, atMs) {
+    timers.push(setTimeout(() => showStage(stageId), atMs));
+  }
+
+  function scheduleComplete(atMs) {
+    timers.push(setTimeout(() => completeOpening(false), atMs));
+  }
+
+  function showStage(stageId) {
+    if (!stages) return;
+    stages.forEach((s) => {
+      s.hidden = true;
+      s.classList.remove('opening-stage--active');
+    });
+    const target = stages.find((s) => String(s.dataset.stageId) === String(stageId));
+    if (!target) return;
+    target.hidden = false;
+    // 強制 reflow 後加 class 觸發 transition
+    void target.offsetWidth;
+    target.classList.add('opening-stage--active');
+  }
+
+  function completeOpening(silent) {
+    if (!stages) return;
+    timers.forEach((t) => clearTimeout(t));
+    timers = [];
+    const root = document.getElementById(ROOT_ID);
+    if (!root) return;
+    root.dataset.complete = 'true';
+    if (!silent) markSeen();
+    setTimeout(() => {
+      root.style.display = 'none';
+    }, 1500);
+  }
+
+  // 公開 API:外部可手動 skip 或重啟
+  return {
+    init,
+    skip: () => completeOpening(false),
+    restart: () => {
+      const root = document.getElementById(ROOT_ID);
+      if (!root) return;
+      root.style.display = '';
+      root.dataset.complete = 'false';
+      markSeen(); // 重啟也算看過
+      init();
+    }
+  };
+})();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', window.__xiaomengOpening.init);
+} else {
+  window.__xiaomengOpening.init();
+}
+
+
+/* ====================================================================
+ * 🎴 Ritual CTA 點擊轉場(§21.4 卡片飛向中央)
+ * ==================================================================== */
+(function () {
+  const cta = document.getElementById('ritualCTA');
+  if (!cta) return;
+
+  cta.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // §21.4 步驟 1:卡片從 Hero 飛向畫面中央(150ms)
+    const opening = document.getElementById('opening-sequence');
+    if (opening) {
+      // 建立過場卡片
+      const card = document.createElement('div');
+      card.className = 'ritual-cta__flying-card';
+      card.style.cssText = 
+        position: fixed;
+        top: 50%; left: 50%;
+        width: 100px; height: 150px;
+        margin: -75px 0 0 -50px;
+        background: linear-gradient(135deg, rgba(245, 211, 139, 0.4), rgba(124, 77, 196, 0.3));
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1.5px solid #f5d38b;
+        border-radius: 12px;
+        z-index: 100000;
+        box-shadow: 0 0 60px rgba(245, 211, 139, 0.6);
+        transform: scale(0.2);
+        opacity: 0;
+        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      ;
+      document.body.appendChild(card);
+
+      // 觸發飛行動畫
+      requestAnimationFrame(() => {
+        card.style.transform = 'scale(1) translateY(0)';
+        card.style.opacity = '1';
+        setTimeout(() => {
+          card.style.transform = 'scale(8) translateY(0)';
+          card.style.opacity = '0';
+        }, 220);
+      });
+
+      // §21.4 步驟 2:同時所有元素 opacity → 0(200ms)
+      // §21.4 步驟 3:200ms 黑屏過場
+      setTimeout(() => {
+        opening.style.transition = 'opacity 200ms ease';
+        opening.style.opacity = '0';
+        document.body.style.transition = 'background 200ms ease';
+        document.body.style.background = '#000';
+      }, 400);
+
+      // §21.4 步驟 4:進入 F22 系統選擇頁
+      setTimeout(() => {
+        opening.style.display = 'none';
+        card.remove();
+        document.body.style.background = '';
+        // 觸發 F22 — 嘗試多個可能的入口
+        if (typeof window.openF22 === 'function') {
+          window.openF22();
+        } else if (typeof window.__xiaomengFortune === 'object' && window.__xiaomengFortune.openF22) {
+          window.__xiaomengFortune.openF22();
+        } else {
+          // 備援:點擊既有的命運之門按鈕
+          const fortuneBtn = document.querySelector('[data-system="tarot"]') || document.querySelector('.fortune-gate-btn') || document.querySelector('a[href*="tarot"]');
+          if (fortuneBtn) fortuneBtn.click();
+        }
+      }, 700);
+    }
+  });
+})();

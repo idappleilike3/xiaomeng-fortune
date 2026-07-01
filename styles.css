@@ -7703,3 +7703,312 @@ html, body { overflow-x: hidden; }
 .wallet-chip {
   cursor: pointer;
 }
+
+/* ====================================================================
+ * 🌟 Opening Experience Sequence(§21.1 八步容器)
+ * ==================================================================== */
+.opening-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  pointer-events: auto;
+  transition: opacity 1.2s ease;
+  overflow: hidden;
+}
+.opening-sequence[data-complete="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+.opening-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+.opening-stage[hidden] { display: none !important; }
+.opening-stage--active { opacity: 1; }
+
+/* Stage 1: Black */
+.opening-black__void { position: absolute; inset: 0; background: #000; }
+
+/* Stage 2: North Star */
+.opening-stage--star { background: #000; }
+.opening-star__core {
+  width: 4px; height: 4px;
+  background: #fff5d8;
+  border-radius: 50%;
+  box-shadow: 0 0 30px #fff5d8, 0 0 80px #f5d38b, 0 0 120px rgba(245, 211, 139, 0.5);
+  position: relative; z-index: 2;
+  animation: opening-star-pulse 2.4s ease-in-out infinite;
+}
+.opening-star__pulse {
+  position: absolute;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.7) 0%, rgba(245, 211, 139, 0.2) 40%, transparent 70%);
+  animation: opening-star-pulse-expand 2.4s ease-in-out infinite;
+}
+.opening-star__halo {
+  position: absolute;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.18) 0%, transparent 70%);
+  animation: opening-star-halo 3.6s ease-in-out infinite;
+}
+@keyframes opening-star-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.85; } }
+@keyframes opening-star-pulse-expand { 0%, 100% { transform: scale(0.6); opacity: 0.5; } 50% { transform: scale(1.6); opacity: 0.15; } }
+@keyframes opening-star-halo { 0%, 100% { transform: scale(0.8); opacity: 0.4; } 50% { transform: scale(1.4); opacity: 0.1; } }
+
+/* Stage 3: Sacred Geometry */
+.opening-stage--geometry { background: #000; }
+.opening-geometry__svg {
+  width: min(85vmin, 700px);
+  height: min(85vmin, 700px);
+  opacity: 0;
+  animation: opening-geometry-rotate 40s linear infinite, opening-geometry-fade 2s ease forwards;
+}
+@keyframes opening-geometry-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes opening-geometry-fade { from { opacity: 0; } to { opacity: 0.7; } }
+
+/* Stage 4: Background Awakening */
+.opening-stage--bg { background: #000; }
+.opening-bg__image {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  animation: opening-bg-awaken 2.5s ease forwards;
+}
+@keyframes opening-bg-awaken {
+  from { opacity: 0; transform: scale(1.08); filter: brightness(0.3) blur(8px); }
+  to { opacity: 0.35; transform: scale(1); filter: brightness(0.85) blur(0); }
+}
+
+/* Stage 5: Logo */
+.opening-stage--logo { background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(25, 20, 46, 0.55) 100%); }
+.opening-logo__inner { text-align: center; }
+.opening-logo__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(40px, 7vw, 84px);
+  font-weight: 900;
+  color: #f5d38b;
+  letter-spacing: 0.32em;
+  margin: 0;
+  text-shadow: 0 0 40px rgba(245, 211, 139, 0.5), 0 0 80px rgba(245, 211, 139, 0.2);
+  animation: opening-logo-rise 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(24px);
+}
+.opening-logo__subtitle {
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  font-size: clamp(10px, 1.4vw, 13px);
+  font-weight: 500;
+  color: #c9b88a;
+  letter-spacing: 0.5em;
+  margin: 14px 0 0;
+  opacity: 0;
+  animation: opening-logo-sub-fade 1.4s ease 0.6s forwards;
+}
+@keyframes opening-logo-rise { to { opacity: 1; transform: translateY(0); } }
+@keyframes opening-logo-sub-fade { to { opacity: 0.85; } }
+
+/* Stage 6: Hero Text */
+.opening-stage--hero {
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(25, 20, 46, 0.45) 100%);
+  padding: 0 24px;
+}
+.opening-hero__inner { text-align: center; max-width: 720px; }
+.opening-hero__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 700;
+  color: #fff5d8;
+  letter-spacing: 0.12em;
+  margin: 0 0 28px;
+  line-height: 1.3;
+  opacity: 0;
+  animation: opening-hero-rise 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  text-shadow: 0 0 30px rgba(255, 245, 216, 0.3);
+}
+.opening-hero__sub-en, .opening-hero__sub-zh {
+  font-family: Georgia, serif;
+  margin: 6px 0;
+  color: #c9b88a;
+  opacity: 0;
+}
+.opening-hero__sub-en {
+  font-size: clamp(13px, 1.8vw, 17px);
+  letter-spacing: 0.28em;
+  animation: opening-hero-rise 1.4s ease 0.7s forwards;
+}
+.opening-hero__sub-zh {
+  font-size: clamp(15px, 2.2vw, 19px);
+  letter-spacing: 0.18em;
+  animation: opening-hero-rise 1.4s ease 0.95s forwards;
+}
+@keyframes opening-hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stage 7: Three Entries */
+.opening-stage--entries {
+  background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(25, 20, 46, 0.4) 100%);
+  padding: 0 20px;
+}
+.opening-entries__row {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  justify-content: center; align-items: center;
+}
+.opening-entry {
+  position: relative;
+  display: inline-flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  padding: 22px 38px;
+  background: rgba(245, 211, 139, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  border-radius: 16px;
+  color: #fff5d8;
+  text-decoration: none;
+  font-family: Georgia, serif;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.opening-entry[data-stagger="0"] { animation: opening-entry-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
+.opening-entry[data-stagger="1"] { animation: opening-entry-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards; }
+.opening-entry[data-stagger="2"] { animation: opening-entry-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards; }
+.opening-entry__zh { font-size: 18px; font-weight: 700; letter-spacing: 0.18em; }
+.opening-entry__en { font-size: 11px; letter-spacing: 0.3em; color: #c9b88a; }
+.opening-entry:hover {
+  transform: translateY(-4px);
+  border-color: #f5d38b;
+  box-shadow: 0 10px 36px rgba(245, 211, 139, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(245, 211, 139, 0.12);
+}
+@keyframes opening-entry-rise { to { opacity: 1; transform: translateY(0); } }
+
+/* Stage 8: Ritual CTA Button(BRAND_BIBLE §8.6) */
+.opening-stage--cta {
+  background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(25, 20, 46, 0.4) 100%);
+}
+.ritual-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 60px;
+  background: rgba(245, 211, 139, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  color: #fff5d8;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  overflow: visible;
+  box-shadow: 0 8px 32px rgba(245, 211, 139, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: divine-glow-pulse 1.8s ease-in-out infinite, opening-cta-rise 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px) scale(0.94);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.45s ease;
+}
+@keyframes opening-cta-rise {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes divine-glow-pulse {
+  0%, 100% { box-shadow: 0 8px 32px rgba(245, 211, 139, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12); }
+  50% { box-shadow: 0 14px 52px rgba(245, 211, 139, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
+}
+.ritual-cta::before {
+  content: '';
+  position: absolute; inset: -1.5px;
+  border-radius: 999px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #f5d38b 0%, #fff5d8 50%, #f5d38b 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.ritual-cta::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.32) 50%, transparent 70%);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+.ritual-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 56px rgba(245, 211, 139, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: rgba(245, 211, 139, 0.18);
+}
+.ritual-cta:hover::after { animation: ritual-shine-sweep 1.2s ease forwards; }
+@keyframes ritual-shine-sweep { to { transform: translateX(100%); } }
+.ritual-cta__text { position: relative; z-index: 2; }
+.ritual-cta__particles::before, .ritual-cta__particles::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #fff5d8;
+  box-shadow: 0 0 8px #f5d38b, 0 0 16px #fff5d8;
+  opacity: 0;
+  pointer-events: none;
+}
+.ritual-cta:hover .ritual-cta__particles::before { animation: ritual-particle-1 1s ease-out forwards; }
+.ritual-cta:hover .ritual-cta__particles::after { animation: ritual-particle-2 1s ease-out forwards; }
+@keyframes ritual-particle-1 {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + 70px), calc(-50% - 70px)) scale(0.2); }
+}
+@keyframes ritual-particle-2 {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% - 70px), calc(-50% + 70px)) scale(0.2); }
+}
+
+/* Skip button */
+.opening-skip {
+  position: fixed; top: 20px; right: 20px;
+  z-index: 10001;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  border-radius: 999px;
+  color: #c9b88a;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.4s ease, border-color 0.3s ease, color 0.3s ease;
+}
+.opening-skip[hidden] { display: none !important; }
+.opening-skip--visible { opacity: 0.85; }
+.opening-skip:hover { opacity: 1; border-color: #f5d38b; color: #fff5d8; }
+.opening-skip__icon { font-size: 11px; }
+
+@media (max-width: 720px) {
+  .opening-entries__row { flex-direction: column; gap: 12px; }
+  .opening-entry { padding: 16px 28px; }
+  .ritual-cta { padding: 16px 32px; }
+  .opening-skip { top: 12px; right: 12px; padding: 6px 12px; font-size: 11px; }
+}

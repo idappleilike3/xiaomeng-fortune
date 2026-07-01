@@ -19,6 +19,99 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
   <body>
+    <!-- 🌟 Opening Experience Sequence(§21.1 八步) -->
+    <section id="opening-sequence" class="opening-sequence" data-stage="0" aria-label="Opening Experience">
+      <!-- Stage 1: Black Screen -->
+      <div class="opening-stage opening-stage--black" data-stage-id="1">
+        <div class="opening-black__void"></div>
+      </div>
+
+      <!-- Stage 2: North Star -->
+      <div class="opening-stage opening-stage--star" data-stage-id="2" hidden>
+        <div class="opening-star__halo"></div>
+        <div class="opening-star__pulse"></div>
+        <div class="opening-star__core"></div>
+      </div>
+
+      <!-- Stage 3: Sacred Geometry -->
+      <div class="opening-stage opening-stage--geometry" data-stage-id="3" hidden>
+        <svg class="opening-geometry__svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+          <g class="opening-geometry__lines" stroke="#f5d38b" stroke-width="0.6" fill="none">
+            <!-- Metatron's Cube wireframe -->
+            <polygon points="0,-100 86.6,50 -86.6,50" />
+            <polygon points="0,100 86.6,-50 -86.6,-50" />
+            <circle cx="0" cy="0" r="100" />
+            <circle cx="0" cy="-100" r="50" />
+            <circle cx="86.6" cy="50" r="50" />
+            <circle cx="-86.6" cy="50" r="50" />
+            <circle cx="0" cy="100" r="50" />
+            <circle cx="86.6" cy="-50" r="50" />
+            <circle cx="-86.6" cy="-50" r="50" />
+            <line x1="0" y1="-100" x2="86.6" y2="50" />
+            <line x1="86.6" y1="50" x2="-86.6" y2="50" />
+            <line x1="-86.6" y1="50" x2="0" y2="-100" />
+            <line x1="0" y1="100" x2="86.6" y2="-50" />
+            <line x1="86.6" y1="-50" x2="-86.6" y2="-50" />
+            <line x1="-86.6" y1="-50" x2="0" y2="100" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Stage 4: Background Awakening(goddess bg 0 → 1) -->
+      <div class="opening-stage opening-stage--bg" data-stage-id="4" hidden>
+        <img src="assets/hero-bg-goddess-16x9.png" alt="" class="opening-bg__image" />
+      </div>
+
+      <!-- Stage 5: Logo -->
+      <div class="opening-stage opening-stage--logo" data-stage-id="5" hidden>
+        <div class="opening-logo__inner">
+          <h1 class="opening-logo__title">小夢神殿</h1>
+          <p class="opening-logo__subtitle">XIAOMENG SANCTUARY</p>
+        </div>
+      </div>
+
+      <!-- Stage 6: Hero Text -->
+      <div class="opening-stage opening-stage--hero" data-stage-id="6" hidden>
+        <div class="opening-hero__inner">
+          <h2 class="opening-hero__title" id="heroOpeningTitle" data-text="今晚,你想尋找什麼答案?">今晚,你想尋找什麼答案?</h2>
+          <p class="opening-hero__sub-en">Every soul has its own constellation.</p>
+          <p class="opening-hero__sub-zh">每一個靈魂,都有屬於自己的星軌。</p>
+        </div>
+      </div>
+
+      <!-- Stage 7: Three Entries -->
+      <div class="opening-stage opening-stage--entries" data-stage-id="7" hidden>
+        <div class="opening-entries__row">
+          <a href="#" class="opening-entry" data-system="tarot" data-stagger="0">
+            <span class="opening-entry__zh">命運之門</span>
+            <span class="opening-entry__en">TAROT</span>
+          </a>
+          <a href="#" class="opening-entry" data-system="pet" data-stagger="1">
+            <span class="opening-entry__zh">靈魂之門</span>
+            <span class="opening-entry__en">PET</span>
+          </a>
+          <a href="#" class="opening-entry" data-system="oracle" data-stagger="2">
+            <span class="opening-entry__zh">神諭之門</span>
+            <span class="opening-entry__en">ORACLE</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Stage 8: Ritual CTA(§8.6) -->
+      <div class="opening-stage opening-stage--cta" data-stage-id="8" hidden>
+        <button id="ritualCTA" class="ritual-cta" type="button">
+          <span class="ritual-cta__text">讓小夢陪你翻開命運的第一張牌。</span>
+          <span class="ritual-cta__particles" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <!-- Skip button(回訪使用者) -->
+      <button id="skipOpening" class="opening-skip" type="button" hidden aria-label="略過開場儀式">
+        <span class="opening-skip__icon" aria-hidden="true">⏭</span>
+        <span class="opening-skip__text">略過開場</span>
+      </button>
+    </section>
+
     <div class="ritual-background" aria-hidden="true">
       <span class="ritual-orbit orbit-one"></span>
       <span class="ritual-orbit orbit-two"></span>
