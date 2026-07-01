@@ -2686,3 +2686,130 @@ if (document.readyState === 'loading') {
   // initial paint
   refreshPointsBadge();
 })();
+
+
+// =====================================================================
+// F30 解鎖流程 — 查看完整解讀 / 預約深度占卜 / 扣點解鎖
+// =====================================================================
+(function f30UnlockHandlers() {
+  function openUnlockModal(opts) {
+    const overlay = document.createElement("div");
+    overlay.className = "unlock-modal-overlay";
+    const title = opts.title || "解鎖完整解析";
+    const body = opts.body || "";
+    const cta = opts.cta || "確認";
+    const ctaAction = opts.ctaAction || "noop";
+    overlay.innerHTML = `
+      <div class="unlock-modal" role="dialog" aria-labelledby="unlockModalTitle">
+        <div class="unlock-modal__head">
+          <h3 id="unlockModalTitle">${title}</h3>
+          <button type="button" class="unlock-modal__close" aria-label="關閉">✕</button>
+        </div>
+        <div class="unlock-modal__body">${body}</div>
+        <div class="unlock-modal__actions">
+          <button type="button" class="ritual-cta ritual-cta--ghost" data-action="close">取消</button>
+          <button type="button" class="ritual-cta" data-action="${ctaAction}">${cta}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add("is-open"));
+    const close = () => overlay.remove();
+    overlay.querySelectorAll("[data-action='close']").forEach((b) => b.addEventListener("click", close));
+    overlay.querySelector(".unlock-modal__close").addEventListener("click", close);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    const ctaBtn = overlay.querySelector(`[data-action='${ctaAction}']`);
+    if (ctaBtn) ctaBtn.addEventListener("click", () => {
+      if (opts.onCta) opts.onCta();
+      close();
+    });
+    return overlay;
+  }
+
+  // (A) 查看完整解讀
+  document.querySelector("#viewFullBtn")?.addEventListener("click", () => {
+    openUnlockModal({
+      title: "完整解讀 · $99 / 次",
+      body: `
+        <p>完整解讀將延伸:</p>
+        <ul>
+          <li>感情 / 工作 / 財運三軸交叉分析</li>
+          <li>未來 14–30 天走勢預覽</li>
+          <li>阻礙來源與突破建議</li>
+          <li>對方狀態 / 對方想法(若適用)</li>
+          <li>下一步行動清單 + 對應開運選品</li>
+        </ul>
+        <p class="unlock-modal__note">正式上線後將串接 ECPay 線上付款;目前為流程預覽。</p>
+      `,
+      cta: "前往付款預覽",
+      ctaAction: "ecpay-preview",
+      onCta: () => {
+        const u = document.querySelector('[data-unlock="single"]');
+        u && u.click();
+      },
+    });
+  });
+
+  // (B) 預約深度占卜
+  document.querySelector("#bookSessionBtn")?.addEventListener("click", () => {
+    openUnlockModal({
+      title: "預約深度占卜 · 一對一",
+      body: `
+        <p>一對一深度占卜包含:</p>
+        <ul>
+          <li>30 分鐘即時視訊 / 語音解析</li>
+          <li>客製化行動建議書(PDF)</li>
+          <li>3 個月內 1 次免費回測</li>
+          <li>對應開運選品 5 折優惠</li>
+        </ul>
+        <p class="unlock-modal__note">目前先以 LINE 官方帳號預約時段。</p>
+      `,
+      cta: "前往 LINE 預約",
+      ctaAction: "line-booking",
+      onCta: () => {
+        window.open("https://line.me/R/ti/p/@471cptxk", "_blank");
+      },
+    });
+  });
+
+  // (C) 60 點解鎖深度解析
+  document.querySelector("#unlockWithPoints")?.addEventListener("click", () => {
+    openUnlockModal({
+      title: "60 點解鎖深度解析",
+      body: `
+        <p>將從你的點數錢包扣除 <strong>60 點</strong>,解鎖本次抽牌的完整解析。</p>
+        <p>目前點數餘額:<strong data-points-badge>0</strong> 點</p>
+        <p class="unlock-modal__note">點數不足?分享給 LINE 好友即可獲得 60 點。</p>
+      `,
+      cta: "確認扣點解鎖",
+      ctaAction: "confirm-spend",
+      onCta: () => {
+        const current = Number(localStorage.getItem("xiaomeng:memberPoints") || 0);
+        if (current < 60) {
+          alert("點數不足!\n\n分享給 LINE 好友可獲得 60 點,或選擇單次 $99 解鎖。");
+          return;
+        }
+        const next = current - 60;
+        localStorage.setItem("xiaomeng:memberPoints", String(next));
+        const evt = new CustomEvent("xiaomeng:points-spent", { detail: { amount: 60, reason: "解鎖深度解析" } });
+        window.dispatchEvent(evt);
+        alert(`已扣 60 點。\n剩餘點數:${next} 點\n\n完整解析已解鎖(本機預覽模式)。`);
+      },
+    });
+  });
+
+  // (D) 分享送 20 點(舊按鈕 ID 留著)
+  document.querySelector("#rewardPoints")?.addEventListener("click", () => {
+    const evt = new CustomEvent("xiaomeng:share-completed");
+    window.dispatchEvent(evt);
+    const current = Number(localStorage.getItem("xiaomeng:memberPoints") || 0);
+    alert(`分享完成!\n已送你 20 點。\n目前點數:${current + 20} 點`);
+  });
+
+  // 監聽 points-spent → refresh badge
+  window.addEventListener("xiaomeng:points-spent", () => {
+    document.querySelectorAll("[data-points-badge]").forEach((b) => {
+      b.textContent = String(localStorage.getItem("xiaomeng:memberPoints") || 0);
+    });
+  });
+})();
