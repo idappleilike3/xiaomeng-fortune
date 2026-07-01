@@ -4,55 +4,55 @@
     "height": 1686
   },
   "selected": true,
-  "name": "小夢老師主選單",
+  "name": "小夢神殿選單 v2",
   "chatBarText": "小夢選單",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "設定生日",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=profile"
+        "label": "命運塔羅",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=tarot&entry=liff"
       }
     },
     {
       "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "塔羅抽牌",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
+        "label": "毛孩心語",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=pet&entry=liff"
       }
     },
     {
       "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "求籤",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
+        "label": "今日神諭",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=oracle&entry=liff"
       }
     },
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "生命靈數",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=demo"
+        "type": "message",
+        "label": "靈性積分",
+        "text": "查詢靈性積分"
       }
     },
     {
       "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "命盤",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=profile"
+        "type": "message",
+        "label": "我的紀錄",
+        "text": "查看我的紀錄"
       }
     },
     {
       "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "命運市集",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=market"
+        "label": "更多探索",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?layer=3&entry=liff"
       }
     }
   ]

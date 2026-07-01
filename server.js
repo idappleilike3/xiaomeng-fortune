@@ -268,6 +268,10 @@ function uriAction(label, uri) {
   return { type: "uri", label, uri };
 }
 
+function messageAction(label, text) {
+  return { type: "message", label, text };
+}
+
 function liffPageUrl(page) {
   return `${liffBaseUrl}?page=${encodeURIComponent(page)}`;
 }
@@ -354,6 +358,267 @@ function menuFlexMessage() {
           size: "xs",
           color: "#CDBCEB",
           wrap: true,
+        },
+      ],
+    },
+  });
+}
+
+function welcomeFlexMessage() {
+  // 對齊 PROJECT_BIBLE §20 + LINE_OFFICIAL_EXPERIENCE_v2.0_DRAFT §③
+  return flexMessage("歡迎來到小夢 Fortune Platform", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#0D0718",
+      contents: [
+        {
+          type: "text",
+          text: "歡迎來到",
+          size: "sm",
+          color: "#C9B88A",
+          align: "center",
+        },
+        {
+          type: "text",
+          text: "小夢 Fortune Platform 🌙",
+          size: "xl",
+          weight: "bold",
+          color: "#F5D38B",
+          align: "center",
+        },
+        {
+          type: "text",
+          text: "今晚,",
+          size: "md",
+          color: "#FFF5D8",
+          align: "center",
+        },
+        {
+          type: "text",
+          text: "也許宇宙正準備給你一個答案。",
+          size: "md",
+          color: "#FFF5D8",
+          align: "center",
+          wrap: true,
+        },
+        {
+          type: "separator",
+          margin: "lg",
+          color: "#5C4570",
+        },
+        {
+          type: "text",
+          text: "🎁 新朋友專屬禮遇",
+          size: "sm",
+          weight: "bold",
+          color: "#F5D38B",
+          margin: "md",
+        },
+        {
+          type: "text",
+          text: "✨ 50 靈性積分\n✨ 三大系統首次免費體驗",
+          size: "sm",
+          color: "#FFF5D8",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "請點擊下方【小夢選單】\n開始今晚的探索。",
+          size: "xs",
+          color: "#C9B88A",
+          margin: "lg",
+          align: "center",
+          wrap: true,
+        },
+      ],
+    },
+  });
+}
+
+function tarotGuidanceFlexMessage() {
+  // 對齊 LINE_OFFICIAL_EXPERIENCE_v2.0_DRAFT §⑤ 命運塔羅
+  const items = [
+    { label: "✨ 今日一張牌(免費)", value: "塔羅 今日一張牌" },
+    { label: "💕 感情關係", value: "塔羅 感情" },
+    { label: "💼 工作事業", value: "塔羅 工作" },
+    { label: "💰 財富豐盛", value: "塔羅 財富" },
+    { label: "🔮 完整牌陣", value: "塔羅 完整牌陣" },
+  ];
+  return flexMessage("今晚,你想尋找什麼答案？", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#1A0F2D",
+      contents: [
+        {
+          type: "text",
+          text: "今晚,你想尋找什麼答案？",
+          size: "lg",
+          weight: "bold",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "選擇主題,由小夢陪你抽牌。",
+          size: "sm",
+          color: "#C9B88A",
+          wrap: true,
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: items.map((it) => ({
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            color: "#F5D38B",
+            action: messageAction(it.label, it.value),
+          })),
+        },
+        {
+          type: "button",
+          style: "primary",
+          height: "sm",
+          color: "#7C4DC4",
+          margin: "md",
+          action: uriAction("🔮 前往官網", liffPageUrl("tarot")),
+        },
+      ],
+    },
+  });
+}
+
+function petGuidanceFlexMessage() {
+  // 對齊 LINE_OFFICIAL_EXPERIENCE_v2.0_DRAFT §⑤ 毛孩心語
+  const items = [
+    { label: "🐾 今日一牌(免費)", value: "毛孩 今日一牌" },
+    { label: "💕 毛孩與你的關係", value: "毛孩 關係" },
+    { label: "🩺 毛孩健康與飲食", value: "毛孩 健康" },
+    { label: "🎾 毛孩行為理解", value: "毛孩 行為" },
+    { label: "🌙 毛孩離世後的訊息", value: "毛孩 離世訊息" },
+    { label: "🔮 完整牌陣", value: "毛孩 完整牌陣" },
+  ];
+  return flexMessage("今晚,想為哪位毛孩探尋心意？", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#1A0F2D",
+      contents: [
+        {
+          type: "text",
+          text: "今晚,想為哪位毛孩探尋心意？",
+          size: "lg",
+          weight: "bold",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "選擇主題,聽見毛孩的心聲。",
+          size: "sm",
+          color: "#C9B88A",
+          wrap: true,
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: items.map((it) => ({
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            color: "#F5D38B",
+            action: messageAction(it.label, it.value),
+          })),
+        },
+        {
+          type: "text",
+          text: "⚠ 本內容僅提供能量探索,不能取代獸醫診斷。",
+          size: "xxs",
+          color: "#FF9090",
+          margin: "md",
+          wrap: true,
+        },
+        {
+          type: "button",
+          style: "primary",
+          height: "sm",
+          color: "#7C4DC4",
+          margin: "sm",
+          action: uriAction("🐾 前往官網", liffPageUrl("pet")),
+        },
+      ],
+    },
+  });
+}
+
+function oracleGuidanceFlexMessage() {
+  // 對齊 LINE_OFFICIAL_EXPERIENCE_v2.0_DRAFT §⑤ 今日神諭
+  const items = [
+    { label: "✨ 今日訊息(免費)", value: "神諭 今日訊息" },
+    { label: "💫 宇宙提醒", value: "神諭 宇宙提醒" },
+    { label: "🌟 心靈祝福", value: "神諭 心靈祝福" },
+    { label: "🌓 月相指引", value: "神諭 月相指引" },
+    { label: "🔮 完整神諭組", value: "神諭 完整神諭" },
+  ];
+  return flexMessage("今晚,宇宙想給你什麼訊息？", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#1A0F2D",
+      contents: [
+        {
+          type: "text",
+          text: "今晚,宇宙想給你什麼訊息？",
+          size: "lg",
+          weight: "bold",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "宇宙的訊息,正在向你靠近。",
+          size: "sm",
+          color: "#C9B88A",
+          wrap: true,
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          contents: items.map((it) => ({
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            color: "#F5D38B",
+            action: messageAction(it.label, it.value),
+          })),
+        },
+        {
+          type: "button",
+          style: "primary",
+          height: "sm",
+          color: "#7C4DC4",
+          margin: "md",
+          action: uriAction("🌙 前往官網", liffPageUrl("oracle")),
         },
       ],
     },
@@ -703,19 +968,55 @@ function buildReplyMessages(event) {
   const lowerText = text.toLowerCase();
 
   if (event.type === "follow") {
-    return [menuFlexMessage()];
+    return [welcomeFlexMessage()];
   }
 
   if (!text) {
     return [menuFlexMessage()];
   }
 
-  if (text.includes("塔羅") || lowerText.includes("tarot")) {
-    return [tarotEntryFlexMessage()];
+  if (text.includes("命運塔羅") || text === "塔羅" || lowerText.includes("tarot")) {
+    return [tarotGuidanceFlexMessage()];
+  }
+
+  if (text.includes("毛孩心語") || text.includes("毛孩")) {
+    return [petGuidanceFlexMessage()];
+  }
+
+  if (text.includes("今日神諭") || text.includes("神諭")) {
+    return [oracleGuidanceFlexMessage()];
   }
 
   if (text.includes("求籤") || text.includes("籤")) {
     return [oracleEntryFlexMessage()];
+  }
+
+  if (text === "查詢靈性積分" || text.includes("靈性積分")) {
+    const member = getOrCreateMember(getLineUserId(event) || "demo-member-001");
+    const wallet = getMemberWallet(member.id);
+    return [
+      textMessage(
+        `✨ 你的靈性積分\n\n餘額：${wallet.balance ?? member.points} SP\n\n累積來源：\n• 每日簽到 +5\n• 首次體驗 +50\n• 分享 +50\n\n兌換：\n• 1 次完整牌陣 -50\n• 抽獎 -200\n\n${liffPageUrl("member")}`
+      ),
+    ];
+  }
+
+  if (text === "查看我的紀錄" || text.includes("我的紀錄")) {
+    const member = getOrCreateMember(getLineUserId(event) || "demo-member-001");
+    const records = (member.records || []).slice(0, 5);
+    if (!records.length) {
+      return [
+        textMessage(
+          `你還沒有占卜紀錄。\n\n開始第一場神聖占卜：\n${liffPageUrl("tarot")}`
+        ),
+      ];
+    }
+    const lines = records.map((r, i) => `${i + 1}. ${r.name || r.card || "未命名"} (${r.system || "tarot"})`).join("\n");
+    return [
+      textMessage(
+        `📖 近 5 次占卜紀錄\n\n${lines}\n\n完整紀錄：\n${liffPageUrl("member")}`
+      ),
+    ];
   }
 
   if (text.includes("靈數") || text.includes("生命靈數") || lowerText.includes("number")) {
