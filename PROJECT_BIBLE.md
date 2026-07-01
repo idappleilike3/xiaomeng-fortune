@@ -788,17 +788,177 @@ fps: 60
 | 解讀 | 一次性 | 分段打字機 |
 | 完成儀式 | 無 | 今日祝福 + 三按鈕 |
 
-### §18.13 對齊關係
 
-| F22 v2.0 | 對齊 |
+### §18.14 Sacred Stage Engine(SSE · 可重複使用引擎)
+
+> **F22 不是動畫。F22 是引擎。**
+> 三大占卜系統、未來新增的任何牌陣,**不需要重寫動畫**,只需提供配置。
+> 引擎讀取 config,自動渲染完整 11 步神聖儀式。
+
+#### 核心概念
+
+`
+舊架構:
+  F22 塔羅(寫死) + F22 寵物(寫死) + F22 神諭(寫死) ❌
+新架構:
+  Sacred Stage Engine(核心) + spread-themes/{system}.js(配置) ✅
+`
+
+#### 引擎位置
+
+`
+xiaomeng-fortune/
+├── lib/
+│   ├── sacred-stage-engine.js   ← 核心引擎(11 步編舞 + 主題切換 + 音效 + 動畫)
+│   ├── sacred-stage.css         ← 引擎樣式(主舞台 + 牌卡 + 翻牌 + 粒子)
+│   ├── sacred-stage.html        ← 引擎 HTML 模板(11 步容器)
+│   └── spread-themes/           ← 配置目錄
+│       ├── tarot.js             ← 塔羅配置
+│       ├── pet.js               ← 寵物配置
+│       ├── oracle.js            ← 神諭配置
+│       └── _template.js         ← 新增牌陣範本
+`
+
+#### SSE 公開 API
+
+`js
+// 啟動一個神聖舞台
+const stage = new SacredStage({
+  // 必填
+  system: 'tarot' | 'pet' | 'oracle' | 'custom',
+  spread: 'three-card' | 'celtic-cross' | 'one-card' | string,
+  cards: Array<CardData>,         // 牌組資料
+  
+  // 主題(從 spread-themes/{system}.js 載入)
+  theme: {
+    name: string,                 // '命運之門'
+    background: string,           // 主題背景色
+    accentColor: string,          // 點綴色
+    cardBack: string,             // 牌背圖 URL
+    cardFrameStyle: object,       // 牌框裝飾
+  },
+  
+  // 音效(自動載入系統 BGM + 11 步音效)
+  audio: {
+    bgm: string,                  // 'bgm-tarot.mp3'
+    enabled: boolean,             // 受 xm_audio_muted 控制
+    volume: number,               // 預設 0.3
+  },
+  
+  // 翻牌特效(粒子類型)
+  effects: {
+    particleType: 'gold-sparkles' | 'pink-hearts-paws' | 'white-light-rays' | 'custom',
+    particleCount: number,        // 預設 24
+    particleLifetime: number,     // ms, 預設 1500
+    glowColor: string,            // 粒子發光色
+  },
+  
+  // 深度靈性解讀模板
+  readingTemplate: {
+    sections: Array<{
+      key: 'core' | 'situation' | 'guidance' | 'blessing',
+      title: string,              // '核心訊息'
+      template: string,           // 模板字串(含 {{card.name}} 等變數)
+      duration: number,           // 打字機總時長
+    }>,
+  },
+  
+  // 選填
+  onComplete: (reading) => {},   // 完成時 callback
+  onShare: (card) => {},         // 分享時 callback
+  onSave: (record) => {},        // 收藏時 callback
+});
+
+stage.start();                    // 開始 11 步
+stage.skip();                     // 略過(罕用)
+stage.destroy();                  // 銷毀 + 清理
+`
+
+#### CardData 結構
+
+`js
+{
+  id: 'tarot-00',                 // 唯一 ID
+  name: '愚者',                   // 顯示名
+  nameEn: 'The Fool',             // 英文
+  numeral: '0',                   // 數字或羅馬
+  image: 'assets/tarot-00-fool.png',
+  keywords: ['新開始', '純真', '冒險'],
+  reversed: boolean,              // 是否逆位
+  customData: object,             // 系統專屬擴充
+}
+`
+
+#### 5 大主題變數(由引擎統一管理)
+
+| 變數 | 用途 | 預設 |
+|---|---|---|
+| --sse-bg | 舞台主背景色 | #0d0718 |
+| --sse-accent | 主題點綴色 | #f5d38b |
+| --sse-particle-color | 粒子主色 | 跟隨 theme |
+| --sse-glow | 光暈顏色 | 跟隨 theme |
+| --sse-font | 字型 | Georgia, serif |
+
+#### 引擎職責
+
+`
+✅ 11 步完整流程編舞
+✅ 自動載入系統主題
+✅ 自動播放 BGM + 11 步音效
+✅ 自動套用粒子特效
+✅ 自動呼叫 readingTemplate 生成解讀
+✅ 自動寫入 localStorage(命運紀錄)
+✅ 自動觸發完成儀式(今日祝福)
+✅ 跨裝置同步(若啟用)
+`
+
+#### 配置檔職責
+
+`
+✅ 定義該系統的世界觀 / 色彩 / 牌背
+✅ 定義該系統的 BGM + 11 步音效路徑
+✅ 定義該系統的粒子類型
+✅ 定義該系統的解讀模板
+✅ 定義該系統的完成祝福語
+`
+
+#### 新增牌陣流程(未來)
+
+`
+1. 複製 lib/spread-themes/_template.js → lib/spread-themes/my-spread.js
+2. 修改 5 大區塊:theme / cards / audio / effects / readingTemplate
+3. 呼叫:
+   new SacredStage({
+     system: 'custom',
+     spread: 'my-spread',
+     ...config
+   }).start();
+4. 完成。0 行程式碼動畫。
+`
+
+#### 禁止事項
+
+- ❌ 不得在配置檔寫 CSS 動畫
+- ❌ 不得在配置檔寫 setTimeout 編舞
+- ❌ 不得繞過引擎直接操作 DOM
+- ❌ 不得複製現有 F22 程式碼「再寫一份」新系統
+
+### §18.15 SSE 與現有 F22 關係
+
+- **現有 F22 程式碼(2026-07-01 前的版本)** → **重構** 為 SSE
+- **§18.14 SSE** 是新架構的 SSOT
+- **§18.2 11 步流程** 由 SSE 執行(不再由各系統各自實作)
+
+### §18.16 SSE 對齊關係
+
+| SSE 元素 | 對齊 |
 |---|---|
-| §18.2 11 步 | BRAND_BIBLE §13 |
-| §18.7 三系統 | §6.1 三大占卜系統 SSOT |
-| §18.8 音效 | BRAND_BIBLE §17 12 音效 |
-| §18.9 動畫 | BRAND_BIBLE §13 統一動畫庫 |
-| §18.10 完成 | §20 LINE §7 50 積分 |
-
-
+| 11 步編舞 | BRAND_BIBLE §13 15 動畫 |
+| 主題切換 | BRAND_BIBLE §5 色彩 + §10 金框 + §11 光暈 |
+| 粒子特效 | BRAND_BIBLE §12 3 粒子系統 |
+| 音效 | BRAND_BIBLE §17 12 音效 |
+| 解讀模板 | §15 Writing Style + §5 命名公約 |
+| 完成儀式 | §18.10 今日祝福 + §20 LINE §7 50 積分 |
 ## §19 Brand Bible (獨立檔案)
 
 > **所有頁面的視覺唯一依據。任何頁面不得自行設計,必須完全對齊本檔案。**
