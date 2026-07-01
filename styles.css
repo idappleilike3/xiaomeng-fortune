@@ -4651,7 +4651,8 @@ body.ritual-active .card-spread-row {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(155deg, rgba(38, 22, 64, 0.55) 0%, rgba(13, 7, 24, 0.85) 100%);
+    linear-gradient(155deg, rgba(38, 22, 64, 0.78) 0%, rgba(13, 7, 24, 0.92) 100%);
+  opacity: 0.15;
   pointer-events: none;
   z-index: 0;
 }
@@ -4689,6 +4690,11 @@ body.ritual-active .card-spread-row {
     0 26px 50px rgba(0, 0, 0, 0.42),
     0 0 36px rgba(245, 211, 139, 0.22),
     inset 0 1px 0 rgba(255, 232, 166, 0.18);
+}
+.hero-entry:hover::before,
+.hero-entry:focus-visible::before {
+  opacity: 0.28;
+  transition: opacity 320ms ease;
 }
 
 .hero-entry__num {
@@ -6923,4 +6929,45 @@ button.compact-button:hover,
   background: rgba(245, 211, 139, 0.12) !important;
   color: var(--btn-text-hover) !important;
   border: 1px solid rgba(245, 211, 139, 0.6) !important;
+}
+
+
+/* =====================================================================
+   Phase 47: 入口 2 表單鎖頭 + 599 折抵字 全面亮香檳金 強化
+   ===================================================================== */
+.system-card__lock {
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.12), rgba(245, 211, 139, 0.04)) !important;
+  border: 1px solid rgba(245, 211, 139, 0.55) !important;
+  color: #f5d38b !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+.system-card__lock .lock-icon,
+.system-card__lock::before {
+  color: #f5d38b !important;
+  filter: drop-shadow(0 0 4px rgba(245, 211, 139, 0.6));
+}
+.system-card__lock small {
+  color: #f5d38b !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.unlock-discount-hint {
+  background: rgba(245, 211, 139, 0.1) !important;
+  border: 1px solid rgba(245, 211, 139, 0.45) !important;
+  color: #f5d38b !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.wallet-hint {
+  color: #f5d38b !important;
+}
+.wallet-hint strong {
+  color: #ffe2a3 !important;
+  text-shadow: 0 0 6px rgba(255, 226, 163, 0.4);
 }
