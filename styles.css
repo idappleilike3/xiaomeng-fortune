@@ -6039,3 +6039,105 @@ body.ritual-active .card-spread-row {
   color: #fff !important;
   transform: translateY(-1px);
 }
+
+
+/* =====================================================================
+   Phase 27: 全站按鈕 降飽和/去實色/幽靈化
+   - 改為深紫半透明 + 香檳金極細發光邊框 + 香檳金字
+   - 加上極慢速呼吸發光動畫
+   ===================================================================== */
+.panel-button,
+.share-btn,
+.ritual-cta,
+.ritual-cta--secondary,
+.ritual-cta--ghost,
+.star-results__btn,
+.star-results__btn--primary {
+  background:
+    linear-gradient(135deg,
+      rgba(28, 18, 56, 0.55) 0%,
+      rgba(38, 22, 64, 0.62) 45%,
+      rgba(58, 32, 90, 0.55) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.18), transparent 70%) !important;
+  color: #f5d38b !important;
+  border: 1px solid rgba(245, 211, 139, 0.4) !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.08) inset,
+    0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 280ms ease, box-shadow 280ms ease, background 280ms ease;
+}
+.panel-button:hover,
+.share-btn:hover,
+.ritual-cta:hover,
+.ritual-cta--secondary:hover,
+.ritual-cta--ghost:hover,
+.star-results__btn:hover,
+.star-results__btn--primary:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(38, 24, 72, 0.7) 0%,
+      rgba(58, 32, 90, 0.78) 45%,
+      rgba(78, 42, 110, 0.7) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.32), transparent 70%) !important;
+  color: #fff5d8 !important;
+  border-color: rgba(245, 211, 139, 0.7) !important;
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.18) inset,
+    0 12px 32px rgba(245, 211, 139, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.panel-button:active,
+.share-btn:active,
+.ritual-cta:active,
+.ritual-cta--secondary:active,
+.ritual-cta--ghost:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* GHOST 變體 — 透明底 */
+.panel-button.ghost-button,
+.ritual-cta--ghost {
+  background: transparent !important;
+  color: #c9b88a !important;
+  border: 1px solid rgba(245, 211, 139, 0.32) !important;
+}
+.panel-button.ghost-button:hover,
+.ritual-cta--ghost:hover {
+  background: rgba(245, 211, 139, 0.06) !important;
+  color: #f5d38b !important;
+  border-color: rgba(245, 211, 139, 0.55) !important;
+}
+
+/* 主要底部 CTA — 慢速呼吸發光 */
+.ritual-cta,
+.ritual-cta[data-action="enter"],
+#ritualCta {
+  animation: ritualCtaPulse 3s ease-in-out infinite;
+  position: relative;
+}
+@keyframes ritualCtaPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(245, 211, 139, 0.1) inset,
+      0 0 18px rgba(245, 211, 139, 0.12),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(245, 211, 139, 0.32) inset,
+      0 0 36px rgba(245, 211, 139, 0.45),
+      0 12px 36px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* 分享裂變連結 — 香檳金微發光 */
+.share-viral-link {
+  color: #f5d38b !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+}
+.share-viral-link::before {
+  background: #f5d38b !important;
+  box-shadow: 0 0 8px rgba(245, 211, 139, 0.7) !important;
+}
