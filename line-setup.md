@@ -75,11 +75,11 @@ https://xiaomeng-fortune.onrender.com/admin.html?admin=1
 3. 按「進入後台」就會看到 7 大模組儀表板
 
 ### 密碼
-**密碼: `xiaomeng2026`**(寫死在 `admin.html` JS 第 350 行附近)
+**密碼: `tarot2026`**(寫死在 `admin.html` JS 第 341 行)
 
 ⚠️ **正式上線前務必改這個值**:
 - 用編輯器打開 `admin.html`
-- 找到 `const ADMIN_PASSWORD = "xiaomeng2026";`
+- 找到 `const ADMIN_PASSWORD = "tarot2026";`
 - 改成你自己的密碼
 - 改完 `git add admin.html && git commit -m "admin: change password" && git push`
 
