@@ -6263,3 +6263,177 @@ body.ritual-active .card-spread-row {
   .rich-menu-title { font-size: 15px; }
   .rich-menu-sub { font-size: 10px; }
 }
+
+
+/* =====================================================================
+   Phase 31: 商品卡 + 解鎖卡 + 分享連結 最高優先級覆蓋
+   (idempotent to Phase 27 — 確保所有生產環境的子元素按鈕也都降飽和)
+   ===================================================================== */
+
+/* product-cta — 迎請靈性聖物 / 預約大師諮詢 大按鈕 */
+.product-cta {
+  display: inline-block !important;
+  padding: 10px 18px !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(135deg,
+      rgba(28, 18, 56, 0.55) 0%,
+      rgba(38, 22, 64, 0.62) 45%,
+      rgba(58, 32, 90, 0.55) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.18), transparent 70%) !important;
+  color: #f5d38b !important;
+  border: 1px solid rgba(245, 211, 139, 0.4) !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.08) inset,
+    0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 240ms ease, box-shadow 240ms ease, background 240ms ease;
+  margin: 6px 0 8px;
+}
+.product-cta:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(38, 24, 72, 0.72) 0%,
+      rgba(58, 32, 90, 0.78) 45%,
+      rgba(78, 42, 110, 0.72) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.32), transparent 70%) !important;
+  color: #fff5d8 !important;
+  border-color: rgba(245, 211, 139, 0.7) !important;
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.18) inset,
+    0 12px 32px rgba(245, 211, 139, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* unlock-card 內的 panel-button — 現金消費解鎖 / 60點解鎖 統一降飽和 */
+.unlock-card .panel-button,
+.unlock-card button.panel-button {
+  background:
+    linear-gradient(135deg,
+      rgba(28, 18, 56, 0.55) 0%,
+      rgba(38, 22, 64, 0.62) 45%,
+      rgba(58, 32, 90, 0.55) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.18), transparent 70%) !important;
+  color: #f5d38b !important;
+  border: 1px solid rgba(245, 211, 139, 0.4) !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.08) inset,
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.unlock-card .panel-button:hover,
+.unlock-card button.panel-button:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(38, 24, 72, 0.72) 0%,
+      rgba(58, 32, 90, 0.78) 45%,
+      rgba(78, 42, 110, 0.72) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.32), transparent 70%) !important;
+  color: #fff5d8 !important;
+  border-color: rgba(245, 211, 139, 0.7) !important;
+  transform: translateY(-1px);
+}
+
+/* affiliate-card 內的 affiliate-link 統一降飽和 */
+.affiliate-link {
+  display: inline-block !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(135deg,
+      rgba(28, 18, 56, 0.55) 0%,
+      rgba(38, 22, 64, 0.62) 45%,
+      rgba(58, 32, 90, 0.55) 100%) !important;
+  color: #f5d38b !important;
+  border: 1px solid rgba(245, 211, 139, 0.4) !important;
+  font-size: 13px !important;
+  letter-spacing: 0.04em !important;
+  text-decoration: none !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.3);
+  font-weight: 600;
+  margin: 4px 0;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+}
+.affiliate-link:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(38, 24, 72, 0.72) 0%,
+      rgba(58, 32, 90, 0.78) 100%) !important;
+  color: #fff5d8 !important;
+  border-color: rgba(245, 211, 139, 0.7) !important;
+  transform: translateY(-1px);
+}
+
+/* share-viral-link 強制 低飽和香檳金 + 發光 (override 之前的橘色) */
+.share-viral-link {
+  color: #f5d38b !important;
+  text-shadow: 0 0 6px rgba(245, 211, 139, 0.4);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.share-viral-link:hover {
+  color: #fff5d8 !important;
+  text-shadow: 0 0 10px rgba(245, 211, 139, 0.65), 0 0 18px rgba(245, 211, 139, 0.35);
+}
+.share-viral-link::before {
+  background: #f5d38b !important;
+  box-shadow: 0 0 8px rgba(245, 211, 139, 0.7) !important;
+}
+
+
+/* =====================================================================
+   Phase 32: 商品卡 / 命運商城卡 — 15% 神女形象背景襯底
+   ===================================================================== */
+.product-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(155deg, rgba(38, 22, 64, 0.55), rgba(13, 7, 24, 0.7)) !important;
+}
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('./assets/tarot-01-the-magician.png') center top / cover no-repeat;
+  background-blend-mode: soft-light;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+.product-card:nth-of-type(2)::before {
+  background: url('./assets/tarot-02-the-high-priestess.png') center top / cover no-repeat;
+}
+.product-card:nth-of-type(3)::before {
+  background: url('./assets/tarot-03-the-empress.png') center top / cover no-repeat;
+}
+.product-card > * { position: relative; z-index: 1; }
+
+/* affiliate-card 也加 15% 神女背景 */
+.affiliate-card {
+  position: relative;
+  overflow: hidden;
+}
+.affiliate-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('./assets/tarot-01-the-magician.png') center top / cover no-repeat;
+  background-blend-mode: soft-light;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+.affiliate-card:nth-of-type(2)::before {
+  background: url('./assets/tarot-02-the-high-priestess.png') center top / cover no-repeat;
+}
+.affiliate-card:nth-of-type(3)::before {
+  background: url('./assets/tarot-03-the-empress.png') center top / cover no-repeat;
+}
+.affiliate-card > * { position: relative; z-index: 1; }
