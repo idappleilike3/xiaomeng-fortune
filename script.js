@@ -2974,3 +2974,229 @@ if (document.readyState === 'loading') {
     }
   });
 })();
+
+
+// =====================================================================
+// F30 商業變現 v5.0 — 599 元折抵 + 50 點 7 天效期 + 靈性收益錢包 + 三套音效
+// =====================================================================
+(function walletAndF30V5() {
+  const POINTS_KEY = "xiaomeng_points";
+  const POINTS_EXP_KEY = "xiaomeng_points_exp";
+  const POINTS_GRANT_DAY_KEY = "xiaomeng_points_grant_day";
+  const FREE_QUOTA_KEY_PREFIX = "xiaomeng_free_quota_";
+  const SPREAD_DISCOUNT_THRESHOLD = 599;
+  const POINTS_DISCOUNT_VALUE = 50;
+
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function addDays(iso, days) {
+    const d = new Date(iso);
+    d.setDate(d.getDate() + days);
+    return d.getTime();
+  }
+  function readPoints() {
+    let pts = Number(localStorage.getItem(POINTS_KEY) || 0);
+    const exp = Number(localStorage.getItem(POINTS_EXP_KEY) || 0);
+    if (exp && Date.now() > exp) {
+      // expired
+      pts = 0;
+      try {
+        localStorage.setItem(POINTS_KEY, "0");
+        localStorage.removeItem(POINTS_EXP_KEY);
+      } catch (e) {}
+    }
+    return pts;
+  }
+  function grantSharePoints() {
+    const lastDay = localStorage.getItem(POINTS_GRANT_DAY_KEY);
+    const today = todayStr();
+    if (lastDay === today) {
+      return { ok: false, reason: "今日已領過,明日再來" };
+    }
+    const cur = readPoints();
+    const next = cur + POINTS_DISCOUNT_VALUE;
+    const expTs = addDays(today, 7);
+    try {
+      localStorage.setItem(POINTS_KEY, String(next));
+      localStorage.setItem(POINTS_EXP_KEY, String(expTs));
+      localStorage.setItem(POINTS_GRANT_DAY_KEY, today);
+    } catch (e) {}
+    return { ok: true, value: next, exp: expTs };
+  }
+  function tryRedeemPoints(orderAmount) {
+    if (orderAmount < SPREAD_DISCOUNT_THRESHOLD) {
+      return { ok: false, reason: "單筆未滿 $599,無法折抵" };
+    }
+    const cur = readPoints();
+    if (cur < POINTS_DISCOUNT_VALUE) {
+      return { ok: false, reason: "目前無可用 50 積分" };
+    }
+    const next = cur - POINTS_DISCOUNT_VALUE;
+    try { localStorage.setItem(POINTS_KEY, String(next)); } catch (e) {}
+    return { ok: true, redeemed: POINTS_DISCOUNT_VALUE, remaining: next, finalPay: orderAmount - POINTS_DISCOUNT_VALUE };
+  }
+  function isFreeQuotaUsed(system) {
+    return localStorage.getItem(FREE_QUOTA_KEY_PREFIX + system) === "1";
+  }
+  function markFreeQuotaUsed(system) {
+    try { localStorage.setItem(FREE_QUOTA_KEY_PREFIX + system, "1"); } catch (e) {}
+  }
+  function refreshWalletUI() {
+    const val = readPoints();
+    const exp = Number(localStorage.getItem(POINTS_EXP_KEY) || 0);
+    const chip = document.getElementById("walletChipValue");
+    if (chip) chip.textContent = String(val);
+    const summary = document.getElementById("walletSummary");
+    if (summary) {
+      const expStr = exp ? new Date(exp).toLocaleDateString("zh-TW") : "—";
+      summary.textContent = `目前 ${val} 靈性積分 · 效期至 ${expStr} · 單筆滿 $599 可折抵 $${POINTS_DISCOUNT_VALUE}`;
+    }
+  }
+
+  // Wallet chip click — show discount hint
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest("#walletChip")) {
+      const v = readPoints();
+      alert(
+        "你當前擁有 " + v + " 靈性積分\n\n" +
+        "單筆現金消費滿 $599 即可一鍵折抵 $50 元現金減免。\n\n" +
+        "（積分僅供折抵,不可用於免費解鎖占卜。）"
+      );
+    }
+  });
+
+  // System CTA buttons
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const cta = t.closest && t.closest("[data-system-cta]");
+    if (!cta) return;
+    const sys = cta.getAttribute("data-system-cta");
+    e.preventDefault();
+    if (sys === "pet") {
+      alert("【毛孩心語】為尊榮會員限定模組。\n\n請透過右上角「與大師一對一」真人守護通道,或聯絡 LINE 官方帳號升級。");
+      return;
+    }
+    if (sys === "oracle") {
+      alert("【今日神諭】原型版 — 正式 3 種模式（今日訊息 / 宇宙提醒 / 心靈祝福）將於下次更新上線。");
+      return;
+    }
+    if (sys === "tarot") {
+      // Trigger the great stage
+      const startBtn = document.getElementById("ritualCta");
+      startBtn && startBtn.click();
+    }
+  });
+
+  // === 三套專屬音效 (Web Audio API stub) ===
+  function playSystemSound(kind) {
+    try {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return;
+      const ctx = window.__audioCtx || (window.__audioCtx = new C());
+      const now = ctx.currentTime;
+      if (kind === "tarot") {
+        // 厚重羊皮紙摩擦 + 水晶音:低頻嗡嗡 + 高頻短音
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = "sawtooth";
+        osc1.frequency.setValueAtTime(60, now);
+        osc1.frequency.linearRampToValueAtTime(120, now + 0.8);
+        gain1.gain.setValueAtTime(0.0001, now);
+        gain1.gain.linearRampToValueAtTime(0.08, now + 0.1);
+        gain1.gain.linearRampToValueAtTime(0.0001, now + 1.0);
+        osc1.connect(gain1).connect(ctx.destination);
+        osc1.start(now); osc1.stop(now + 1.1);
+      } else if (kind === "pet") {
+        // 八音盒 + 貓咪呼嚕:高頻柔和正弦波
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(523, now);
+        osc2.frequency.linearRampToValueAtTime(659, now + 0.5);
+        gain2.gain.setValueAtTime(0.0001, now);
+        gain2.gain.linearRampToValueAtTime(0.06, now + 0.1);
+        gain2.gain.linearRampToValueAtTime(0.0001, now + 0.9);
+        osc2.connect(gain2).connect(ctx.destination);
+        osc2.start(now); osc2.stop(now + 1.0);
+      } else if (kind === "oracle") {
+        // 宇宙頌缽 + 環境風聲:深層低頻 + 噪音
+        const osc3 = ctx.createOscillator();
+        const gain3 = ctx.createGain();
+        osc3.type = "sine";
+        osc3.frequency.setValueAtTime(110, now);
+        gain3.gain.setValueAtTime(0.0001, now);
+        gain3.gain.linearRampToValueAtTime(0.1, now + 0.2);
+        gain3.gain.linearRampToValueAtTime(0.0001, now + 1.4);
+        osc3.connect(gain3).connect(ctx.destination);
+        osc3.start(now); osc3.stop(now + 1.5);
+      }
+    } catch (e) { /* silent fail */ }
+  }
+  // Expose to global so the Great Stage can call it
+  window.__playSystemSound = playSystemSound;
+
+  // === Footer legal modals ===
+  function openLegalModal(id) {
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.classList.add("is-open");
+    m.setAttribute("aria-hidden", "false");
+  }
+  function closeLegalModal(el) {
+    el.classList.remove("is-open");
+    el.setAttribute("aria-hidden", "true");
+  }
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest("#openPrivacyModal")) {
+      e.preventDefault();
+      openLegalModal("privacyModal");
+    } else if (t.closest && t.closest("#openTermsModal")) {
+      e.preventDefault();
+      openLegalModal("termsModal");
+    } else if (t.closest && t.closest(".legal-modal__close")) {
+      const modal = t.closest(".legal-modal-overlay");
+      modal && closeLegalModal(modal);
+    } else if (t.classList && t.classList.contains("legal-modal-overlay")) {
+      closeLegalModal(t);
+    }
+  });
+
+  // === LINE FAB — 跳轉到 LINE 官方帳號 ===
+  const LINE_OA_URL = "https://line.me/R/ti/p/@471cptxk";
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest("#lineFab")) {
+      e.preventDefault();
+      window.open(LINE_OA_URL, "_blank", "noopener,noreferrer");
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const t = e.target instanceof Element ? e.target : null;
+    if (t && t.id === "lineFab") {
+      e.preventDefault();
+      window.open(LINE_OA_URL, "_blank", "noopener,noreferrer");
+    }
+  });
+
+  // === Free quota: intercept entry to first 3 systems (3 systems each 1 free) ===
+  // Already handled via freeQuotaUsed flag; this just exposes helper
+  window.__xiaomengF30 = {
+    grantSharePoints,
+    tryRedeemPoints,
+    isFreeQuotaUsed,
+    markFreeQuotaUsed,
+    readPoints,
+    refreshWalletUI,
+  };
+
+  refreshWalletUI();
+})();

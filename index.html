@@ -8,6 +8,13 @@
       name="description"
       content="LINE 結合網頁的命理服務 MVP，包含塔羅、求籤、命盤、合盤、生命靈數、MBTI 與聯盟行銷入口。"
     />
+  <meta property="og:title" content="【小夢老師 • 占卜療癒室】萬物皆有星軌,點擊免費啟動你的專屬星盤流年解碼" />
+  <meta property="og:description" content="塔羅探索 ・ 毛孩心語 ・ 今日神諭 — 為現代女性量身打造的靈性諮商空間" />
+  <meta property="og:image" content="https://xiaomeng-fortune.onrender.com/assets/tarot-01-the-magician.png" />
+  <meta property="og:url" content="https://xiaomeng-fortune.onrender.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://xiaomeng-fortune.onrender.com/assets/tarot-01-the-magician.png" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
@@ -33,6 +40,10 @@
         </span>
       </a>
       <nav class="nav" aria-label="主要導覽" hidden></nav>
+      <button type="button" class="wallet-chip" id="walletChip" aria-label="靈性收益錢包" title="靈性收益錢包">
+        <span class="wallet-chip__icon" aria-hidden="true">✨</span>
+        <span class="wallet-chip__value" id="walletChipValue">0</span>
+      </button>
       <button type="button" class="inbox-fab" id="inboxFab" aria-label="靈性收件匣" title="靈性收件匣">
         <span class="inbox-fab__icon" aria-hidden="true">✉</span>
         <span class="inbox-fab__dot" id="inboxFabDot" hidden></span>
@@ -188,6 +199,81 @@
             <button class="ritual-cta ritual-cta--ghost" id="ritualReset" type="button" hidden>重新洗牌</button>
           </div>
         </article>
+
+        <section class="f30-systems" aria-label="F30 三大占卜系統">
+          <div class="f30-systems__head">
+            <p class="eyebrow">F30 · 三大占卜系統</p>
+            <h2>選擇今晚為你指路的那一條星軌</h2>
+          </div>
+          <div class="f30-systems__grid">
+            <article class="system-card" data-system="tarot">
+              <div class="system-card__num">I</div>
+              <h3 class="system-card__title">塔羅探索</h3>
+              <p class="system-card__subtitle">塔羅 System · Tarot</p>
+              <p class="system-card__purpose">78 張大牌小牌，為你揭開未知迷霧</p>
+              <ul class="system-card__meta">
+                <li><span>適合問</span>感情糾葛 / 職涯抉擇 / 命運走向</li>
+                <li><span>不適合</span>已決定之事 / 短期小確幸</li>
+                <li><span>牌數</span>1 / 3 / 5 / 10 張經典牌陣</li>
+                <li><span>時間</span>3-8 分鐘</li>
+                <li><span>難度</span>新手・初窺</li>
+                <li><span>等級</span>免費體驗 × 1 次</li>
+              </ul>
+              <button class="system-card__cta" type="button" data-system-cta="tarot">啟動塔羅儀式</button>
+            </article>
+
+            <article class="system-card system-card--pet" data-system="pet">
+              <div class="system-card__num">II</div>
+              <h3 class="system-card__title">毛孩心語</h3>
+              <p class="system-card__subtitle">Pet Divination · 毛孩心靈</p>
+              <p class="system-card__purpose">7 大情境，看見毛孩最真實的內在</p>
+              <ul class="system-card__meta">
+                <li><span>適合問</span>日常陪伴 / 行為理解 / 離世悼念</li>
+                <li><span>不適合</span>代替獸醫診斷</li>
+                <li><span>牌數</span>7 大情境 22 張動物大師</li>
+                <li><span>時間</span>5-10 分鐘</li>
+                <li><span>難度</span>進階・調頻</li>
+                <li><span>等級</span>尊榮會員 · 消費解鎖</li>
+              </ul>
+              <p class="system-card__lock">
+                <span class="lock-icon" aria-hidden="true">🔒</span>
+                尊榮會員限定 · 消費解鎖後開放<br/>
+                <small>本單滿$599可使用50積分折抵</small>
+              </p>
+              <button class="system-card__cta system-card__cta--locked" type="button" data-system-cta="pet" disabled>升級尊榮會員後開放</button>
+            </article>
+
+            <article class="system-card system-card--oracle" data-system="oracle">
+              <div class="system-card__num">III</div>
+              <h3 class="system-card__title">今日神諭</h3>
+              <p class="system-card__subtitle">Oracle Cards · 神諭之聲</p>
+              <p class="system-card__purpose">3 種模式，每日一句宇宙的話</p>
+              <ul class="system-card__meta">
+                <li><span>適合問</span>今日指引 / 宇宙提醒 / 心靈祝福</li>
+                <li><span>不適合</span>重大決策 / 感情結局預測</li>
+                <li><span>模式</span>3 種：今日訊息 / 宇宙提醒 / 心靈祝福</li>
+                <li><span>時間</span>30 秒</li>
+                <li><span>難度</span>新手・初窺</li>
+                <li><span>等級</span>免費體驗 × 1 次</li>
+              </ul>
+              <button class="system-card__cta" type="button" data-system-cta="oracle">接收今日神諭</button>
+            </article>
+          </div>
+
+          <div class="membership-bar">
+            <p class="membership-bar__label">會員等級</p>
+            <div class="membership-bar__tiers">
+              <span class="tier-chip tier-free" data-tier="free">免費體驗</span>
+              <span class="tier-chip tier-member" data-tier="member">
+                <span class="lock-icon" aria-hidden="true">🔒</span> 尊榮會員
+              </span>
+              <span class="tier-chip tier-premium" data-tier="premium">
+                <span class="lock-icon" aria-hidden="true">🔐</span> 殿堂大師
+              </span>
+            </div>
+            <p class="membership-bar__hint">本單滿 $599 可使用 50 積分折抵</p>
+          </div>
+        </section>
 
         <div class="demo-secondary">
 
@@ -461,9 +547,64 @@
     </main>
 
     <footer class="footer">
+      <div class="master-credentials" aria-label="大師資歷">
+        <span class="master-credential">✦ 獨創星軌流年與空間能量調頻體系</span>
+        <span class="master-credential">✦ 專注於現代女性情感與職涯靈性諮商</span>
+        <span class="master-credential">✦ 已陪伴無數迷茫靈魂重新尋回命運軌道</span>
+      </div>
+      <nav class="footer-legal" aria-label="法律與隱私">
+        <a href="#" id="openPrivacyModal">🔒 隱私權政策</a>
+        <span class="footer-legal__sep">|</span>
+        <a href="#" id="openTermsModal">⚖️ 法律與免責聲明</a>
+      </nav>
       <p>© 2026 小夢老師</p>
       <p>本頁為原創 MVP 示範，圖片與文案皆可替換成你的正式品牌素材。</p>
     </footer>
+
+    <div class="line-fab" id="lineFab" role="button" tabindex="0" aria-label="與大師一對一 真人守護通道">
+      <span class="line-fab__pulse" aria-hidden="true"></span>
+      <span class="line-fab__icon" aria-hidden="true">✦</span>
+      <span class="line-fab__label">與大師一對一<br/><small>真人守護通道</small></span>
+    </div>
+
+    <div class="legal-modal-overlay" id="privacyModal" aria-hidden="true" role="dialog" aria-labelledby="privacyModalTitle">
+      <div class="legal-modal" role="document">
+        <div class="legal-modal__head">
+          <h3 id="privacyModalTitle">🔒 隱私權政策</h3>
+          <button type="button" class="legal-modal__close" aria-label="關閉">✕</button>
+        </div>
+        <div class="legal-modal__body">
+          <p>歡迎使用「小夢老師 TAROT RITUAL 塔羅命盤療癒室」（以下簡稱本服務）。本服務極度重視您的個人隱私，並嚴格遵守中華民國個資法與 App Store 隱私權審查標準。請詳閱以下聲明：</p>
+          <h4>一、 個人資料之搜集與用途</h4>
+          <p>1. 當您使用本服務之【星盤流年解碼】與【深夜靈性信件解答】時,系統將引導您填寫姓名/暱稱、性別、出生日期時間及出生地點。</p>
+          <p>2. 上述資料純粹用於後台調頻引擎進行西洋星軌、生命靈數、東方命盤之個人化天文軌道排列計算,以及後端深度解析排版工具之口吻校正,絕不挪作他用。</p>
+          <h4>二、 資料儲存與安全加密</h4>
+          <p>1. 本機安全封存：在測試與正式上線初期,您所輸入的所有出生資料均「100% 加密儲存於您個人的本機瀏覽器（LocalStorage）中」,本服務後端不進行任何永久性留存。</p>
+          <p>2. 完全控制權：您可隨時透過本服務首頁之「修改資料」按鈕,一鍵澈底清除本機儲存的所有個資。未來升級會員資料庫時,亦將無條件提供「刪除會員與全面銷毀個資」之常駐入口。</p>
+          <h4>三、 第三方資料共享與推播</h4>
+          <p>本服務絕不將您的個資販售、交換或洩漏給任何第三方機構。您的數據僅於您點擊付費發送時,透過安全加密之傳輸協定（HTTPS）與 LINE 官方通訊接口（Messaging API）進行非即時的指引信件排程推播。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-modal-overlay" id="termsModal" aria-hidden="true" role="dialog" aria-labelledby="termsModalTitle">
+      <div class="legal-modal" role="document">
+        <div class="legal-modal__head">
+          <h3 id="termsModalTitle">⚖️ 法律與免責聲明</h3>
+          <button type="button" class="legal-modal__close" aria-label="關閉">✕</button>
+        </div>
+        <div class="legal-modal__body">
+          <p>歡迎使用「小夢老師 TAROT RITUAL 塔羅命盤療癒室」（以下簡稱本服務）。當您進入本服務並啟動占卜儀式時,即代表您已閱讀、理解並同意接受以下法律條款之約束：</p>
+          <h4>一、 服務性質與靈性本質聲明</h4>
+          <p>1. 本服務所提供之【塔羅探索】、【毛孩心語】與【今日神諭】之解牌、流年運勢與信件解析,本質上屬於天文星軌符號學、神秘學原型意象與靈性統計學之智慧延伸。</p>
+          <p>2. 所有解析文本、命運預言與大師指引信,旨在為使用者面臨人生抉擇、情感卡關與心理焦慮時,提供一個內在探索的視覺錨點與心靈輔助建議,不具備絕對之強制性與宿命論。</p>
+          <h4>二、 專業領域之醫療與法律免責</h4>
+          <p>1. 醫療與心理諮商免責：本服務之【能量檢測】與【七脈輪平衡】純屬能量狀態之靈性調頻提示。本服務絕不提供任何醫療診斷、心理治療、處方建議。若您身體或心理出現臨床症狀,必須尋求專業合格醫師之協助。</p>
+          <p>2. <strong>寵物醫療最高警語（毛孩心語專用）</strong>：本服務之【毛孩心語・健康能量占卜】模組,其所有解析僅提供寵物心靈與能量之直覺指引,「絕對不能、亦無法取代專業獸醫師之醫學臨床診斷、手術、藥物與醫療行為」。若毛小孩有任何健康異常,飼主必須立即送往專業獸醫診所就診。</p>
+          <p>3. 財務與法律決策免責：本服務之【投資分析】與【創業策略】牌陣,僅用於檢視使用者看待金錢時的情緒盲點,絕不構成任何具體投資標的之推薦、股票漲跌預測或法律條文審查。使用者因參考本服務而做出之任何現實財務投資與民刑事法律行為,其風險與盈虧須由使用者自行承擔,本服務不負任何法律連帶責任。</p>
+        </div>
+      </div>
+    </div>
 
     <div class="inbox-modal-overlay" id="inboxModal" aria-hidden="true" role="dialog" aria-labelledby="inboxModalTitle">
       <div class="inbox-modal" role="document">
