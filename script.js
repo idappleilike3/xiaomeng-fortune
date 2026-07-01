@@ -1881,12 +1881,170 @@ async function shareFortuneForTool(toolName) {
   }
 }
 
+// ============================================================
+// 真實分享按鈕 — LINE / Facebook / 複製連結
+// 使用 liff.shareTargetPicker(LINE 內)+ Web Share API + 外部 URL fallback
+// 獎勵:每分享 1 次 → 50 靈性積分,7 天效期,每日 1 次
+// ============================================================
+const SHARE_REWARD_POINTS = 50;
+const SHARE_KEY_PREFIX = "xiaomeng.share.";
+const SHARE_TTL_DAYS = 7;
+
+function buildShareUrl() {
+  // 分享 URL = 公開首頁(LINE/Facebook 預覽由 OG meta 顯示 Magician 卡 + 「萬物皆有星軌」)
+  return window.__xiaomengShareUrl || "https://xiaomeng-fortune.onrender.com/";
+}
+function buildShareText() {
+  return "【小夢老師 • 占卜療癒室】萬物皆有星軌,點擊免費啟動你的專屬星盤流年解碼";
+}
+function canClaimShareReward(tool) {
+  try {
+    const raw = localStorage.getItem(SHARE_KEY_PREFIX + tool);
+    if (!raw) return { ok: true, hoursLeft: null };
+    const data = JSON.parse(raw);
+    const now = Date.now();
+    if (now >= data.expiresAt) {
+      localStorage.removeItem(SHARE_KEY_PREFIX + tool);
+      return { ok: true, hoursLeft: null };
+    }
+    const lastClaim = data.lastClaim || 0;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    if (lastClaim >= todayStart.getTime()) {
+      return { ok: false, reason: "今日已領", nextAt: todayStart.getTime() + 24 * 60 * 60 * 1000 };
+    }
+    return { ok: true, hoursLeft: Math.ceil((data.expiresAt - now) / 3600000) };
+  } catch (e) { return { ok: true, hoursLeft: null }; }
+}
+function recordShareReward(tool, source) {
+  try {
+    const raw = localStorage.getItem(SHARE_KEY_PREFIX + tool);
+    let data = raw ? JSON.parse(raw) : {};
+    data.lastClaim = Date.now();
+    data.expiresAt = Date.now() + SHARE_TTL_DAYS * 24 * 60 * 60 * 1000;
+    data.source = source;
+    data.count = (data.count || 0) + 1;
+    localStorage.setItem(SHARE_KEY_PREFIX + tool, JSON.stringify(data));
+  } catch (e) {}
+}
+
+async function shareToLINE(text, url) {
+  // LINE 內頁優先用 liff.shareTargetPicker(手機 LINE 自動彈好友清單)
+  if (window.liff && typeof window.liff.isInClient === "function" && window.liff.isInClient()) {
+    try {
+      await window.liff.shareTargetPicker([
+        {
+          type: "text",
+          text: text + "\n" + url,
+        },
+      ]);
+      return "line-native";
+    } catch (e) {
+      console.warn("LIFF shareTargetPicker failed, fallback to URL", e);
+    }
+  }
+  // Web 端 fallback → 開新分頁 LINE social plugin
+  const u = "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+  window.open(u, "_blank", "noopener,noreferrer");
+  return "line-web";
+}
+
+function shareToFacebook(text, url) {
+  const u = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(text);
+  window.open(u, "_blank", "noopener,noreferrer");
+  return "facebook";
+}
+
+async function shareCopyLink(text, url) {
+  const fullText = text + "\n" + url;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(fullText);
+      return "clipboard";
+    }
+  } catch (e) {}
+  // fallback
+  const ta = document.createElement("textarea");
+  ta.value = fullText;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+  return "clipboard-fallback";
+}
+
+function showShareToast(msg) {
+  let toast = document.getElementById("shareToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "shareToast";
+    toast.style.cssText = "position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9999;padding:12px 22px;border-radius:999px;background:linear-gradient(135deg,rgba(38,22,64,0.95),rgba(13,7,24,0.98));border:1px solid rgba(245,211,139,0.6);color:#fff5d8;font-size:13px;letter-spacing:0.04em;backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,0.5);opacity:0;transition:opacity 240ms ease,transform 240ms ease;pointer-events:none;max-width:90vw;text-align:center;";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  requestAnimationFrame(() => {
+    toast.style.opacity = "1";
+    toast.style.transform = "translateX(-50%) translateY(0)";
+  });
+  clearTimeout(showShareToast._t);
+  showShareToast._t = setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(-50%) translateY(20px)";
+  }, 2800);
+}
+
+async function awardSharePointsOnce(tool, channel) {
+  const claim = canClaimShareReward(tool);
+  if (!claim.ok) {
+    showShareToast("✨ " + claim.reason + ",明天再來");
+    playRitualTone("alert");
+    return false;
+  }
+  recordShareReward(tool, channel);
+  if (typeof window.__xiaomengApi === "object" && typeof window.__xiaomengApi.awardPoints === "function") {
+    try {
+      await window.__xiaomengApi.awardPoints({ amount: SHARE_REWARD_POINTS, reason: "share-" + channel, scope: tool });
+    } catch (e) { /* ignore */ }
+  } else if (typeof awardPoints === "function") {
+    try { awardPoints(SHARE_REWARD_POINTS, "分享好友 +" + SHARE_REWARD_POINTS + " 點(" + channel + ")"); } catch (e) {}
+  }
+  showShareToast("✨ +" + SHARE_REWARD_POINTS + " 靈性積分(" + channel + ")· 7 天效期 · 已入帳");
+  playRitualTone("success");
+  return true;
+}
+
+async function handleShareClick(channel, btn) {
+  const row = btn.closest('.share-row');
+  const tool = (row && row.dataset && row.dataset.tool) ? row.dataset.tool : 'tarot';
+  const text = buildShareText();
+  const url = buildShareUrl();
+  let result = channel;
+  try {
+    if (channel === 'line') result = await shareToLINE(text, url);
+    else if (channel === 'fb') result = shareToFacebook(text, url);
+    else if (channel === 'copy') result = await shareCopyLink(text, url);
+  } catch (e) {
+    console.error("share failed", e);
+    showShareToast("分享失敗,請稍後再試");
+    playRitualTone("alert");
+    return;
+  }
+  await awardSharePointsOnce(tool, result);
+  // 同步刷新所有 share-row 計數
+  if (typeof refreshAllShareCounts === "function") {
+    const claim = canClaimShareReward(tool);
+    const hint = claim.hoursLeft ? "(已領,還剩 " + claim.hoursLeft + " 小時重新可領)" : "(今日已領,明天可再領)";
+    refreshAllShareCounts("✨ 分享好友得 <strong>" + SHARE_REWARD_POINTS + " 靈性積分</strong>(7 天效期,每日 1 次)" + hint);
+  }
+}
+
 function wireShareButtons() {
   document.querySelectorAll('.share-row .share-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      const row = btn.closest('.share-row');
-      const tool = (row && row.dataset && row.dataset.tool) ? row.dataset.tool : '';
-      shareFortuneForTool(tool);
+      const channel = btn.dataset.share || 'line';
+      handleShareClick(channel, btn);
     });
   });
   refreshAllShareCounts();
