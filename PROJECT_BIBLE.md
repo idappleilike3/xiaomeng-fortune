@@ -1,4 +1,4 @@
-# 📖 小夢 Fortune Platform — Project Bible
+﻿# 📖 小夢 Fortune Platform — Project Bible
 
 > **唯一官方規格文件。本檔案為所有功能、PR、Commit、Codex Task、OpenClaw Task 的最高依據。**
 >
@@ -342,6 +342,10 @@ Machine Reading
 - 字眼過濾清單生效
 - 加入 §14 Motion / §15 Writing Style / §16 UI Component Rules / §17 Audio Bible / §18 Sacred Flow
 
+### v1.1.0 (2026-07-02) — 補上 Brand Bible 索引
+- 新增 §19 Brand Bible 索引,指向獨立檔案 `BRAND_BIBLE.md`
+- Brand Bible v1.0.0 上線:15 章節,含品牌定位 / Logo / 語言 / 世界觀 / 色彩 / 字型 / Icon / 按鈕 / 陰影 / 金框 / 光暈 / 粒子 / 動畫 / 跨頁一致性檢查表
+
 ---
 
 ## §13 整合索引 — 今晚已完成對齊清單
@@ -665,6 +669,60 @@ AI / Bot / 機器人 / 演算法
 - ✨ 揭曉(翻牌是神聖時刻,不是「點按鈕」)
 - 🌙 守護(陪伴感,不是工具感)
 - 💫 驚喜(祝福推送,不是通知堆疊)
+
+---
+
+
+---
+
+## §19 Brand Bible (獨立檔案)
+
+> **所有頁面的視覺唯一依據。任何頁面不得自行設計,必須完全對齊本檔案。**
+> 版本: v1.0.0 | 對齊 PROJECT_BIBLE v1.0.0 | 生效日: 2026-07-02
+
+詳細內容請參閱獨立檔案:BRAND_BIBLE.md(14.57 KB,15 章節)
+
+### §19.1 Brand Bible 章節速覽
+
+| 章節 | 內容 |
+|---|---|
+| §1 | 品牌定位 |
+| §2 | Logo 使用規範 |
+| §3 | 品牌語言 |
+| §4 | 品牌世界觀 |
+| §5 | 品牌色彩 |
+| §6 | 字型 |
+| §7 | Icon 規範(§7.5 統一清單) |
+| §8 | 按鈕規範(五種變體) |
+| §9 | 陰影系統(7 層級) |
+| §10 | 金框(4 規格) |
+| §11 | 光暈(5 類型 + 動畫) |
+| §12 | 粒子(3 系統) |
+| §13 | 品牌動畫(15 清單) |
+| §14 | 跨頁一致性檢查表(15 項) |
+| §15 | 版本歷史 |
+
+### §19.2 與 PROJECT_BIBLE 對應關係
+
+| Brand Bible | PROJECT_BIBLE |
+|---|---|
+| §5 色彩 | §4 設計原則 |
+| §6 字型 | §4 設計原則 |
+| §8 按鈕 | §16 UI Component Rules |
+| §10 金框 | §16 UI Component Rules |
+| §11 光暈 | §16 UI Component Rules |
+| §12 粒子 | §14 Motion & Ritual |
+| §13 動畫 | §14 Motion & Ritual |
+| §7 Icon | §16 UI Component Rules |
+| §3 品牌語言 | §15 Writing Style |
+| §4 世界觀 | §3 世界觀 |
+
+### §19.3 強制執行
+
+- 所有頁面交付前必須跑過 §14 跨頁一致性檢查表(15 項)
+- 違反 Brand Bible 的 PR 將被拒絕
+- 任何頁面不得自行設計顏色、字型、按鈕、動畫
+- 新增頁面必須先寫進 Brand Bible 再 Coding
 
 ---
 
