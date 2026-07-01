@@ -5091,3 +5091,120 @@ body.ritual-active .card-spread-row {
 .hero-scroll-y-slow { transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.15), 0); }
 .hero-scroll-y-med  { transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.35), 0); }
 .hero-scroll-y-fast { transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.6), 0); }
+
+
+/* === 靈性收件匣 浮空按鈕 === */
+.inbox-fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 211, 139, 0.55);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 233, 168, 0.32), rgba(255, 233, 168, 0) 60%),
+    rgba(13, 7, 24, 0.72);
+  color: #f5d38b;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.12) inset,
+    0 6px 24px rgba(245, 211, 139, 0.22),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+.inbox-fab:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.32) inset,
+    0 8px 32px rgba(255, 215, 130, 0.45),
+    0 18px 40px rgba(0, 0, 0, 0.55);
+}
+.inbox-fab:active { transform: translateY(0) scale(0.98); }
+.inbox-fab__icon { line-height: 1; filter: drop-shadow(0 0 6px rgba(255, 215, 130, 0.55)); }
+.inbox-fab__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff5b5b;
+  box-shadow:
+    0 0 0 2px rgba(13, 7, 24, 0.95),
+    0 0 10px rgba(255, 91, 91, 0.85);
+  animation: inboxDotPulse 1.6s ease-in-out infinite;
+}
+@keyframes inboxDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.75; }
+}
+
+/* === 靈性收件匣 毛玻璃 Modal === */
+.inbox-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(8, 4, 18, 0.62);
+  backdrop-filter: blur(12px);
+}
+.inbox-modal-overlay.is-open { display: flex; animation: inboxFade 240ms ease; }
+@keyframes inboxFade { from { opacity: 0; } to { opacity: 1; } }
+.inbox-modal {
+  width: min(440px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  border-radius: 22px;
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  background:
+    linear-gradient(155deg, rgba(38, 22, 64, 0.92), rgba(13, 7, 24, 0.95));
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(245, 211, 139, 0.18) inset;
+  padding: 22px 22px 18px;
+  color: #f7e6c2;
+  font-family: "Noto Serif TC", Georgia, "Times New Roman", serif;
+}
+.inbox-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.inbox-modal__title { font-size: 18px; color: #f5d38b; letter-spacing: 0.04em; margin: 0; }
+.inbox-modal__close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  color: #f5d38b; font-size: 16px; cursor: pointer;
+}
+.inbox-letter {
+  border: 1px solid rgba(245, 211, 139, 0.28);
+  border-radius: 16px;
+  padding: 18px 18px 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 244, 220, 0.06), rgba(255, 244, 220, 0.02));
+}
+.inbox-letter__meta {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: #c9b88a; margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.inbox-letter__subject {
+  font-size: 16px; color: #ffe2a3; margin: 0 0 10px;
+  letter-spacing: 0.04em;
+}
+.inbox-letter__body {
+  font-size: 14px; line-height: 1.85; color: #f3e2bd;
+  white-space: pre-wrap; word-break: break-word;
+}
+.inbox-empty {
+  text-align: center; padding: 36px 18px;
+  color: #c9b88a; font-size: 14px; line-height: 1.85;
+}
+.inbox-empty__glyph { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.7; }

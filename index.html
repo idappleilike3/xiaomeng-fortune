@@ -36,6 +36,10 @@
         <a href="#demo">功能</a>
         <a href="#market">變現</a>
       </nav>
+      <button type="button" class="inbox-fab" id="inboxFab" aria-label="靈性收件匣" title="靈性收件匣">
+        <span class="inbox-fab__icon" aria-hidden="true">✉</span>
+        <span class="inbox-fab__dot" id="inboxFabDot" hidden></span>
+      </button>
     </header>
 
     <main>
@@ -481,6 +485,16 @@
       <p>© 2026 小夢老師</p>
       <p>本頁為原創 MVP 示範，圖片與文案皆可替換成你的正式品牌素材。</p>
     </footer>
+
+    <div class="inbox-modal-overlay" id="inboxModal" aria-hidden="true" role="dialog" aria-labelledby="inboxModalTitle">
+      <div class="inbox-modal" role="document">
+        <div class="inbox-modal__head">
+          <h3 class="inbox-modal__title" id="inboxModalTitle">靈性收件匣</h3>
+          <button type="button" class="inbox-modal__close" id="inboxModalClose" aria-label="關閉">✕</button>
+        </div>
+        <div id="inboxModalBody"></div>
+      </div>
+    </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script type="module" src="./script.js"></script>

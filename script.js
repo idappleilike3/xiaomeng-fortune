@@ -2223,6 +2223,83 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', checkPendingLetterNotification);
 } else {
   setTimeout(checkPendingLetterNotification, 1500);
+
+  // ===== 靈性收件匣 FAB (Phase 7 — header envelope + modal) =====
+  const INBOX_HOURS = 0.5; // demo threshold; production 2-4h
+  function inboxReadPending() {
+    try {
+      const raw = localStorage.getItem('pendingLetter');
+      if (!raw) return null;
+      const letter = JSON.parse(raw);
+      const submittedAt = new Date(letter.submittedAt || letter.letterSubmittedAt || Date.now()).getTime();
+      const elapsedHours = (Date.now() - submittedAt) / 36e5;
+      if (elapsedHours < INBOX_HOURS) return null;
+      return letter;
+    } catch (e) { return null; }
+  }
+  function inboxRefreshDot() {
+    const dot = document.getElementById('inboxFabDot');
+    if (!dot) return;
+    dot.hidden = !inboxReadPending();
+  }
+  function inboxFormatTime(iso) {
+    try {
+      const d = new Date(iso);
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    } catch (e) { return '--'; }
+  }
+  function inboxRender() {
+    const body = document.getElementById('inboxModalBody');
+    if (!body) return;
+    const letter = inboxReadPending();
+    if (!letter) {
+      body.innerHTML =
+        '<div class="inbox-empty">' +
+          '<span class="inbox-empty__glyph">✦</span>' +
+          '靈性信箱暫時無新信件<br/>' +
+          '<small>當小夢老師於深夜完成回信，信件會自動送達此處。</small>' +
+        '</div>';
+      return;
+    }
+    const subject = letter.subject || '【命運指引】來自小夢老師的一封深夜親筆信';
+    const bodyText = letter.body || letter.content || '（信件內容準備中…）';
+    const fromName = letter.fromName || '小夢老師';
+    const time = inboxFormatTime(letter.submittedAt || letter.letterSubmittedAt || Date.now());
+    body.innerHTML =
+      '<article class="inbox-letter">' +
+        '<div class="inbox-letter__meta">' +
+          '<span>寄件人：' + fromName + '</span>' +
+          '<span>' + time + '</span>' +
+        '</div>' +
+        '<h4 class="inbox-letter__subject">' + subject + '</h4>' +
+        '<div class="inbox-letter__body">' + bodyText + '</div>' +
+      '</article>';
+  }
+  function inboxOpen() {
+    const modal = document.getElementById('inboxModal');
+    if (!modal) return;
+    inboxRender();
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function inboxClose() {
+    const modal = document.getElementById('inboxModal');
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  const inboxFab = document.getElementById('inboxFab');
+  if (inboxFab) inboxFab.addEventListener('click', inboxOpen);
+  const inboxCloseBtn = document.getElementById('inboxModalClose');
+  if (inboxCloseBtn) inboxCloseBtn.addEventListener('click', inboxClose);
+  const inboxModal = document.getElementById('inboxModal');
+  if (inboxModal) {
+    inboxModal.addEventListener('click', (e) => {
+      if (e.target === inboxModal) inboxClose();
+    });
+  }
+  inboxRefreshDot();
 }
 
 // ============================================================
