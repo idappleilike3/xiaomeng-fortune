@@ -5253,3 +5253,10 @@ body.ritual-active .card-spread-row {
 /* 當有真實圖片時,隱藏 CSS 藝術(只保留金色外框) */
 .tarot-card-face.has-card-image .tarot-art-frame { opacity: 0.06; }
 .tarot-card-face.has-card-image .tarot-art-figure { opacity: 0.05; }
+
+
+/* === Step 4: entry 2 緊湊表單 === */
+.profile-card { display: flex; flex-direction: column; gap: 12px; max-width: 360px; margin: 0 auto; }
+.profile-card .input-label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #e9d6a8; }
+.profile-card input, .profile-card select { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(245, 211, 139, 0.35); background: rgba(13, 7, 24, 0.6); color: #fff7e0; font-size: 15px; }
+.profile-privacy { font-size: 12px; color: #8b9bb5; text-align: center; margin-top: 6px; letter-spacing: 0.04em; }

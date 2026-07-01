@@ -32,10 +32,7 @@
           <small>塔羅命盤療癒室</small>
         </span>
       </a>
-      <nav class="nav" aria-label="主要導覽">
-        <a href="#demo">功能</a>
-        <a href="#market">變現</a>
-      </nav>
+      <nav class="nav" aria-label="主要導覽" hidden></nav>
       <button type="button" class="inbox-fab" id="inboxFab" aria-label="靈性收件匣" title="靈性收件匣">
         <span class="inbox-fab__icon" aria-hidden="true">✉</span>
         <span class="inbox-fab__dot" id="inboxFabDot" hidden></span>
@@ -86,64 +83,24 @@
       </section>
       
 
-      <section id="profile" class="profile-section">
-        <div class="section-heading">
-          <p class="eyebrow">Birth Profile</p>
-          <h2>設定生日，之後自動帶入命盤</h2>
-          <p>使用者第一次進來先填出生資料，後續塔羅、八字、紫微斗數、生命靈數、合盤與擇日都能直接沿用。畫面會先說明用途，讓使用者安心選擇。</p>
-        </div>
-
-        <div class="profile-layout">
-          <article class="consent-card">
-            <span class="product-tag">安心說明</span>
-            <h3>為什麼小夢老師需要這些資料？</h3>
-            <ul class="reason-list">
-              <li><strong>出生日期</strong><span>用來計算生命靈數、流年與基本命盤。</span></li>
-              <li><strong>出生時間</strong><span>用來細分八字時辰與紫微斗數命宮；不知道也可以先略過。</span></li>
-              <li><strong>出生地</strong><span>用來校正時區與地點，讓命盤更貼近你的出生條件。</span></li>
-              <li><strong>暱稱與性別</strong><span>讓解析口吻更自然，也可用於合盤與關係分析。</span></li>
-            </ul>
-            <p>資料只用於命理解析與個人化提醒。正式上線後會提供刪除資料與取消提醒的入口。</p>
-          </article>
-
-          <div class="profile-card">
-            <span class="liff-status" id="liffStatus">LIFF 等待 LINE 內頁</span>
-            <label class="input-label">
-              暱稱
-              <input id="profileName" type="text" placeholder="例：小月" />
-            </label>
-            <label class="input-label">
-              性別
-              <select id="profileGender">
-                <option>女性</option>
-                <option>男性</option>
-                <option>其他 / 不透露</option>
-              </select>
-            </label>
-            <label class="input-label">
-              出生日期
-              <input id="profileBirthDate" type="date" />
-            </label>
-            <label class="input-label">
-              出生時間
-              <input id="profileBirthTime" type="time" />
-            </label>
-            <label class="input-label">
-              出生地
-              <input id="profileBirthPlace" type="text" placeholder="例：台北市、基隆市、台中市" />
-            </label>
-            <label class="input-label">
-              提醒頻率
-              <select id="profileReminder">
-                <option>每日一則提醒</option>
-                <option>每週一則提醒</option>
-                <option>只在我主動查詢時回覆</option>
-              </select>
-            </label>
-            <button class="panel-button" id="saveBirthProfile" type="button">同意並設定生日</button>
-            <p id="profileResult">資料會先存在你的瀏覽器，正式上線後會存進會員資料庫。</p>
-          </div>
-        </div>
+      <section id="profile" class="profile-section" hidden>
+        <form class="profile-card" id="birthForm" onsubmit="return false;">
+          <span class="liff-status" id="liffStatus">LIFF 等待 LINE 內頁</span>
+          <label class="input-label">
+            出生日期
+            <input id="profileBirthDate" type="date" required />
+          </label>
+          <label class="input-label">
+            出生時間
+            <input id="profileBirthTime" type="time" />
+          </label>
+          <label class="input-label">
+            暱稱
+            <input id="profileName" type="text" placeholder="例：小月" />
+          </label>
+          <button class="panel-button" id="saveBirthProfile" type="button">啟動星軌解碼</button>
+          <p class="profile-privacy">資料僅用於命盤計算與個人化解讀，不會外流或主動推播。</p>
+        </form>
       </section>
 
       <section id="demo" class="demo-section demo-ritual">
