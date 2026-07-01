@@ -179,11 +179,35 @@ function getTarotCardMeta(cardName) {
   };
 }
 
-const tarotDeck = rawTarotDeck.map(([name, meaning]) => ({
-  name,
-  meaning,
-  ...getTarotCardMeta(name),
-}));
+const MAJOR_ARCANA_IMAGES = {
+  0: "./assets/tarot-00-the-fool.png",
+  1: "./assets/tarot-01-the-magician.png",
+  2: "./assets/tarot-02-the-high-priestess.png",
+  3: "./assets/tarot-03-the-empress.png",
+  4: "./assets/tarot-04-the-emperor.png",
+  5: "./assets/tarot-05-the-hierophant.png",
+  6: "./assets/tarot-06-the-lovers.png",
+  7: "./assets/tarot-07-the-chariot.png",
+  8: "./assets/tarot-08-strength.png",
+  9: "./assets/tarot-09-the-hermit.png",
+  10: "./assets/tarot-10-wheel-of-fortune.png",
+  11: "./assets/tarot-11-justice.png",
+  12: "./assets/tarot-12-the-hanged-man.png",
+  13: "./assets/tarot-13-death.png",
+  14: "./assets/tarot-14-temperance.png",
+  15: "./assets/tarot-15-the-devil.png",
+  16: "./assets/tarot-16-the-tower.png",
+  17: "./assets/tarot-17-the-star.png",
+  18: "./assets/tarot-18-the-moon.png",
+  19: "./assets/tarot-19-the-sun.png",
+  20: "./assets/tarot-20-judgement.png",
+  21: "./assets/tarot-21-the-world.png",
+};
+const tarotDeck = rawTarotDeck.map(([name, meaning]) => {
+  const meta = getTarotCardMeta(name);
+  const image = meta.suit === "major" ? MAJOR_ARCANA_IMAGES[meta.index] || null : null;
+  return { name, meaning, ...meta, image };
+});
 const majorArcanaDeck = tarotDeck.filter((card) => card.suit === "major");
 
 
@@ -874,6 +898,21 @@ function setTarotExperienceState(state, message) {
   }
 }
 
+function applyCardImage(cardEl, card) {
+  if (!cardEl || !card) return;
+  const img = cardEl.querySelector("[data-card-image]");
+  if (!img) return;
+  if (card.image) {
+    img.src = card.image;
+    img.alt = card.name || "";
+    img.removeAttribute("aria-hidden");
+    cardEl.classList.add("has-card-image");
+  } else {
+    img.removeAttribute("src");
+    cardEl.classList.remove("has-card-image");
+  }
+}
+
 function tarotCardBackMarkup() {
   return `
     <span class="tarot-card-back">
@@ -954,6 +993,7 @@ function createTarotRevealParticles(target) {
 
 function tarotCardFrontMarkup(card, position) {
   const symbols = ["☾", "✦", "◆", "✧", "◐", "✺", "◇", "☉", "☽", "✶"];
+  const cardImage = card && card.image;
   const code = [...card.name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const symbol = card.symbol || symbols[code % symbols.length];
   const accent = code % 5;
@@ -963,6 +1003,7 @@ function tarotCardFrontMarkup(card, position) {
   const suit = card.suit || "major";
   return `
     <span class="tarot-card-face ${position === "逆位" ? "is-reversed" : ""}" data-accent="${accent}" data-suit="${suit}">
+      <span class="tarot-card-image-wrap" data-card-image-wrap><img class="tarot-card-image" alt="" aria-hidden="true" data-card-image /></span>
       <span class="tarot-card-foil" aria-hidden="true"></span>
       <span class="tarot-card-corner top-left" aria-hidden="true">✦</span>
       <span class="tarot-card-corner top-right" aria-hidden="true">✦</span>
@@ -1192,6 +1233,7 @@ function drawTarotCard(order) {
 
   if (selectedButton) {
     selectedButton.querySelector(".tarot-flip-front").innerHTML = tarotCardFrontMarkup(selected, position);
+  applyCardImage(el, card);
     selectedButton.classList.add("is-selected");
     setTarotExperienceState("revealing");
     createTarotRevealParticles(selectedButton);
