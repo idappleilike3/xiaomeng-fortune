@@ -5260,3 +5260,121 @@ body.ritual-active .card-spread-row {
 .profile-card .input-label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #e9d6a8; }
 .profile-card input, .profile-card select { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(245, 211, 139, 0.35); background: rgba(13, 7, 24, 0.6); color: #fff7e0; font-size: 15px; }
 .profile-privacy { font-size: 12px; color: #8b9bb5; text-align: center; margin-top: 6px; letter-spacing: 0.04em; }
+
+
+/* =====================================================================
+   F22 The Great Stage — 單一沉浸式大舞台
+   把 input / draw / result 三個 stage 疊在同一個畫面
+   ===================================================================== */
+.ritual-flow {
+  position: relative;
+  min-height: 720px;
+}
+.ritual-stage {
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+/* 疊加模式:三個 stage 同時可見 */
+.ritual-flow.great-stage-mode .ritual-stage--input,
+.ritual-flow.great-stage-mode .ritual-stage--draw,
+.ritual-flow.great-stage-mode .ritual-stage--result {
+  position: relative;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+}
+.ritual-flow.great-stage-mode .ritual-stage--input.is-active,
+.ritual-flow.great-stage-mode .ritual-stage--draw.is-active,
+.ritual-flow.great-stage-mode .ritual-stage--result.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.ritual-flow.great-stage-mode .ritual-stage[hidden] {
+  display: block !important;
+}
+
+/* 弧形扇形展牌 — 大牌桌 */
+.card-stack.great-table {
+  position: relative;
+  height: 380px;
+  perspective: 1400px;
+  margin: 28px 0 20px;
+}
+.great-table .great-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92px;
+  height: 140px;
+  margin: -70px 0 0 -46px;
+  border-radius: 10px;
+  transform-origin: center 220%;
+  transition: transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 380ms ease, box-shadow 380ms ease;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+.great-table .great-card.is-dimmed {
+  opacity: 0.2;
+  filter: saturate(0.5) brightness(0.6);
+}
+.great-table .great-card.is-selected {
+  z-index: 50;
+  transform: translate(-50%, -50%) scale(1) !important;
+  cursor: default;
+}
+.great-table .great-card.is-zoomed {
+  z-index: 60;
+  width: 220px;
+  height: 336px;
+  margin: -168px 0 0 -110px;
+  box-shadow: 0 30px 80px rgba(245, 211, 139, 0.45), 0 0 0 2px rgba(245, 211, 139, 0.6);
+}
+
+/* 解讀區打字機效果 */
+.great-reading {
+  font-family: "Noto Serif TC", Georgia, serif;
+  color: #f3e2bd;
+  font-size: 15px;
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 80px;
+}
+.great-reading .caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #f5d38b;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: caretBlink 1s steps(2) infinite;
+}
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* 階段指示器(大舞台底部三段進度) */
+.great-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 4px;
+}
+.great-progress__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(245, 211, 139, 0.25);
+  transition: background 280ms ease, transform 280ms ease;
+}
+.great-progress__dot.is-active {
+  background: #f5d38b;
+  transform: scale(1.4);
+  box-shadow: 0 0 8px rgba(245, 211, 139, 0.8);
+}
+.great-progress__dot.is-done {
+  background: rgba(245, 211, 139, 0.6);
+}

@@ -2813,3 +2813,164 @@ if (document.readyState === 'loading') {
     });
   });
 })();
+
+
+// =====================================================================
+// F22 The Great Stage — 單一沉浸式大舞台 + 弧形扇形展牌 + 打字機
+// 套用條件:使用者按下「進入靜心占卜室」後,三個 stage 疊成同一畫面
+// =====================================================================
+(function greatStageBootstrap() {
+  const GREAT_FAN_SIZE = 21; // 一次展 21 張(可選),扇形半徑 220px
+  const GREAT_FAN_RADIUS = 240; // 牌桌半徑
+  const GREAT_FAN_ANGLE = 110; // 扇形展開角度(度)
+  const greatPicked = []; // 已選牌
+
+  function enterGreatStage() {
+    const flow = document.querySelector('.ritual-flow');
+    if (!flow) return;
+    flow.classList.add('great-stage-mode');
+    // Show all three stages
+    flow.querySelectorAll('.ritual-stage').forEach(s => {
+      s.removeAttribute('hidden');
+      s.classList.remove('is-active');
+    });
+    // Activate input stage
+    const inputStage = flow.querySelector('.ritual-stage--input');
+    if (inputStage) inputStage.classList.add('is-active');
+    // Add progress bar
+    ensureProgressBar(flow);
+  }
+
+  function ensureProgressBar(flow) {
+    if (flow.querySelector('.great-progress')) return;
+    const bar = document.createElement('div');
+    bar.className = 'great-progress';
+    bar.innerHTML = '<span class="great-progress__dot is-active" data-step="input"></span>' +
+                    '<span class="great-progress__dot" data-step="draw"></span>' +
+                    '<span class="great-progress__dot" data-step="result"></span>';
+    flow.insertBefore(bar, flow.firstChild);
+  }
+
+  function setProgress(activeStep, doneSteps) {
+    const dots = document.querySelectorAll('.great-progress__dot');
+    const order = ['input', 'draw', 'result'];
+    dots.forEach((d, i) => {
+      d.classList.toggle('is-active', d.dataset.step === activeStep);
+      d.classList.toggle('is-done', order.indexOf(d.dataset.step) < order.indexOf(activeStep));
+    });
+  }
+
+  function activateStage(stageName) {
+    const flow = document.querySelector('.ritual-flow');
+    if (!flow) return;
+    const map = {
+      input: '.ritual-stage--input',
+      draw: '.ritual-stage--draw',
+      result: '.ritual-stage--result',
+    };
+    flow.querySelectorAll('.ritual-stage').forEach(s => s.classList.remove('is-active'));
+    const target = flow.querySelector(map[stageName]);
+    if (target) target.classList.add('is-active');
+    setProgress(stageName);
+    // Smooth scroll into view
+    setTimeout(() => {
+      target && target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+  }
+
+  // Build the great fan table
+  function buildGreatTable() {
+    const stack = document.getElementById('cardStack');
+    if (!stack) return;
+    stack.classList.add('great-table');
+    stack.innerHTML = '';
+    const fan = (window.majorArcanaDeck || []).slice(0, GREAT_FAN_SIZE);
+    if (!fan.length) {
+      // fallback to all 78
+      const all = (window.tarotDeck || []).slice(0, GREAT_FAN_SIZE);
+      fan.push(...all);
+    }
+    const total = fan.length;
+    const startAngle = -GREAT_FAN_ANGLE / 2;
+    const angleStep = GREAT_FAN_ANGLE / Math.max(1, total - 1);
+
+    fan.forEach((card, i) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'great-card';
+      el.dataset.cardIndex = String((card.index != null) ? card.index : i);
+      const angle = startAngle + angleStep * i;
+      el.style.setProperty('--fan-angle', angle + 'deg');
+      el.style.transform = `rotate(${angle}deg) translateY(-${GREAT_FAN_RADIUS}px) rotate(${-angle}deg)`;
+      el.innerHTML = `<span class="great-card__art"></span>`;
+      el.addEventListener('click', () => onGreatCardClick(card, el, i));
+      stack.appendChild(el);
+    });
+  }
+
+  function onGreatCardClick(card, el, index) {
+    if (el.classList.contains('is-zoomed')) return;
+    if (greatPicked.includes(index)) return;
+    greatPicked.push(index);
+    el.classList.add('is-selected');
+    // Dim all others
+    document.querySelectorAll('.great-card').forEach((c) => {
+      if (c !== el) c.classList.add('is-dimmed');
+    });
+    // Zoom the picked card to center
+    setTimeout(() => {
+      el.classList.add('is-zoomed');
+    }, 220);
+    // Show result after zoom
+    setTimeout(() => {
+      showGreatResult(card);
+    }, 720);
+  }
+
+  function showGreatResult(card) {
+    activateStage('result');
+    const name = document.getElementById('resultCardName');
+    const meaning = document.getElementById('resultMeaning');
+    if (name) name.textContent = (card.english || card.name || '') + ' · ' + (card.name || '');
+    // Typewriter
+    if (meaning) {
+      const text = card.meaning || '願這張牌為你帶來今晚最溫柔的提醒。';
+      typewriteText(meaning, text, 32);
+    }
+  }
+
+  function typewriteText(el, text, speedMs) {
+    el.classList.add('great-reading');
+    el.innerHTML = '';
+    let i = 0;
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    el.appendChild(caret);
+    const tick = () => {
+      if (i >= text.length) {
+        caret.remove();
+        return;
+      }
+      const ch = text.charAt(i++);
+      caret.insertAdjacentText('beforebegin', ch);
+      setTimeout(tick, speedMs);
+    };
+    tick();
+  }
+
+  // Patch existing startRitual by hooking the CTA button
+  document.addEventListener('click', (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest('#ritualCta') && t.closest('#ritualCta').dataset.action === 'enter') {
+      // Defer to let the existing startRitual run, then convert to great stage
+      setTimeout(() => {
+        enterGreatStage();
+        setTimeout(() => {
+          activateStage('draw');
+          buildGreatTable();
+        }, 600);
+      }, 50);
+    }
+  });
+})();
