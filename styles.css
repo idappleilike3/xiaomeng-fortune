@@ -8012,3 +8012,89 @@ html, body { overflow-x: hidden; }
   .ritual-cta { padding: 16px 32px; }
   .opening-skip { top: 12px; right: 12px; padding: 6px 12px; font-size: 11px; }
 }
+
+/* === Hero 4 Entry v1.0 (2026-07-02 06:43) === */
+/* === Hero 4 Entry v1.0 (2026-07-02 06:43) === */
+.hero-quote--xl {
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.25;
+  font-weight: 900;
+  margin: 0 0 16px;
+  color: #fff5d8;
+}
+.hero-sub-en {
+  font-size: 16px;
+  color: #f5d38b;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+  font-weight: 500;
+}
+.hero-sub-zh {
+  font-size: 15px;
+  color: #c9b88a;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+.hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 36px;
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.95), rgba(201, 161, 74, 0.95));
+  border: 1px solid #f5d38b;
+  border-radius: 999px;
+  color: #1a0f24;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  margin: 0 0 40px;
+  box-shadow: 0 8px 24px rgba(245, 211, 139, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.hero-cta-primary::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+}
+.hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245, 211, 139, 0.5); }
+.hero-cta-primary:hover::before { transform: translateX(100%); }
+.hero-section-title {
+  font-size: 22px;
+  color: #fff5d8;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 32px 0 24px;
+  text-align: center;
+}
+.hero-entries--four {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.hero-entry__icon {
+  display: block;
+  font-size: 36px;
+  margin: 0 0 12px;
+  line-height: 1;
+}
+.hero-entry--deep {
+  grid-column: 1 / -1;
+  max-width: 240px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, rgba(124, 77, 196, 0.2), rgba(245, 211, 139, 0.12));
+  border: 1px solid rgba(245, 211, 139, 0.5);
+}
+@media (max-width: 720px) {
+  .hero-entries--four { grid-template-columns: 1fr; max-width: 320px; }
+  .hero-entry--deep { grid-column: 1; max-width: 100%; }
+}
+/* === END Hero 4 Entry v1.0 === */

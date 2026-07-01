@@ -4888,3 +4888,43 @@ if (document.readyState === 'loading') {
     }
   });
 })();
+
+/* === Hero 4 Entry v1.0 (2026-07-02 06:43) === */
+// 4 入口點擊 → 寫 localStorage + 滾到 demo
+document.querySelectorAll('.hero-entry[data-system]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const system = btn.dataset.system;
+    try { localStorage.setItem('xm_selected_system', system); } catch (e) {}
+    const target = document.querySelector('#demo, .demo-section, .system-cards, #app');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (typeof window.__setSystem === 'function') {
+      try { window.__setSystem(system); } catch (e) {}
+    }
+  });
+});
+
+// Hero CTA → 滾到 4 入口
+const heroCta = document.getElementById('heroCtaPrimary');
+if (heroCta) {
+  heroCta.addEventListener('click', () => {
+    const target = document.querySelector('.hero-entries--four');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+// URL ?system= 參數 → 自動點對應入口
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const sys = params.get('system');
+    if (sys) {
+      const btn = document.querySelector(`.hero-entry[data-system="${sys}"]`);
+      if (btn) setTimeout(() => btn.click(), 600);
+    }
+    const layer = params.get('layer');
+    if (layer === '3') {
+      const explore = document.querySelector('.hero-entry[data-system="explore"]');
+      if (explore) setTimeout(() => explore.click(), 600);
+    }
+  } catch (e) {}
+})();
