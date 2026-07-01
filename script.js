@@ -3591,3 +3591,80 @@ if (document.readyState === 'loading') {
     setTimeout(openWelcome, 600);
   }
 })();
+
+
+// =====================================================================
+// Phase 49: 全站 Loading — 3 段靈性調頻文本 動態輪播
+// API: window.__showLoader(subtitle?, autoHideMs?) / window.__hideLoader()
+// =====================================================================
+(function ritualLoaderBootstrap() {
+  const MESSAGES = [
+    "正在與你的星軌錢包及命運方案進行能量同步…",
+    "正在依據你的命盤軌道進行專屬星空調頻…",
+    "小夢老師正在為你的信件進行能量封印，請靜心稍候…"
+  ];
+  const SUBTITLES = [
+    "小夢老師正在為你調頻",
+    "星圖能量已啟動",
+    "命運之門正在開啟"
+  ];
+  let rotateTimer = null;
+  let autoHideTimer = null;
+  let openedAt = 0;
+
+  function open(subtitle, autoHideMs) {
+    const overlay = document.getElementById("ritualLoader");
+    const text = document.getElementById("ritualLoaderText");
+    const sub = document.getElementById("ritualLoaderSub");
+    if (!overlay || !text || !sub) return;
+    openedAt = Date.now();
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    text.textContent = MESSAGES[0];
+    sub.textContent = subtitle || SUBTITLES[0];
+    let idx = 0;
+    if (rotateTimer) clearInterval(rotateTimer);
+    rotateTimer = setInterval(() => {
+      idx = (idx + 1) % MESSAGES.length;
+      text.textContent = MESSAGES[idx];
+      sub.textContent = SUBTITLES[idx];
+    }, 2400);
+    if (autoHideTimer) clearTimeout(autoHideTimer);
+    if (autoHideMs && autoHideMs > 0) {
+      autoHideTimer = setTimeout(close, autoHideMs);
+    }
+    document.body.style.overflow = "hidden";
+  }
+
+  function close() {
+    const overlay = document.getElementById("ritualLoader");
+    if (!overlay) return;
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    if (rotateTimer) { clearInterval(rotateTimer); rotateTimer = null; }
+    if (autoHideTimer) { clearTimeout(autoHideTimer); autoHideTimer = null; }
+    document.body.style.overflow = "";
+  }
+
+  // Global API
+  window.__showLoader = open;
+  window.__hideLoader = close;
+
+  // Auto-bind to the form submit buttons in entry 2 (birthday) and entry 3 (letter)
+  document.addEventListener("submit", (e) => {
+    const form = e.target;
+    if (form && form.id === "birthForm") {
+      e.preventDefault();
+      open("正在啟動你的星軌解碼…", 3000);
+    }
+  });
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    // Letter form submit
+    if (t.closest && t.closest("#letterSubmit")) {
+      e.preventDefault();
+      open("正在為你的信件進行能量封印…", 3500);
+    }
+  });
+})();

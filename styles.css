@@ -6971,3 +6971,118 @@ button.compact-button:hover,
   color: #ffe2a3 !important;
   text-shadow: 0 0 6px rgba(255, 226, 163, 0.4);
 }
+
+
+/* =====================================================================
+   Phase 49: 全站 Loading — 靈性調頻文本 + 金色轉圈 + 呼吸發光
+   ===================================================================== */
+.ritual-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 4, 18, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  pointer-events: all;
+}
+.ritual-loader.is-open {
+  display: flex;
+  animation: loaderFadeIn 240ms ease;
+}
+@keyframes loaderFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.ritual-loader__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 360px;
+  text-align: center;
+}
+.ritual-loader__ring {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ritual-loader__ring::before,
+.ritual-loader__ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(245, 211, 139, 0.85);
+  border-right-color: rgba(245, 211, 139, 0.4);
+  animation: loaderSpin 1.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+.ritual-loader__ring::after {
+  inset: 10px;
+  border-top-color: rgba(255, 215, 130, 0.55);
+  border-right-color: rgba(255, 215, 130, 0.2);
+  border-bottom-color: rgba(245, 211, 139, 0.4);
+  animation-duration: 1.9s;
+  animation-direction: reverse;
+}
+.ritual-loader__arc {
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.12), transparent 70%);
+  animation: loaderPulse 2.4s ease-in-out infinite;
+}
+@keyframes loaderSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes loaderPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.ritual-loader__core {
+  position: relative;
+  z-index: 1;
+  font-size: 28px;
+  color: #f5d38b;
+  text-shadow:
+    0 0 12px rgba(245, 211, 139, 0.85),
+    0 0 24px rgba(245, 211, 139, 0.4);
+  animation: loaderCorePulse 2.4s ease-in-out infinite;
+}
+@keyframes loaderCorePulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+.ritual-loader__text {
+  font-family: "Noto Serif TC", Georgia, serif;
+  font-size: 15px;
+  color: #f5d38b;
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+  margin: 0;
+  text-shadow:
+    0 0 8px rgba(245, 211, 139, 0.45),
+    0 0 18px rgba(245, 211, 139, 0.25);
+  animation: loaderTextBreath 3.6s ease-in-out infinite;
+  min-height: 48px;
+}
+@keyframes loaderTextBreath {
+  0%, 100% { opacity: 0.85; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-1px); }
+}
+.ritual-loader__sub {
+  font-family: "Noto Serif TC", Georgia, serif;
+  font-size: 12px;
+  color: rgba(201, 184, 138, 0.8);
+  letter-spacing: 0.18em;
+  margin: 0;
+  text-shadow: 0 0 4px rgba(245, 211, 139, 0.2);
+}
