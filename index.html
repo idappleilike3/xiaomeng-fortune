@@ -6,7 +6,7 @@
     <title>小夢老師｜塔羅命盤療癒室</title>
     <meta
       name="description"
-      content="LINE 結合網頁的命理服務 MVP，包含塔羅、求籤、命盤、合盤、生命靈數、MBTI 與聯盟行銷入口。"
+      content="小夢老師 Tarot Ritual — 塔羅探索、毛孩心語、今日神諭,大師親自為你解讀星軌。"
     />
   <meta property="og:title" content="【小夢老師 • 占卜療癒室】萬物皆有星軌,點擊免費啟動你的專屬星盤流年解碼" />
   <meta property="og:description" content="塔羅探索 ・ 毛孩心語 ・ 今日神諭 — 為現代女性量身打造的靈性諮商空間" />
@@ -331,9 +331,9 @@
 
       <section id="market" class="market-section">
         <div class="section-heading">
-          <p class="eyebrow">Affiliate Funnel</p>
-          <h2>算完之後，接商品與付費服務</h2>
-          <p>每個命理結果都能對應一組商品：牌卡、香氛、課程、諮詢、開運小物，形成自然導購。</p>
+          <p class="eyebrow">大師指引 · 命運的下一章</p>
+          <h2>大師指引 ✦ 命運的下一章</h2>
+          <p>每一份牌意都是引子,真正的轉化發生在日常的微小選擇。<br/>以下聖物由小夢老師親自調頻選品,陪你走過星軌的下一段路。</p>
         </div>
 
         <div class="unlock-grid" aria-label="付費解鎖方案">
@@ -341,22 +341,26 @@
             <span class="product-tag">免費</span>
             <h3>簡易解析</h3>
             <strong>$0</strong>
-            <p>提供牌名、籤號、正逆位、簡短提醒與一個注意事項，適合第一次體驗。</p>
+            <p>提供牌名、籤號、正逆位、簡短提醒與一個注意事項,適合第一次體驗。</p>
             <button class="panel-button" type="button" data-unlock="free">查看免費內容</button>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-free">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
           <article class="unlock-card featured">
             <span class="product-tag">推薦</span>
             <h3>單次深度解析</h3>
             <strong>$99</strong>
             <p>延伸感情、工作、財運、未來 14 到 30 天走勢、阻礙來源與下一步行動。</p>
-            <button class="panel-button" type="button" data-unlock="single">預覽解鎖流程</button>
+            <button class="panel-button" type="button" data-unlock="single">現金消費解鎖</button>
+            <p class="unlock-discount-hint">🔒 本單滿 $599 可使用 50 靈性積分折抵</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-single">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
           <article class="unlock-card">
             <span class="product-tag">點數</span>
             <h3>靈感點數包</h3>
             <strong>300 點</strong>
-            <p>適合常回來抽牌、求籤、看週運的人。每次深度解析可扣點，不必每次付款。</p>
+            <p>適合常回來抽牌、求籤、看週運的人。每次深度解析可扣點,不必每次付款。</p>
             <button class="panel-button" type="button" data-unlock="points">查看點數制</button>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-points">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
         </div>
 
@@ -369,56 +373,61 @@
           <div>
             <span class="product-tag">會員錢包</span>
             <h3>點數餘額與解鎖流程</h3>
-            <p id="walletSummary">正在讀取會員點數與付款方案。</p>
+            <p id="walletSummary">正在與你的星軌錢包及命運方案進行能量同步……</p>
+            <p class="wallet-hint">🔒 <strong>尊榮守護</strong>：本積分具備 <strong>7 天時效</strong>,單筆現金消費滿 <strong>$599</strong> 即可一鍵折抵 <strong>$50</strong> 元現金減免。</p>
+            <a href="#" class="share-viral-link" data-viral-source="wallet">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </div>
           <div class="wallet-actions">
-            <button class="panel-button" id="rewardPoints" type="button">分享送 20 點</button>
-            <button class="panel-button ghost-button" id="unlockWithPoints" type="button">60 點解鎖深度解析</button>
+            <button class="panel-button" id="rewardPoints" type="button">分享好友 · 獲取 50 靈性積分</button>
+            <button class="panel-button ghost-button" id="unlockWithPoints" type="button">現金消費解鎖深度解析</button>
           </div>
-          <div class="payment-plans" id="paymentPlans" aria-label="綠界付款方案"></div>
-          <p class="share-status" id="paymentStatus">綠界正式收款需填入 Merchant ID、HashKey、HashIV。現在先提供流程預覽。</p>
+          <div class="payment-plans" id="paymentPlans" aria-label="付款方案"></div>
+          <p class="share-status" id="paymentStatus" hidden></p>
         </div>
 
         <div class="market-grid">
           <article class="product-card">
-            <span class="product-tag">塔羅結果推薦</span>
+            <span class="product-tag">大師專屬推薦</span>
             <h3>直覺塔羅入門組</h3>
-            <p>適合抽到「女祭司、月亮、星星」的使用者，主打直覺與自我對話。</p>
-            <a href="https://example.com/tarot?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="直覺塔羅入門組" data-track-source="tarot-result">查看聯盟商品</a>
+            <p>適合抽到「女祭司、月亮、星星」的使用者,主打直覺與自我對話。</p>
+            <a href="#" class="product-cta" data-track-product="直覺塔羅入門組" data-track-source="tarot-result">迎請靈性聖物</a>
+            <a href="#" class="share-viral-link" data-viral-source="product-tarot">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
           <article class="product-card">
-            <span class="product-tag">感情運推薦</span>
+            <span class="product-tag">大師專屬推薦</span>
             <h3>月光香氛蠟燭</h3>
-            <p>適合感情占卜後推薦，搭配睡前冥想、書寫與顯化儀式。</p>
-            <a href="https://example.com/candle?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="月光香氛蠟燭" data-track-source="love-fortune">查看聯盟商品</a>
+            <p>適合感情占卜後推薦,搭配睡前冥想、書寫與顯化儀式。</p>
+            <a href="#" class="product-cta" data-track-product="月光香氛蠟燭" data-track-source="love-fortune">迎請靈性聖物</a>
+            <a href="#" class="share-viral-link" data-viral-source="product-candle">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
           <article class="product-card">
-            <span class="product-tag">命盤進階</span>
+            <span class="product-tag">尊榮守護</span>
             <h3>一對一命盤諮詢</h3>
-            <p>免費命盤給摘要，完整解析導到付費諮詢、課程或會員訂閱。</p>
-            <a href="https://example.com/consulting?utm_source=line_fortune" target="_blank" rel="nofollow sponsored noopener" data-track-product="一對一命盤諮詢" data-track-source="chart-upsell">查看合作方案</a>
+            <p>免費命盤給摘要,完整解析導到現金消費諮詢、課程或會員訂閱。</p>
+            <a href="#" class="product-cta" data-track-product="一對一命盤諮詢" data-track-source="chart-upsell">預約大師諮詢</a>
+            <a href="#" class="share-viral-link" data-viral-source="product-consulting">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
         </div>
       
         <div class="affiliate-grid" aria-label="命運市集聯盟商品">
-          <p class="affiliate-eyebrow">F30 命運商城 · 命理解析嚴選</p>
+          <p class="affiliate-eyebrow">大師調頻選品 · 命理解析嚴選</p>
           <article class="affiliate-card">
             <span class="affiliate-tag">水晶</span>
             <h4>月光石能量手鏈</h4>
             <p>對應月亮、星星、女祭司牌組,適合直覺冥想。</p>
-            <a class="affiliate-link" href="#" data-affiliate="moonstone" data-source="tarot-reading">前往商城 →</a>
+            <a class="affiliate-link" href="#" data-affiliate="moonstone" data-source="tarot-reading">迎請靈性聖物 →</a>
           </article>
           <article class="affiliate-card">
             <span class="affiliate-tag">精油</span>
             <h4>雪松沉靜擴香</h4>
             <p>對應力量、節制、世界牌組,適合靜心與睡前儀式。</p>
-            <a class="affiliate-link" href="#" data-affiliate="cedarwood" data-source="tarot-reading">前往商城 →</a>
+            <a class="affiliate-link" href="#" data-affiliate="cedarwood" data-source="tarot-reading">迎請靈性聖物 →</a>
           </article>
           <article class="affiliate-card">
             <span class="affiliate-tag">塔羅書</span>
             <h4>韋特塔羅入門圖典</h4>
             <p>對應所有 78 張大牌小牌,適合深度研究牌義。</p>
-            <a class="affiliate-link" href="#" data-affiliate="tarot-book" data-source="tarot-reading">前往商城 →</a>
+            <a class="affiliate-link" href="#" data-affiliate="tarot-book" data-source="tarot-reading">迎請靈性聖物 →</a>
           </article>
         </div>
 </section>

@@ -3385,3 +3385,128 @@ if (document.readyState === 'loading') {
 
   refreshWalletUI();
 })();
+
+
+// =====================================================================
+// F30 變現 — 分享裂變金色連結 (50 點 / 7 天 / 每日限一次)
+// =====================================================================
+(function shareViralBootstrap() {
+  const SHARE_TEXT = "【小夢老師 • 占卜療癒室】萬物皆有星軌,點擊免費啟動你的專屬星盤流年解碼";
+  const SHARE_URL = "https://xiaomeng-fortune.onrender.com/";
+
+  async function doShare(source) {
+    const POINTS_KEY = "xiaomeng_viral_points";
+    const POINTS_EXP_KEY = "xiaomeng_viral_exp";
+    const POINTS_GRANT_DAY_KEY = "xiaomeng_viral_grant_day";
+    function grantLocal() {
+      try {
+        const raw = localStorage.getItem(POINTS_KEY);
+        const cur = Number(raw || 0);
+        const today = new Date().toISOString().slice(0, 10);
+        const lastDay = localStorage.getItem(POINTS_GRANT_DAY_KEY);
+        if (lastDay === today) {
+          return { ok: false, reason: "already_claimed_today" };
+        }
+        const exp = new Date();
+        exp.setDate(exp.getDate() + 7);
+        localStorage.setItem(POINTS_KEY, String(cur + 50));
+        localStorage.setItem(POINTS_EXP_KEY, String(exp.getTime()));
+        localStorage.setItem(POINTS_GRANT_DAY_KEY, today);
+        return { ok: true, value: cur + 50 };
+      } catch (e) { return { ok: false, reason: "storage_error" }; }
+    }
+    let grantResult;
+    if (!window.__xiaomengF30) {
+      // F30 not yet loaded — use local fallback
+      grantResult = grantLocal();
+      if (!grantResult.ok) {
+        alert("你今日已領過 50 靈性積分囉,明日再來領取～");
+        return;
+      }
+    } else {
+      const r = window.__xiaomengF30.grantSharePoints();
+      if (!r.ok) {
+        alert("你今日已領過 50 靈性積分囉,明日再來領取～");
+        return;
+      }
+    }
+    // Refresh wallet UI
+    if (window.__xiaomengF30 && window.__xiaomengF30.refreshWalletUI) {
+      window.__xiaomengF30.refreshWalletUI();
+    }
+    // Try LIFF share
+    if (window.liff && window.liff.isLoggedIn && window.liff.isLoggedIn()) {
+      try {
+        await window.liff.shareTargetPicker([
+          {
+            type: "flex",
+            altText: SHARE_TEXT,
+            contents: {
+              type: "bubble",
+              hero: {
+                type: "image",
+                url: SHARE_URL + "assets/tarot-01-the-magician.png",
+                size: "full",
+                aspectRatio: "2:3",
+                aspectMode: "cover"
+              },
+              body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  { type: "text", text: SHARE_TEXT, weight: "bold", size: "md", color: "#1a0e2e" },
+                  { type: "text", text: "免費啟動你的星軌解碼", size: "sm", color: "#5a4a3a", margin: "md" }
+                ]
+              },
+              footer: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  { type: "button", action: { type: "uri", label: "✦ 立即啟動", uri: SHARE_URL }, style: "primary", color: "#1a0e2e" }
+                ]
+              }
+            }
+          }
+        ]);
+      } catch (e) {
+        // Fallback to native share
+        try { navigator.share && navigator.share({ title: "小夢老師", text: SHARE_TEXT, url: SHARE_URL }); } catch (e2) {}
+      }
+    } else {
+      // Test mode
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: "小夢老師 Tarot Ritual", text: SHARE_TEXT, url: SHARE_URL });
+        } else {
+          // Manual copy
+          try {
+            await navigator.clipboard.writeText(SHARE_TEXT + " " + SHARE_URL);
+            alert("已複製分享文案 + 50 靈性積分已存入錢包！\n\n貼到 LINE / Facebook 給好友即可。");
+          } catch (e) {
+            alert("已存入 50 靈性積分！\n\n請手動複製這段話分享給好友：\n" + SHARE_TEXT + "\n" + SHARE_URL);
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const a = t.closest && t.closest(".share-viral-link");
+    if (!a) return;
+    e.preventDefault();
+    const source = a.getAttribute("data-viral-source") || "unknown";
+    doShare(source);
+  });
+
+  // Hook the original rewardPoints button too
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest("#rewardPoints")) {
+      e.preventDefault();
+      doShare("rewardPoints");
+    }
+  });
+})();
