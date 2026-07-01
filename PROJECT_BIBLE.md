@@ -775,6 +775,80 @@ AI / Bot / 機器人 / 演算法
 
 ---
 
+
+---
+
+## §21 Opening Experience(首頁不是網站,是體驗)
+
+> **首頁不是功能介紹,而是品牌體驗。**
+
+老闆 2026-07-02 03:32 定案:
+> 「首頁不是一般網站,而是 Opening Experience。」
+
+### §21.1 八步序列儀式(Opening Sequence)
+
+使用者進入首頁後,以下八步依序發生(每步有時序 + 動畫 + 音效):
+
+| # | 步驟 | 時點 | 動畫 | 音效 |
+|---|---|---|---|
+| 1 | 黑畫面 | 0ms | 純黑 #000000 | 無 |
+| 2 | 北極星出現 | 800ms | 星點淡入 + 緩慢脈動 | stars-whisper.mp3 |
+| 3 | 神聖幾何 | 1800ms | 梅塔特隆立方體線稿由星點連成 | geometry-humming.mp3 |
+| 4 | 背景甦醒 | 3000ms | 神女大底圖從 0.1 → 1 opacity | goddess-awakening.mp3 |
+| 5 | Logo 顯現 | 4500ms | 小夢神殿 標題從下方 fade-up | soft-chime.mp3 |
+| 6 | Hero 主副標 | 5500ms | 標題打字機效果 32ms/字 + 副標 fade-in | hero-pulse.mp3 |
+| 7 | 三大入口 | 7000ms | 從兩側滑入 + 依序 staggered 100ms | entry-chimes.mp3 |
+| 8 | 開始儀式(CTA) | 8500ms | 從中央 scale 0 → 1 + particle burst | ritual-bell.mp3 |
+
+### §21.2 Hero 文案(定稿)
+
+`yaml
+主標: 今晚,你想尋找什麼答案?
+副標:
+  - EN: Every soul has its own constellation.
+  - 中: 每一個靈魂,都有屬於自己的星軌。
+CTA:  讓小夢陪你翻開命運的第一張牌。
+``n
+### §21.3 Ritual CTA 按鈕(§8.6 變體)
+
+詳見 BRAND_BIBLE.md §8.6 Ritual CTA Button,核心六特徵:
+1. 玻璃質感(backdrop-filter: blur(18px) + rgba 半透明)
+2. 香檳金邊框(linear-gradient + mask-composite: exclude)
+3. 流光 Hover(gradient sweep animation 1.2s)
+4. Glow(box-shadow 內外雙層 + animation divine-glow-pulse 1.8s)
+5. Particle Burst(hover 時 gold-sparkles-burst,詳 §12)
+6. Hover Floating(transform: translateY(-3px) + 微妙陰影變化)
+
+### §21.4 點擊轉場(按鈕 → 進入 F22)
+
+`yaml
+click_action:
+  - 卡片從 Hero 區飛向畫面中央(150ms, transform + scale)
+  - 同時所有元素 opacity → 0(200ms)
+  - 200ms 黑屏過場
+  - 進入 F22 系統選擇頁(三大神殿)
+`
+
+### §21.5 強制規則
+
+- ❌ 不得用任何傳統 CTA 按鈕樣式(Bootstrap / Material / 純色填充)
+- ❌ 不得在 §21.2 主副標出現之前,顯示任何按鈕或入口
+- ✅ Hero 文字必須對齊 BRAND_BIBLE §3 品牌語言(小夢 / 靈魂 / 星軌 / 命運之門)
+- ✅ 每次進首頁都跑 §21.1 完整 8 步(除非 localStorage 有 session)
+- ✅ 必須 audio-visually synced(對齊 §17 Audio Bible + §13 Animation)
+
+### §21.6 對齊關係
+
+| Opening Experience | 對齊 |
+|---|---|
+| §21.1 八步序列 | BRAND_BIBLE §13 15 動畫 + §17 Audio Bible |
+| §21.2 文案 | BRAND_BIBLE §3 品牌語言 + §15 Writing Style |
+| §21.3 Ritual CTA | BRAND_BIBLE §8.6 |
+| §21.4 點擊轉場 | BRAND_BIBLE §13 typewriter-32ms + §11 divine-glow-pulse |
+| §21.5 強制規則 | BRAND_BIBLE §14 跨頁一致性 |
+
+---
+
 **Project Bible v1.0.0 — 正式生效**
 
 蝦董 / 龍蝦團隊 / 小夢老師 共同維護
