@@ -4,8 +4,8 @@
     "height": 1686
   },
   "selected": true,
-  "name": "小夢神殿選單 v2",
-  "chatBarText": "小夢選單",
+  "name": "小夢神殿選單 v3",
+  "chatBarText": "小夢神殿",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
@@ -34,25 +34,25 @@
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "message",
-        "label": "靈性積分",
-        "text": "查詢靈性積分"
+        "type": "uri",
+        "label": "命運市集",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=market&entry=liff"
       }
     },
     {
       "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
       "action": {
-        "type": "message",
-        "label": "我的紀錄",
-        "text": "查看我的紀錄"
+        "type": "uri",
+        "label": "我的收藏",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=favorites&entry=liff"
       }
     },
     {
       "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "更多探索",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?layer=3&entry=liff"
+        "label": "大師調頻",
+        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=master&entry=liff"
       }
     }
   ]
