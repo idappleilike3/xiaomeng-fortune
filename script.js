@@ -3004,15 +3004,25 @@ if (document.readyState === 'loading') {
     activateStage('draw');
     buildGreatTable();
     await new Promise(r => setTimeout(r, 200));
+    // Play shuffle sound
+    if (window.__playSystemSound) window.__playSystemSound(currentSystem, 'shuffle');
     await shuffleDeck();
     await new Promise(r => setTimeout(r, 200));
+    // Play cut sound
+    if (window.__playSystemSound) window.__playSystemSound(currentSystem, 'cut');
     await cutDeck();
+    // Play spread sound (slight delay so user sees the fan-out)
+    setTimeout(() => {
+      if (window.__playSystemSound) window.__playSystemSound(currentSystem, 'spread');
+    }, 200);
   }
 
   function onGreatCardClick(card, el, index) {
     if (el.classList.contains('is-zoomed')) return;
     if (greatPicked.includes(index)) return;
     greatPicked.push(index);
+    // Play flip sound immediately on click
+    if (window.__playSystemSound) window.__playSystemSound(currentSystem, 'flip');
     el.classList.add('is-selected');
     document.querySelectorAll('.great-card').forEach((c) => {
       if (c !== el) c.classList.add('is-dimmed');
@@ -3263,14 +3273,17 @@ if (document.readyState === 'loading') {
     const sys = cta.getAttribute("data-system-cta");
     e.preventDefault();
     if (sys === "pet") {
+      if (window.__setSoundSystem) window.__setSoundSystem('pet');
       alert("【毛孩心語】為尊榮會員限定模組。\n\n請透過右上角「與大師一對一」真人守護通道,或聯絡 LINE 官方帳號升級。");
       return;
     }
     if (sys === "oracle") {
+      if (window.__setSoundSystem) window.__setSoundSystem('oracle');
       alert("【今日神諭】原型版 — 正式 3 種模式（今日訊息 / 宇宙提醒 / 心靈祝福）將於下次更新上線。");
       return;
     }
     if (sys === "tarot") {
+      if (window.__setSoundSystem) window.__setSoundSystem('tarot');
       // Trigger the great stage
       const startBtn = document.getElementById("ritualCta");
       startBtn && startBtn.click();
@@ -3667,4 +3680,303 @@ if (document.readyState === 'loading') {
       open("正在為你的信件進行能量封印…", 3500);
     }
   });
+})();
+
+
+// =====================================================================
+// Phase 51-53: 真實感 3 套環境音效 — Web Audio API 多層合成
+// 嚴格依據 docx 規格:
+//   - Tarot: 厚重羊皮紙摩擦聲 + 低調空靈水晶音樂
+//   - Pet:   輕盈暖心八音盒 + 水晶鈴鐺 + 療癒貓咪呼嚕聲
+//   - Oracle: 深邃宇宙頌缽低頻 + 神秘環境風聲
+// =====================================================================
+(function ritualSoundSystem() {
+  const C = window.AudioContext || window.webkitAudioContext;
+  if (!C) return;
+
+  let masterGain = null;
+  let unlocked = false;
+  let currentSystem = "tarot";
+
+  function ensureCtx() {
+    if (!masterGain) {
+      const ctx = new C();
+      const master = ctx.createGain();
+      master.gain.value = 0.7;
+      master.connect(ctx.destination);
+      masterGain = { ctx, master };
+    }
+    return masterGain;
+  }
+
+  // Browsers require user gesture to unlock AudioContext
+  function tryUnlock() {
+    if (unlocked) return;
+    const { ctx } = ensureCtx();
+    if (ctx.state === "suspended") {
+      ctx.resume();
+    }
+    unlocked = true;
+  }
+  // Unlock on any user interaction
+  ["click", "touchstart", "keydown"].forEach((evt) => {
+    document.addEventListener(evt, tryUnlock, { once: false, passive: true });
+  });
+
+  // === Helper: white noise buffer ===
+  function makeNoiseBuffer(ctx, durationSec) {
+    const sr = ctx.sampleRate;
+    const len = Math.floor(sr * durationSec);
+    const buf = ctx.createBuffer(1, len, sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    return buf;
+  }
+
+  // === Helper: shaped noise (filtered) ===
+  function playNoise(ctx, dest, when, durationSec, type, gainPeak) {
+    const src = ctx.createBufferSource();
+    src.buffer = makeNoiseBuffer(ctx, durationSec);
+    const filter = ctx.createBiquadFilter();
+    filter.type = type === "low" ? "lowpass" : type === "high" ? "highpass" : "bandpass";
+    filter.frequency.value = type === "low" ? 220 : type === "high" ? 4000 : 1200;
+    filter.Q.value = 0.6;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(gainPeak, when + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + durationSec);
+    src.connect(filter).connect(g).connect(dest);
+    src.start(when);
+    src.stop(when + durationSec);
+  }
+
+  // === Helper: sine tone with envelope ===
+  function playTone(ctx, dest, when, freq, durationSec, gainPeak, type = "sine") {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, when);
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(gainPeak, when + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + durationSec);
+    osc.connect(g).connect(dest);
+    osc.start(when);
+    osc.stop(when + durationSec + 0.05);
+  }
+
+  // === Helper: bell-like tone with shimmer ===
+  function playBell(ctx, dest, when, freq, durationSec, gainPeak) {
+    const partials = [
+      { ratio: 1.0, gain: 1.0 },
+      { ratio: 2.0, gain: 0.5 },
+      { ratio: 3.0, gain: 0.25 },
+      { ratio: 4.2, gain: 0.12 },
+    ];
+    partials.forEach((p) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq * p.ratio;
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(gainPeak * p.gain, when + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + durationSec);
+      osc.connect(g).connect(dest);
+      osc.start(when);
+      osc.stop(when + durationSec + 0.05);
+    });
+  }
+
+  // ============== TAROT 系統音效 ==============
+  // 厚重羊皮紙摩擦聲(短促多次白噪音) + 低調空靈水晶音樂(柔和持續高頻 sine)
+  function playTarotShuffle() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 羊皮紙摩擦 — 12 次短促高頻噪音 burst
+    for (let i = 0; i < 14; i++) {
+      const t = now + i * 0.18 + Math.random() * 0.05;
+      playNoise(ctx, master, t, 0.12, "high", 0.18);
+      playNoise(ctx, master, t, 0.12, "bandpass", 0.08);
+    }
+    // 水晶音樂 — 持續低頻和聲
+    [261.6, 392.0, 523.2].forEach((f, i) => {
+      playTone(ctx, master, now, f, 3.2, 0.04);
+    });
+  }
+
+  function playTarotCut() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 切牌 — 一次乾淨的中頻噪音 + 一聲鈴
+    playNoise(ctx, master, now, 0.4, "bandpass", 0.16);
+    playBell(ctx, master, now + 0.1, 880, 1.4, 0.06);
+  }
+
+  function playTarotSpread() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 展牌 — 連續水玲鐺叮噹聲
+    for (let i = 0; i < 7; i++) {
+      const t = now + i * 0.16;
+      playBell(ctx, master, t, 1320 + Math.random() * 240, 0.5, 0.05);
+    }
+  }
+
+  function playTarotFlip() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 翻牌 — 短銳利高音 + 鈴鐺
+    playNoise(ctx, master, now, 0.08, "high", 0.14);
+    playBell(ctx, master, now + 0.05, 1760, 1.0, 0.08);
+    playBell(ctx, master, now + 0.1, 2200, 0.8, 0.04);
+  }
+
+  // ============== PET 系統音效 ==============
+  // 輕盈暖心八音盒 + 水晶鈴鐺 + 療癒貓咪呼嚕聲(低頻持續震動)
+  function playPetShuffle() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 八音盒旋律(C 大調上行)
+    const notes = [523.2, 587.3, 659.3, 784.0, 880.0, 1046.5];
+    notes.forEach((f, i) => {
+      const t = now + i * 0.22;
+      playBell(ctx, master, t, f, 0.7, 0.07);
+    });
+    // 貓咪呼嚕聲 — 持續低頻震動(25 Hz 帶調變)
+    const purrOsc = ctx.createOscillator();
+    const purrGain = ctx.createGain();
+    purrOsc.type = "sawtooth";
+    purrOsc.frequency.value = 25;
+    // 調變器(模擬喉嚨振動)
+    const modOsc = ctx.createOscillator();
+    const modGain = ctx.createGain();
+    modOsc.frequency.value = 4;
+    modGain.gain.value = 6;
+    modOsc.connect(modGain).connect(purrOsc.frequency);
+    purrGain.gain.setValueAtTime(0.0001, now);
+    purrGain.gain.linearRampToValueAtTime(0.06, now + 0.3);
+    purrGain.gain.linearRampToValueAtTime(0.0001, now + 1.6);
+    purrOsc.connect(purrGain).connect(master);
+    purrOsc.start(now); purrOsc.stop(now + 1.7);
+    modOsc.start(now); modOsc.stop(now + 1.7);
+  }
+
+  function playPetCut() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 切牌 — 鈴鐺單聲 + 短呼嚕
+    playBell(ctx, master, now, 1318, 0.8, 0.08);
+    const purr = ctx.createOscillator();
+    const pg = ctx.createGain();
+    purr.type = "sawtooth";
+    purr.frequency.value = 30;
+    pg.gain.setValueAtTime(0.0001, now);
+    pg.gain.linearRampToValueAtTime(0.05, now + 0.2);
+    pg.gain.linearRampToValueAtTime(0.0001, now + 0.8);
+    purr.connect(pg).connect(master);
+    purr.start(now); purr.stop(now + 0.9);
+  }
+
+  function playPetSpread() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 展牌 — 連續鈴鐺上升
+    [1046, 1175, 1318, 1568, 1760].forEach((f, i) => {
+      playBell(ctx, master, now + i * 0.14, f, 0.5, 0.05);
+    });
+  }
+
+  function playPetFlip() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 翻牌 — 愛心跳動般鈴鐺
+    playBell(ctx, master, now, 1568, 0.4, 0.08);
+    playBell(ctx, master, now + 0.08, 2093, 0.4, 0.06);
+  }
+
+  // ============== ORACLE 系統音效 ==============
+  // 深邃宇宙頌缽低頻(持續 sine + 緩慢調變) + 神秘環境風聲(低通白噪音持續)
+  function playOracleShuffle() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 頌缽 — 深層 sine + 緩慢失諧
+    const bowlOsc = ctx.createOscillator();
+    const bowlGain = ctx.createGain();
+    bowlOsc.type = "sine";
+    bowlOsc.frequency.setValueAtTime(110, now);
+    bowlOsc.frequency.linearRampToValueAtTime(82.4, now + 4);
+    bowlGain.gain.setValueAtTime(0.0001, now);
+    bowlGain.gain.linearRampToValueAtTime(0.18, now + 0.8);
+    bowlGain.gain.linearRampToValueAtTime(0.0001, now + 4);
+    bowlOsc.connect(bowlGain).connect(master);
+    bowlOsc.start(now); bowlOsc.stop(now + 4.1);
+    // 環境風聲 — 持續低通噪音
+    playNoise(ctx, master, now, 3.5, "low", 0.07);
+    // 偶爾的微風
+    for (let i = 0; i < 3; i++) {
+      playNoise(ctx, master, now + i * 1.2, 0.5, "low", 0.04);
+    }
+  }
+
+  function playOracleCut() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 切牌 — 頌缽泛音
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(110, now + 1.2);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.14, now + 0.3);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+    osc.connect(g).connect(master);
+    osc.start(now); osc.stop(now + 1.6);
+  }
+
+  function playOracleSpread() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 展牌 — 頌缽 + 風聲層
+    playNoise(ctx, master, now, 1.8, "low", 0.05);
+    [110, 165, 220, 330].forEach((f, i) => {
+      playTone(ctx, master, now + i * 0.2, f, 1.4, 0.05);
+    });
+  }
+
+  function playOracleFlip() {
+    const { ctx, master } = ensureCtx();
+    const now = ctx.currentTime;
+    // 翻牌 — 宇宙白光聚集
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.1, now + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+    osc.connect(g).connect(master);
+    osc.start(now); osc.stop(now + 1.1);
+  }
+
+  // ============== ROUTER ==============
+  const PLAYERS = {
+    tarot:   { shuffle: playTarotShuffle,   cut: playTarotCut,   spread: playTarotSpread,   flip: playTarotFlip },
+    pet:     { shuffle: playPetShuffle,     cut: playPetCut,     spread: playPetSpread,     flip: playPetFlip },
+    oracle:  { shuffle: playOracleShuffle,  cut: playOracleCut,  spread: playOracleSpread,  flip: playOracleFlip }
+  };
+
+  window.__playSystemSound = function (system, action) {
+    tryUnlock();
+    if (!masterGain) ensureCtx();
+    const sys = PLAYERS[system] || PLAYERS[currentSystem];
+    if (!sys) return;
+    if (action && sys[action]) {
+      sys[action]();
+    }
+  };
+
+  window.__setSoundSystem = function (system) {
+    currentSystem = system;
+  };
 })();
