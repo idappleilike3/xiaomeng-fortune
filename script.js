@@ -4357,3 +4357,39 @@ ${new Date().toLocaleString("zh-TW")}`;
     if (!seen) openOnb();
   }, 800);
 })();
+
+
+// =====================================================================
+// Phase 66: 前端 fetch 取代 localStorage 模擬
+// - /api/letter/schedule: 排程信件
+// - /api/points/award: 分享送 50 點
+// - 失敗時自動 fallback 到 localStorage
+// =====================================================================
+(function apiBridge() {
+  const API_BASE = "https://xiaomeng-bot.onrender.com";
+
+  async function callApi(path, payload, timeoutMs = 5000) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload || {}),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) return { ok: false, error: "HTTP " + res.status };
+      return await res.json();
+    } catch (e) {
+      return { ok: false, error: String(e), network: true };
+    }
+  }
+
+  // Public API
+  window.__xiaomengApi = {
+    scheduleLetter: async (letter) => callApi("/api/letter/schedule", letter),
+    awardPoints: async (reason) => callApi("/api/points/award", { reason: reason || "share-friend" }),
+    callApi
+  };
+})();

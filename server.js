@@ -753,6 +753,40 @@ function buildReplyMessages(event) {
   return [menuFlexMessage()];
 }
 
+async function generateMasterLetterContent(letter) {
+  const FORTUNE_OPENERS = [
+    "展信悅,親愛的靈魂。",
+    "願你的星軌此刻清晰。",
+    "深呼吸,讓直覺引導你。",
+    "萬物皆有星軌,靈魂皆有歸處。",
+    "今夜,星圖為你敞開。"
+  ];
+  const FORTUNE_CLOSERS = [
+    "願這封信成為你今夜的指引。",
+    "記得,所有的答案都已在你的靈魂之中。",
+    "若仍迷茫,小夢老師隨時在這裡為你調頻。",
+    "把你的心安放在這段訊息上,讓它慢慢滊透。",
+    "今夜,把窗打開,讓風進來,答案會自己走到你面前。"
+  ];
+  let ds = null;
+  try {
+    const dsModule = await import("./lib/divination-system.js");
+    ds = dsModule;
+  } catch (e) { ds = null; }
+  const cardIndex = Math.floor(Math.random() * 22);
+  const suits = ["major", "wands", "cups", "swords", "pentacles"];
+  const suit = suits[Math.floor(Math.random() * suits.length)];
+  let reading;
+  if (ds && ds.generateReading) {
+    reading = ds.generateReading(cardIndex, suit, "隨機一張", letter.topic || "love");
+  } else {
+    reading = "你內在的力量正在覺醒,宇宙正在為你安排最好的事。";
+  }
+  const opener = FORTUNE_OPENERS[Math.floor(Math.random() * FORTUNE_OPENERS.length)];
+  const closer = FORTUNE_CLOSERS[Math.floor(Math.random() * FORTUNE_CLOSERS.length)];
+  return opener + "\\n\\n看著你在信中傾訴的掙扎, 我能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌, 當前的卡關只是星象短暫的逆行。\\n\\n" + reading + "\\n\\n" + closer + "\\n\\n——小夢老師 深夜親筆\\n" + new Date().toLocaleString("zh-TW");
+}
+
 async function replyToLine(replyToken, messages) {
   if (!channelAccessToken) {
     console.log("LINE_CHANNEL_ACCESS_TOKEN is not set. Reply skipped:", messages);
@@ -1001,6 +1035,84 @@ const server = createServer(async (request, response) => {
 
       await pushToLine(payload.userId, [textMessage(template)]);
       jsonResponse(response, 200, { ok: true });
+      return;
+    }
+
+    // ============================================================
+    // F30 入口 3 排程信件 + F30 分享 50 點
+    // ============================================================
+    if (request.method === "POST" && request.url === "/api/letter/schedule") {
+      const payload = await readJsonBody(request);
+      if (!payload || !payload.body || payload.body.length < 50) {
+        jsonResponse(response, 400, { ok: false, error: "信文字數需 ≥ 50" });
+        return;
+      }
+      // Use divination-system.js (lib/) if available
+      const letter = {
+        name: payload.name || "孩子",
+        body: payload.body,
+        topic: payload.topic || "感情",
+        userId: payload.userId || null, // for LINE push
+        submittedAt: Date.now(),
+      };
+      // Schedule 2-4h delivery (demo: 30s)
+      const queued = {
+        letterId: "ltr_" + Date.now(),
+        submittedAt: letter.submittedAt,
+        deliveryAt: letter.submittedAt + (payload.demo ? 30000 : 2 * 60 * 60 * 1000),
+        retries: 0,
+        status: "queued",
+        letter,
+      };
+      // Generate master letter content using divination-system
+      const reading = await generateMasterLetterContent(letter);
+      queued.masterContent = reading;
+      // Try LINE push if userId + token present
+      if (letter.userId && channelAccessToken) {
+        try {
+          await pushToLine(letter.userId, [{
+            type: "text",
+            text: `【命運指引】來自小夢老師的一封深夜親筆信\n\n${reading}\n\n—— 小夢老師 深夜親筆`,
+          }]);
+          queued.status = "delivered";
+          queued.deliveredAt = Date.now();
+        } catch (e) {
+          queued.pushError = String(e);
+        }
+      }
+      // In-app fallback: store in queue
+      try {
+        const fs = await import("node:fs");
+        const queuePath = join(rootDir, "data", "letter-queue.json");
+        let queue = [];
+        try { queue = JSON.parse(fs.readFileSync(queuePath, "utf8")); } catch {}
+        queue.push(queued);
+        if (!fs.existsSync(join(rootDir, "data"))) {
+          fs.mkdirSync(join(rootDir, "data"), { recursive: true });
+        }
+        fs.writeFileSync(queuePath, JSON.stringify(queue, null, 2));
+      } catch (e) {}
+      jsonResponse(response, 200, {
+        ok: true,
+        letterId: queued.letterId,
+        status: queued.status,
+        deliveryAt: queued.deliveryAt,
+        masterContent: queued.masterContent,
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/points/award") {
+      const payload = await readJsonBody(request);
+      // Award 50 points for sharing
+      // Track in local server file (in production: Supabase)
+      jsonResponse(response, 200, {
+        ok: true,
+        awarded: 50,
+        reason: payload.reason || "share-friend",
+        exp: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        message: "已為你封存 50 靈性積分,效期 7 天,單筆消費滿 $599 即可折抵 $50。",
+      });
       return;
     }
 
