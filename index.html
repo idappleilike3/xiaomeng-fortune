@@ -381,7 +381,7 @@
             <button class="panel-button" id="rewardPoints" type="button">分享好友 · 獲取 50 靈性積分</button>
             <button class="panel-button ghost-button" id="unlockWithPoints" type="button">現金消費解鎖深度解析</button>
           </div>
-          <div class="payment-plans" id="paymentPlans" aria-label="付款方案"></div>
+          <div class="payment-plans" id="paymentPlans" aria-label="消費解鎖方案"></div>
           <p class="share-status" id="paymentStatus" hidden></p>
         </div>
 
@@ -409,7 +409,7 @@
           </article>
         </div>
       
-        <div class="affiliate-grid" aria-label="命運市集聯盟商品">
+        <div class="affiliate-grid" aria-label="命運市集選品">
           <p class="affiliate-eyebrow">大師調頻選品 · 命理解析嚴選</p>
           <article class="affiliate-card">
             <span class="affiliate-tag">水晶</span>
@@ -434,67 +434,67 @@
 
       <section id="admin" class="admin-section ops-section">
         <div class="section-heading">
-          <p class="eyebrow">Admin Prototype</p>
-          <h2>管理後台儀表板</h2>
-          <p>這裡會讀取後端 API，顯示會員、點數、解析解鎖與商品點擊狀態。正式上線後可接資料庫與登入權限。</p>
+          <p class="eyebrow">大師後台</p>
+          <h2>靈魂後台 · 守護你的星軌</h2>
+          <p>這裡顯示靈魂會員、靈性積分、深度解析解鎖與聖物選品點擊狀態。</p>
         </div>
 
         <div class="admin-metrics" aria-label="營運數字">
           <article class="metric-card">
-            <span>會員</span>
+            <span>靈魂</span>
             <strong id="metricMembers">--</strong>
-            <small>已建立資料的人數</small>
+            <small>靈魂會員總數</small>
           </article>
           <article class="metric-card">
-            <span>解析</span>
+            <span>解讀</span>
             <strong id="metricReadings">--</strong>
-            <small>抽牌與求籤紀錄</small>
+            <small>占卜解讀紀錄</small>
           </article>
           <article class="metric-card">
-            <span>已解鎖</span>
+            <span>深度解鎖</span>
             <strong id="metricUnlocked">--</strong>
-            <small>深度解析次數</small>
+            <small>深度解析解鎖次數</small>
           </article>
           <article class="metric-card">
-            <span>點擊</span>
+            <span>選品點擊</span>
             <strong id="metricClicks">--</strong>
-            <small>市集商品導流</small>
+            <small>聖物選品點擊</small>
           </article>
           <article class="metric-card">
-            <span>點數</span>
+            <span>靈性積分</span>
             <strong id="metricPoints">--</strong>
-            <small>目前總餘額</small>
+            <small>靈性積分總餘額</small>
           </article>
         </div>
 
         <div class="admin-grid">
           <article class="admin-card">
             <span class="product-tag">內容管理</span>
-            <h3>牌義與籤詩</h3>
+            <h3>牌義與神諭</h3>
             <ul>
-              <li>78 張塔羅牌義</li>
-              <li>正位 / 逆位解析</li>
-              <li>免費版與深度版分層</li>
+              <li>22 張大阿爾克那 + 56 張小牌</li>
+              <li>正位 / 逆位解讀</li>
+              <li>簡易版與深度版分層</li>
             </ul>
           </article>
           <article class="admin-card">
-            <span class="product-tag">商品管理</span>
+            <span class="product-tag">選品管理</span>
             <h3>命運市集連結</h3>
             <ul>
-              <li>商品名稱與分類</li>
-              <li>聯盟行銷連結</li>
+              <li>聖物名稱與分類</li>
+              <li>靈性選品陳列</li>
               <li>對應感情 / 財運 / 命盤結果</li>
               <li>點擊追蹤 UTM</li>
             </ul>
           </article>
           <article class="admin-card">
-            <span class="product-tag">會員紀錄</span>
+            <span class="product-tag">靈魂紀錄</span>
             <h3>解析與點數</h3>
             <ul>
               <li>生日與命盤資料</li>
-              <li>抽牌 / 求籤紀錄</li>
+              <li>占卜解讀紀錄</li>
               <li>深度解析解鎖紀錄</li>
-              <li>點數餘額與扣點紀錄</li>
+              <li>靈性積分與扣點紀錄</li>
             </ul>
           </article>
         </div>
@@ -506,54 +506,93 @@
             <span role="columnheader">下一步</span>
           </div>
           <div class="admin-row" role="row">
-            <span role="cell">牌義資料</span>
-            <strong class="status done" role="cell">前台可用</strong>
-            <span role="cell">拆成資料表，讓後台可新增、修改、停用。</span>
+            <span role="cell">牌義資料庫</span>
+            <strong class="status done" role="cell">已上架</strong>
+            <span role="cell">由大師親自編修,確保每一張牌意都精準到位。</span>
           </div>
           <div class="admin-row" role="row">
-            <span role="cell">商品連結</span>
-            <strong class="status active" role="cell">雛形</strong>
-            <span role="cell">加入點擊紀錄與來源追蹤，之後替換成正式聯盟連結。</span>
+            <span role="cell">靈性選品</span>
+            <strong class="status active" role="cell">原型</strong>
+            <span role="cell">加入點擊紀錄與來源追蹤,作為大師選品推薦的依據。</span>
           </div>
           <div class="admin-row" role="row">
-            <span role="cell">付款 / 點數</span>
-            <strong class="status active" role="cell">API 雛形</strong>
-            <span role="cell">已加入會員錢包、分享送點、扣點解鎖與綠界付款方案預覽。</span>
+            <span role="cell">靈性積分 / 現金消費</span>
+            <strong class="status active" role="cell">原型</strong>
+            <span role="cell">已加入靈性收益錢包、分享好友送 50 點、現金消費解鎖深度解析。</span>
           </div>
         </div>
 
         <div class="admin-live-grid">
           <article class="admin-live-card">
             <div class="live-card-head">
-              <h3>商品點擊排行</h3>
+              <h3>聖物選品點擊</h3>
               <button class="panel-button ghost-button compact-button" id="refreshAdmin" type="button">刷新</button>
             </div>
-            <div class="live-list" id="adminProductClicks">正在讀取商品點擊。</div>
+            <div class="live-list" id="adminProductClicks">聖物選品點擊紀錄準備中…</div>
           </article>
           <article class="admin-live-card">
             <div class="live-card-head">
-              <h3>點數紀錄</h3>
+              <h3>靈性積分紀錄</h3>
               <span class="product-tag">Ledger</span>
             </div>
-            <div class="live-list" id="adminPointLedger">正在讀取點數紀錄。</div>
+            <div class="live-list" id="adminPointLedger">靈性積分紀錄準備中…</div>
           </article>
         </div>
       </section>
 
       <section id="setup" class="setup-section ops-section">
         <div>
-          <p class="eyebrow">LINE Setup</p>
-          <h2>之後真正串 LINE 需要這些東西</h2>
+          <p class="eyebrow">LINE 官方帳號</p>
+          <h2>未來正式串接 LINE 需要準備的清單</h2>
         </div>
         <ol class="setup-list">
-          <li><strong>LINE 官方帳號</strong><span>建立品牌帳號，設定歡迎訊息與圖文選單。</span></li>
+          <li><strong>LINE 官方帳號</strong><span>建立品牌帳號,設定大師歡迎詞與四宮格奢華圖文選單。</span></li>
           <li><strong>LINE Developers</strong><span>啟用 Messaging API，取得 Channel secret 與 Channel access token。</span></li>
           <li><strong>Webhook URL</strong><span>部署後填入 https://你的網址/api/line/webhook，讓 LINE 把訊息送到伺服器。</span></li>
           <li><strong>LIFF App</strong><span>把這個網頁網址放進 LIFF，使用者可在 LINE 內開啟前台工具。</span></li>
           <li><strong>Node Webhook</strong><span>目前已建立 server.js，可回覆塔羅、求籤、生命靈數、命盤、MBTI 與市集指令。</span></li>
-          <li><strong>資料庫</strong><span>用 Supabase 儲存會員、占卜紀錄、商品點擊與訂單狀態。</span></li>
+          <li><strong>資料庫</strong><span>用 Supabase 儲存靈魂會員、占卜解讀、聖物選品點擊與訂單狀態。</span></li>
         </ol>
       </section>
+      <section class="rich-menu-preview" aria-label="LINE 圖文選單 2x2 終極版">
+        <div class="section-heading">
+          <p class="eyebrow">LINE 圖文選單 · 2x2 終極版</p>
+          <h2>大師指引 · 點擊即達</h2>
+          <p>深紫黑金底色 × 香檳金發光細字 × 半透明毛玻璃遮罩,維持全站奢華調性。</p>
+        </div>
+
+        <div class="rich-menu-grid">
+          <a href="https://xiaomeng-fortune.onrender.com/" class="rich-menu-cell" data-cell="tarot">
+            <span class="rich-menu-mask" aria-hidden="true"></span>
+            <span class="rich-menu-text">
+              <strong class="rich-menu-title">啟動 • 塔羅儀式</strong>
+              <small class="rich-menu-sub">當下困惑 • 深度指引</small>
+            </span>
+          </a>
+          <a href="#app" class="rich-menu-cell" data-cell="star" data-trigger-entry="star">
+            <span class="rich-menu-mask" aria-hidden="true"></span>
+            <span class="rich-menu-text">
+              <strong class="rich-menu-title">探尋 • 星盤流年</strong>
+              <small class="rich-menu-sub">生日輸入 • 免費靈數</small>
+            </span>
+          </a>
+          <a href="#app" class="rich-menu-cell" data-cell="letter" data-trigger-entry="letter">
+            <span class="rich-menu-mask" aria-hidden="true"></span>
+            <span class="rich-menu-text">
+              <strong class="rich-menu-title">靈性 • 深夜解答</strong>
+              <small class="rich-menu-sub">傾訴困境 • 老師親筆</small>
+            </span>
+          </a>
+          <a href="#market" class="rich-menu-cell" data-cell="shop">
+            <span class="rich-menu-mask" aria-hidden="true"></span>
+            <span class="rich-menu-text">
+              <strong class="rich-menu-title">迎請 • 能量聖物</strong>
+              <small class="rich-menu-sub">大師調頻 • 專屬推薦</small>
+            </span>
+          </a>
+        </div>
+      </section>
+
     </main>
 
     <footer class="footer">

@@ -3510,3 +3510,29 @@ if (document.readyState === 'loading') {
     }
   });
 })();
+
+
+// =====================================================================
+// Phase 29: LINE 圖文選單 4 宮格 click — 自動跳轉對應入口
+// =====================================================================
+(function richMenuBootstrap() {
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const cell = t.closest && t.closest(".rich-menu-cell");
+    if (!cell) return;
+    const trigger = cell.getAttribute("data-trigger-entry");
+    if (!trigger) return;
+    e.preventDefault();
+    // Wait for app to settle
+    setTimeout(() => {
+      const btn = document.querySelector(`.hero-entry[data-entry="${trigger}"]`);
+      if (btn) {
+        btn.click();
+      } else {
+        // Fallback: navigate to hash
+        window.location.hash = "#app";
+      }
+    }, 120);
+  });
+})();
