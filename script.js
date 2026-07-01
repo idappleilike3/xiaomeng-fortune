@@ -2820,25 +2820,46 @@ if (document.readyState === 'loading') {
 // 套用條件:使用者按下「進入靜心占卜室」後,三個 stage 疊成同一畫面
 // =====================================================================
 (function greatStageBootstrap() {
-  const GREAT_FAN_SIZE = 21; // 一次展 21 張(可選),扇形半徑 220px
-  const GREAT_FAN_RADIUS = 240; // 牌桌半徑
-  const GREAT_FAN_ANGLE = 110; // 扇形展開角度(度)
-  const greatPicked = []; // 已選牌
+  const GREAT_FAN_SIZE = 21;
+  const GREAT_FAN_RADIUS = 240;
+  const GREAT_FAN_ANGLE = 110;
+  const MAJOR_IMAGES = {
+    0: "./assets/tarot-00-the-fool.png",
+    1: "./assets/tarot-01-the-magician.png",
+    2: "./assets/tarot-02-the-high-priestess.png",
+    3: "./assets/tarot-03-the-empress.png",
+    4: "./assets/tarot-04-the-emperor.png",
+    5: "./assets/tarot-05-the-hierophant.png",
+    6: "./assets/tarot-06-the-lovers.png",
+    7: "./assets/tarot-07-the-chariot.png",
+  };
+  const greatPicked = [];
+  let greatDeck = [];
+  let currentSystem = "tarot";
 
-  function enterGreatStage() {
+  function enterGreatStage(system = "tarot") {
+    currentSystem = system;
     const flow = document.querySelector('.ritual-flow');
     if (!flow) return;
     flow.classList.add('great-stage-mode');
-    // Show all three stages
+    flow.classList.remove('has-drawn');
     flow.querySelectorAll('.ritual-stage').forEach(s => {
       s.removeAttribute('hidden');
       s.classList.remove('is-active');
     });
-    // Activate input stage
     const inputStage = flow.querySelector('.ritual-stage--input');
     if (inputStage) inputStage.classList.add('is-active');
-    // Add progress bar
     ensureProgressBar(flow);
+    // Reset result placeholders
+    const name = document.getElementById('resultCardName');
+    const meaning = document.getElementById('resultMeaning');
+    if (name) { name.textContent = '— 靜待你的抉擇 —'; name.setAttribute('data-placeholder', 'true'); }
+    if (meaning) { meaning.textContent = '請從下方牌桌中選擇屬於你的那一張牌。'; meaning.setAttribute('data-placeholder', 'true'); }
+    // Clear result image
+    const ri = document.querySelector('[data-result-image]');
+    if (ri) { ri.removeAttribute('src'); ri.style.display = 'none'; }
+    // Setup Atropos for result card
+    setupResultAtropos();
   }
 
   function ensureProgressBar(flow) {
@@ -2851,10 +2872,10 @@ if (document.readyState === 'loading') {
     flow.insertBefore(bar, flow.firstChild);
   }
 
-  function setProgress(activeStep, doneSteps) {
+  function setProgress(activeStep) {
     const dots = document.querySelectorAll('.great-progress__dot');
     const order = ['input', 'draw', 'result'];
-    dots.forEach((d, i) => {
+    dots.forEach((d) => {
       d.classList.toggle('is-active', d.dataset.step === activeStep);
       d.classList.toggle('is-done', order.indexOf(d.dataset.step) < order.indexOf(activeStep));
     });
@@ -2872,10 +2893,48 @@ if (document.readyState === 'loading') {
     const target = flow.querySelector(map[stageName]);
     if (target) target.classList.add('is-active');
     setProgress(stageName);
-    // Smooth scroll into view
     setTimeout(() => {
       target && target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 80);
+  }
+
+  // Phase 1: shuffle (cards back-up, then re-deal)
+  function shuffleDeck() {
+    return new Promise((resolve) => {
+      const stack = document.getElementById('cardStack');
+      if (!stack) return resolve();
+      stack.classList.add('is-shuffling');
+      const fan = stack.querySelectorAll('.great-card');
+      fan.forEach((el, i) => {
+        el.style.transition = `transform ${300 + (i%3)*40}ms ease, opacity 200ms ease`;
+        el.style.transform = `rotate(${(Math.random() - 0.5) * 20}deg) translateY(${Math.random() * 30 - 15}px)`;
+      });
+      setTimeout(() => {
+        stack.classList.remove('is-shuffling');
+        resolve();
+      }, 900);
+    });
+  }
+  // Phase 2: cut (single big card momentarily appears at center)
+  function cutDeck() {
+    return new Promise((resolve) => {
+      const stack = document.getElementById('cardStack');
+      if (!stack) return resolve();
+      const fan = stack.querySelectorAll('.great-card');
+      if (!fan.length) return resolve();
+      fan.forEach((el) => { el.style.opacity = '0.4'; });
+      const cutCard = document.createElement('div');
+      cutCard.className = 'cut-card';
+      stack.appendChild(cutCard);
+      setTimeout(() => {
+        cutCard.classList.add('is-cutting');
+        setTimeout(() => {
+          cutCard.remove();
+          fan.forEach((el) => { el.style.opacity = '1'; });
+          resolve();
+        }, 700);
+      }, 60);
+    });
   }
 
   // Build the great fan table
@@ -2884,17 +2943,15 @@ if (document.readyState === 'loading') {
     if (!stack) return;
     stack.classList.add('great-table');
     stack.innerHTML = '';
-    const fan = (window.majorArcanaDeck || []).slice(0, GREAT_FAN_SIZE);
-    if (!fan.length) {
-      // fallback to all 78
-      const all = (window.tarotDeck || []).slice(0, GREAT_FAN_SIZE);
-      fan.push(...all);
-    }
-    const total = fan.length;
+    // Get deck: prefer major arcana (22), fallback to all
+    const all = (window.tarotDeck || []);
+    const majors = all.filter(c => c.suit === 'major');
+    greatDeck = (majors.length >= GREAT_FAN_SIZE ? majors : all).slice(0, GREAT_FAN_SIZE);
+    const total = greatDeck.length;
     const startAngle = -GREAT_FAN_ANGLE / 2;
     const angleStep = GREAT_FAN_ANGLE / Math.max(1, total - 1);
 
-    fan.forEach((card, i) => {
+    greatDeck.forEach((card, i) => {
       const el = document.createElement('button');
       el.type = 'button';
       el.className = 'great-card';
@@ -2908,20 +2965,26 @@ if (document.readyState === 'loading') {
     });
   }
 
+  async function runDrawSequence() {
+    activateStage('draw');
+    buildGreatTable();
+    await new Promise(r => setTimeout(r, 200));
+    await shuffleDeck();
+    await new Promise(r => setTimeout(r, 200));
+    await cutDeck();
+  }
+
   function onGreatCardClick(card, el, index) {
     if (el.classList.contains('is-zoomed')) return;
     if (greatPicked.includes(index)) return;
     greatPicked.push(index);
     el.classList.add('is-selected');
-    // Dim all others
     document.querySelectorAll('.great-card').forEach((c) => {
       if (c !== el) c.classList.add('is-dimmed');
     });
-    // Zoom the picked card to center
     setTimeout(() => {
       el.classList.add('is-zoomed');
     }, 220);
-    // Show result after zoom
     setTimeout(() => {
       showGreatResult(card);
     }, 720);
@@ -2929,9 +2992,38 @@ if (document.readyState === 'loading') {
 
   function showGreatResult(card) {
     activateStage('result');
+    const flow = document.querySelector('.ritual-flow');
+    if (flow) flow.classList.add('has-drawn');
     const name = document.getElementById('resultCardName');
     const meaning = document.getElementById('resultMeaning');
-    if (name) name.textContent = (card.english || card.name || '') + ' · ' + (card.name || '');
+    // Name
+    if (name) {
+      name.textContent = (card.english || card.name || '') + ' · ' + (card.name || '');
+      name.removeAttribute('data-placeholder');
+    }
+    // Image
+    const ri = document.querySelector('[data-result-image]');
+    if (ri) {
+      const idx = card.index != null ? card.index : null;
+      const src = (idx != null && MAJOR_IMAGES[idx]) || card.image;
+      if (src) {
+        ri.src = src;
+        ri.alt = card.name || '';
+        ri.style.display = 'block';
+        ri.classList.add('is-loaded');
+      } else {
+        ri.removeAttribute('src');
+        ri.style.display = 'none';
+      }
+    }
+    // Flip animation
+    const inner = document.getElementById('resultCardInner');
+    if (inner) {
+      inner.classList.remove('is-flipped');
+      // Force reflow then re-add for re-trigger
+      void inner.offsetWidth;
+      setTimeout(() => inner.classList.add('is-flipped'), 60);
+    }
     // Typewriter
     if (meaning) {
       const text = card.meaning || '願這張牌為你帶來今晚最溫柔的提醒。';
@@ -2942,6 +3034,7 @@ if (document.readyState === 'loading') {
   function typewriteText(el, text, speedMs) {
     el.classList.add('great-reading');
     el.innerHTML = '';
+    el.removeAttribute('data-placeholder');
     let i = 0;
     const caret = document.createElement('span');
     caret.className = 'caret';
@@ -2958,22 +3051,66 @@ if (document.readyState === 'loading') {
     tick();
   }
 
-  // Patch existing startRitual by hooking the CTA button
-  document.addEventListener('click', (e) => {
+  // Atropos 3D tilt on the result card
+  function setupResultAtropos() {
+    const wrap = document.querySelector('.result-card-wrap');
+    if (!wrap || wrap.__atroposReady) return;
+    if (window.Atropos) {
+      try {
+        const a = Atropos({
+          el: wrap,
+          activeOffset: 18,
+          shadowScale: 0.92,
+          rotate: true,
+          rotateTouch: true,
+        });
+        wrap.__atroposInstance = a;
+        wrap.__atroposReady = true;
+      } catch (e) { /* silent */ }
+    } else {
+      // Fallback: re-init when atropos CDN finishes loading
+      const retry = setInterval(() => {
+        if (window.Atropos) {
+          clearInterval(retry);
+          setupResultAtropos();
+        }
+      }, 200);
+      setTimeout(() => clearInterval(retry), 5000);
+    }
+  }
+
+  // Hook the CTA: enter great stage, then draw sequence
+  document.addEventListener("click", (e) => {
     const t = e.target instanceof Element ? e.target : null;
     if (!t) return;
-    if (t.closest && t.closest('#ritualCta') && t.closest('#ritualCta').dataset.action === 'enter') {
-      // Defer to let the existing startRitual run, then convert to great stage
+    const cta = t.closest && t.closest("#ritualCta");
+    if (!cta) return;
+    setTimeout(async () => {
+      enterGreatStage("tarot");
       setTimeout(() => {
-        enterGreatStage();
-        setTimeout(() => {
-          activateStage('draw');
-          buildGreatTable();
-        }, 600);
-      }, 50);
-    }
+        activateStage("draw");
+        runDrawSequence();
+      }, 200);
+    }, 50);
+  });
+
+  // Hook F30 system CTAs
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const cta = t.closest && t.closest("[data-system-cta="tarot"]");
+    if (!cta) return;
+    e.preventDefault();
+    setTimeout(async () => {
+      enterGreatStage("tarot");
+      setTimeout(() => {
+        activateStage("draw");
+        runDrawSequence();
+      }, 200);
+    }, 50);
   });
 })();
+)();
 
 
 // =====================================================================
