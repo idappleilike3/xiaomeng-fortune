@@ -7086,3 +7086,40 @@ button.compact-button:hover,
   margin: 0;
   text-shadow: 0 0 4px rgba(245, 211, 139, 0.2);
 }
+
+
+/* =====================================================================
+   Phase 54: 全站按鈕 active 觸感回饋 + 視覺按下陰影變化
+   ===================================================================== */
+button:not(:disabled):active,
+a:active,
+.spread-pill:active,
+.system-card__cta:not(:disabled):active,
+.affiliate-link:active,
+.product-cta:active,
+.tier-chip:active {
+  transform: scale(0.96) !important;
+  transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.5) inset,
+    0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+button:not(:disabled):active::after,
+a:active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(245, 211, 139, 0.18), transparent 70%);
+  pointer-events: none;
+  animation: tapRipple 360ms ease;
+}
+@keyframes tapRipple {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.inbox-fab:active,
+.wallet-chip:active,
+.line-fab:active {
+  transform: scale(0.92) !important;
+}

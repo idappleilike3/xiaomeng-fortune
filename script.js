@@ -3980,3 +3980,166 @@ if (document.readyState === 'loading') {
     currentSystem = system;
   };
 })();
+
+
+// =====================================================================
+// Phase 54-55: 全站按鈕通用音效 — 點擊/hover 統一反饋
+// - 點擊通用: 短銳水晶鈴(0.1s)
+// - hover: 超微弱脈衝(0.06s)
+// - 特殊按鈕: 不同音色
+// =====================================================================
+(function uiSoundBootstrap() {
+  const C = window.AudioContext || window.webkitAudioContext;
+  if (!C) return;
+
+  function ensure() {
+    if (!window.__uiAudioCtx) {
+      const ctx = new C();
+      const master = ctx.createGain();
+      master.gain.value = 0.5;
+      master.connect(ctx.destination);
+      window.__uiAudioCtx = { ctx, master };
+    }
+    if (window.__uiAudioCtx.ctx.state === "suspended") {
+      window.__uiAudioCtx.ctx.resume();
+    }
+    return window.__uiAudioCtx;
+  }
+
+  // 通用點擊鈴 — 短銳水晶
+  function playClick() {
+    const { ctx, master } = ensure();
+    const now = ctx.currentTime;
+    const partials = [
+      { ratio: 1.0,  gain: 1.0,  freq: 1760 },
+      { ratio: 2.0,  gain: 0.5,  freq: 3520 },
+      { ratio: 3.0,  gain: 0.18, freq: 5280 }
+    ];
+    partials.forEach((p) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = p.freq;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.06 * p.gain, now + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      osc.connect(g).connect(master);
+      osc.start(now);
+      osc.stop(now + 0.13);
+    });
+  }
+
+  // hover 微響 — 極短低頻脈衝
+  function playHover() {
+    const { ctx, master } = ensure();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 660;
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.018, now + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    osc.connect(g).connect(master);
+    osc.start(now);
+    osc.stop(now + 0.07);
+  }
+
+  // 關閉/取消 — 低沉解除
+  function playClose() {
+    const { ctx, master } = ensure();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(220, now + 0.2);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.05, now + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    osc.connect(g).connect(master);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  }
+
+  // 成功 — 雙音上行
+  function playSuccess() {
+    const { ctx, master } = ensure();
+    const now = ctx.currentTime;
+    [523.2, 659.3, 784.0].forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, now + i * 0.08);
+      g.gain.exponentialRampToValueAtTime(0.07, now + i * 0.08 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.5);
+      osc.connect(g).connect(master);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.6);
+    });
+  }
+
+  // 警告 — 銳利提示
+  function playAlert() {
+    const { ctx, master } = ensure();
+    const now = ctx.currentTime;
+    [880, 660].forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, now + i * 0.18);
+      g.gain.exponentialRampToValueAtTime(0.05, now + i * 0.18 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.18 + 0.16);
+      osc.connect(g).connect(master);
+      osc.start(now + i * 0.18);
+      osc.stop(now + i * 0.18 + 0.17);
+    });
+  }
+
+  // Map button class to sound variant
+  const SOUND_MAP = {
+    ".legal-modal__close": "close",
+    ".welcome-modal__close": "close",
+    ".privacy-modal__close": "close",
+    ".inbox-modal__close": "close",
+  };
+
+  // Universal: capture all clicks on buttons + interactive elements
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const btn = t.closest && t.closest("button, a, .spread-pill, .inbox-fab, .wallet-chip, .line-fab, .system-card__cta, .tier-chip");
+    if (!btn) return;
+    // Close buttons
+    for (const sel in SOUND_MAP) {
+      if (btn.matches && btn.matches(sel)) {
+        playClose();
+        return;
+      }
+      if (btn.closest && btn.closest(sel)) {
+        playClose();
+        return;
+      }
+    }
+    // Default click sound
+    playClick();
+  }, { passive: true });
+
+  // Universal: hover on important buttons (debounced)
+  let lastHoverAt = 0;
+  document.addEventListener("mouseover", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    const btn = t.closest && t.closest("button, a, .spread-pill, .tier-chip, .system-card__cta");
+    if (!btn) return;
+    const now = Date.now();
+    if (now - lastHoverAt < 120) return; // throttle
+    lastHoverAt = now;
+    playHover();
+  }, { passive: true });
+
+  // Expose for other modules
+  window.__uiSounds = { playClick, playHover, playClose, playSuccess, playAlert };
+})();
