@@ -593,13 +593,6 @@ h1 {
   backdrop-filter: blur(24px);
 }
 
-.phone-status,
-.line-header,
-.rich-menu {
-  display: flex;
-  align-items: center;
-}
-
 .phone-status {
   justify-content: space-between;
   padding: 14px 22px 10px;
@@ -796,22 +789,6 @@ h1 {
   border: 2px solid rgba(245, 211, 139, 0.72);
   border-radius: 8px;
   color: #fff;
-  cursor: pointer;
-  font-weight: 900;
-}
-
-.rich-menu {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: rgba(245, 211, 139, 0.2);
-}
-
-.rich-menu button {
-  min-height: 62px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 0;
-  color: #111827;
   cursor: pointer;
   font-weight: 900;
 }
@@ -3700,11 +3677,7 @@ h1 {
     min-height: 390px;
   }
 
-  .rich-menu button {
-    min-height: 56px;
-    font-size: 14px;
   }
-}
 
 
 /* === 铦﹁懀鎺ユ墜 F22 鍗囩礆 鈥?2026-07-01 === */
@@ -6143,126 +6116,7 @@ body.ritual-active .card-spread-row {
 }
 
 
-/* =====================================================================
-   Phase 28: LINE 圖文選單 2x2 終極版 — 4 宮格 + 底圖 + 毛玻璃遮罩
-   ===================================================================== */
-.rich-menu-preview {
-  padding: 36px 18px 28px;
-  margin: 18px 0 28px;
-  border-top: 1px solid rgba(245, 211, 139, 0.18);
-  border-bottom: 1px solid rgba(245, 211, 139, 0.18);
-}
-.rich-menu-preview .section-heading {
-  text-align: center;
-  margin-bottom: 18px;
-}
-.rich-menu-preview .section-heading h2 {
-  font-size: 22px;
-  color: #f5d38b;
-  letter-spacing: 0.06em;
-  margin: 4px 0 6px;
-}
-.rich-menu-preview .section-heading p {
-  color: #c9b88a;
-  font-size: 13px;
-  margin: 0;
-}
-.rich-menu-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 6px;
-  max-width: 720px;
-  margin: 0 auto;
-  aspect-ratio: 3 / 2;
-  border-radius: 14px;
-  overflow: hidden;
-  background: url('./assets/line-rich-menu-bg.png') center/cover no-repeat;
-  position: relative;
-  box-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(245, 211, 139, 0.45) inset;
-}
-.rich-menu-cell {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: inherit;
-  overflow: hidden;
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-.rich-menu-cell:hover {
-  transform: scale(0.98);
-  z-index: 2;
-}
-.rich-menu-cell:hover .rich-menu-mask {
-  background: rgba(8, 4, 18, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.rich-menu-cell:hover .rich-menu-title {
-  text-shadow:
-    0 0 14px rgba(245, 211, 139, 0.85),
-    0 0 28px rgba(245, 211, 139, 0.5);
-}
 
-/* 毛玻璃遮罩 — 每格獨立,半透明黑色 + 柔焦 */
-.rich-menu-mask {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 86%;
-  height: 72%;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(245, 211, 139, 0.32);
-  z-index: 1;
-  transition: background 200ms ease, backdrop-filter 200ms ease;
-  pointer-events: none;
-}
-
-/* 文字層 */
-.rich-menu-text {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 10px;
-}
-.rich-menu-title {
-  display: block;
-  font-size: 17px;
-  font-weight: 700;
-  color: #f5d38b;
-  letter-spacing: 0.08em;
-  font-family: "Noto Serif TC", Georgia, serif;
-  text-shadow:
-    0 0 8px rgba(245, 211, 139, 0.55),
-    0 0 18px rgba(245, 211, 139, 0.32);
-  line-height: 1.25;
-}
-.rich-menu-sub {
-  display: block;
-  font-size: 11px;
-  color: rgba(200, 215, 240, 0.78);
-  letter-spacing: 0.12em;
-  font-family: "Noto Serif TC", Georgia, serif;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-@media (max-width: 480px) {
-  .rich-menu-title { font-size: 15px; }
-  .rich-menu-sub { font-size: 10px; }
-}
 
 
 /* =====================================================================
@@ -6784,4 +6638,69 @@ body.ritual-active .card-spread-row {
 .stage-label--ritual select option {
   background: #1a0e2e;
   color: #f5d38b;
+}
+
+
+/* =====================================================================
+   LINE 歡迎詞預覽 modal (admin only via ?admin=1)
+   ===================================================================== */
+.welcome-modal-overlay {
+  position: fixed; inset: 0; z-index: 90;
+  display: none; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(8, 4, 18, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.welcome-modal-overlay.is-open { display: flex; animation: welcomeFade 280ms ease; }
+@keyframes welcomeFade { from { opacity: 0; } to { opacity: 1; } }
+.welcome-modal {
+  width: min(620px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  border-radius: 22px;
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  background: linear-gradient(155deg, rgba(38, 22, 64, 0.95), rgba(13, 7, 24, 0.97));
+  padding: 22px 24px;
+  color: #f7e6c2;
+  font-family: "Noto Serif TC", Georgia, serif;
+}
+.welcome-modal__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.welcome-modal__head h3 { font-size: 17px; color: #f5d38b; margin: 0; letter-spacing: 0.04em; }
+.welcome-modal__close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  color: #f5d38b; cursor: pointer; font-size: 16px;
+}
+.welcome-modal__body p { margin: 0 0 12px; }
+.welcome-modal__hint {
+  font-size: 12px;
+  color: #c9b88a;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(245, 211, 139, 0.06);
+  border-left: 2px solid rgba(245, 211, 139, 0.5);
+  line-height: 1.6;
+}
+.welcome-modal__hint code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: rgba(28, 18, 56, 0.6);
+  border-radius: 4px;
+  color: #f5d38b;
+}
+.welcome-modal__text {
+  font-size: 13.5px;
+  line-height: 1.95;
+  color: #e0cfa3;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  background: rgba(8, 4, 18, 0.5);
+  border: 1px solid rgba(245, 211, 139, 0.22);
+  border-radius: 12px;
+  letter-spacing: 0.02em;
 }

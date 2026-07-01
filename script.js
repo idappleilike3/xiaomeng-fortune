@@ -3512,30 +3512,6 @@ if (document.readyState === 'loading') {
 })();
 
 
-// =====================================================================
-// Phase 29: LINE 圖文選單 4 宮格 click — 自動跳轉對應入口
-// =====================================================================
-(function richMenuBootstrap() {
-  document.addEventListener("click", (e) => {
-    const t = e.target instanceof Element ? e.target : null;
-    if (!t) return;
-    const cell = t.closest && t.closest(".rich-menu-cell");
-    if (!cell) return;
-    const trigger = cell.getAttribute("data-trigger-entry");
-    if (!trigger) return;
-    e.preventDefault();
-    // Wait for app to settle
-    setTimeout(() => {
-      const btn = document.querySelector(`.hero-entry[data-entry="${trigger}"]`);
-      if (btn) {
-        btn.click();
-      } else {
-        // Fallback: navigate to hash
-        window.location.hash = "#app";
-      }
-    }, 120);
-  });
-})();
 
 
 // =====================================================================
@@ -3581,5 +3557,37 @@ if (document.readyState === 'loading') {
       });
       flowObserver.observe(flow, { attributes: true, subtree: true, attributeFilter: ["class"] });
     }
+  }
+})();
+
+
+// =====================================================================
+// Phase 43: Welcome modal — admin only via ?admin=1
+// =====================================================================
+(function welcomeModalBootstrap() {
+  function openWelcome() {
+    const m = document.getElementById("welcomeModal");
+    if (!m) return;
+    m.classList.add("is-open");
+    m.setAttribute("aria-hidden", "false");
+  }
+  function closeWelcome() {
+    const m = document.getElementById("welcomeModal");
+    if (!m) return;
+    m.classList.remove("is-open");
+    m.setAttribute("aria-hidden", "true");
+  }
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.closest && t.closest(".welcome-modal__close")) {
+      closeWelcome();
+    } else if (t.classList && t.classList.contains("welcome-modal-overlay")) {
+      closeWelcome();
+    }
+  });
+  // Auto-open if URL has admin=1
+  if (window.location.search.includes("admin=1")) {
+    setTimeout(openWelcome, 600);
   }
 })();
