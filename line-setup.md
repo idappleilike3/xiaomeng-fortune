@@ -58,6 +58,47 @@ OPENAI_API_KEY = (從 https://platform.openai.com/api-keys 取得)
 
 目前 OpenAI server overload 中(`request timed out`),22 張大牌的剩 14 張會在 server 恢復後自動 retry。
 
+## 後台管理系統 admin.html(給大師用)
+
+### 入口網址
+打開瀏覽器輸入:
+
+```
+https://xiaomeng-fortune.onrender.com/admin.html?admin=1
+```
+
+(網址一定要帶 `?admin=1`,否則會直接卡在閘門)
+
+### 進入步驟(3 步)
+1. 開上面的網址
+2. 看到「🔒 靈魂後台」密碼輸入框,輸入密碼
+3. 按「進入後台」就會看到 7 大模組儀表板
+
+### 密碼
+**密碼: `xiaomeng2026`**(寫死在 `admin.html` JS 第 350 行附近)
+
+⚠️ **正式上線前務必改這個值**:
+- 用編輯器打開 `admin.html`
+- 找到 `const ADMIN_PASSWORD = "xiaomeng2026";`
+- 改成你自己的密碼
+- 改完 `git add admin.html && git commit -m "admin: change password" && git push`
+
+### 安全特性
+- sessionStorage 8 小時內免重複輸入密碼
+- 不輸入 `?admin=1` 的人直接看不到任何後台內容
+- 沒有任何 URL 路徑暴露後台存在(`/admin.html` 連結只出現在首頁 footer 的「⚙️ 後台管理」紅色按鈕,**只給大師本人點**)
+
+### 7 大模組(進入後可看)
+1. **📊 總覽儀表板** — KPI 卡: 靈魂會員 / 占卜解讀 / 深度解鎖 / 聖物點擊 / 靈性積分總額
+2. **👥 靈魂會員** — 會員列表 + 搜尋 + 編輯 + 刪除 + 匯出 CSV
+3. **🃏 占卜解讀紀錄** — 4 系統(塔羅/毛孩/神諭)分頁查閱
+4. **📜 深度解析排版工具** — 7 大情境 prompt 編輯器(毛孩心語用)
+5. **✨ 靈性積分 / 599 折抵** — 點數 ledger + KPI(總發放/已折抵/活躍持有人)
+6. **💎 聖物選品點擊** — 商品點擊排行 + URL 管理
+7. **⚖️ 法律與隱私** — privacy.html + terms.html 開啟 / 用戶同意書狀態
+
+---
+
 ## ECPay 金流(等上線前設定)
 
 到 https://www.ecpay.com.tw → 商戶後台:
