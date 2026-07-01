@@ -5069,10 +5069,10 @@ body.ritual-active .card-spread-row {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(13, 7, 24, 0.32) 0%, rgba(13, 7, 24, 0.62) 100%),
-    url('./assets/tarot-01-the-magician.png') center top / cover no-repeat;
-  filter: brightness(0.92) saturate(1.08) contrast(1.04);
-  transform: scale(1.04);
+    linear-gradient(180deg, rgba(13, 7, 24, 0.28) 0%, rgba(13, 7, 24, 0.55) 100%),
+    url('./assets/hero-bg-16x9.png') center / cover no-repeat;
+  filter: brightness(0.95) saturate(1.05);
+  transform: scale(1.02);
 }
 .hero-layer--master::after {
   content: "";
