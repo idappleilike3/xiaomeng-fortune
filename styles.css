@@ -6704,3 +6704,223 @@ body.ritual-active .card-spread-row {
   border-radius: 12px;
   letter-spacing: 0.02em;
 }
+
+
+/* =====================================================================
+   Phase 45: 全站按鈕視覺統一 — Single Source of Truth
+   4 variants: PRIMARY / SECONDARY / GHOST / CHIP
+   1 color system across all 13 button classes
+   ===================================================================== */
+
+/* === GLOBAL DESIGN TOKENS === */
+:root {
+  --btn-bg-primary:
+    linear-gradient(135deg,
+      rgba(28, 18, 56, 0.6) 0%,
+      rgba(38, 22, 64, 0.68) 45%,
+      rgba(58, 32, 90, 0.6) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.18), transparent 70%);
+  --btn-bg-hover:
+    linear-gradient(135deg,
+      rgba(38, 24, 72, 0.78) 0%,
+      rgba(58, 32, 90, 0.85) 45%,
+      rgba(78, 42, 110, 0.78) 100%),
+    radial-gradient(ellipse at 50% 30%, rgba(245, 211, 139, 0.32), transparent 70%);
+  --btn-border: 1px solid rgba(245, 211, 139, 0.4);
+  --btn-border-hover: 1px solid rgba(245, 211, 139, 0.75);
+  --btn-text: #f5d38b;
+  --btn-text-hover: #fff5d8;
+  --btn-text-ghost: #c9b88a;
+  --btn-text-ghost-hover: #f5d38b;
+  --btn-shadow: 0 0 0 1px rgba(245, 211, 139, 0.08) inset, 0 8px 24px rgba(0, 0, 0, 0.4);
+  --btn-shadow-hover: 0 0 0 1px rgba(245, 211, 139, 0.18) inset, 0 12px 32px rgba(245, 211, 139, 0.18), 0 4px 12px rgba(0, 0, 0, 0.5);
+  --btn-glow: 0 0 6px rgba(245, 211, 139, 0.3);
+  --btn-radius: 999px;
+  --btn-radius-rect: 14px;
+}
+
+/* === PRIMARY BUTTONS (大圓鈕) === */
+.ritual-cta,
+.ritual-start-btn__inner,
+.ritual-cta--primary,
+#ritualCta,
+#ritualStartBtn .ritual-start-btn__inner {
+  background: var(--btn-bg-primary) !important;
+  color: var(--btn-text) !important;
+  border: var(--btn-border) !important;
+  text-shadow: var(--btn-glow);
+  box-shadow: var(--btn-shadow);
+  border-radius: var(--btn-radius) !important;
+}
+.ritual-cta:hover,
+#ritualCta:hover,
+.ritual-start-btn:hover .ritual-start-btn__inner {
+  background: var(--btn-bg-hover) !important;
+  color: var(--btn-text-hover) !important;
+  border: var(--btn-border-hover) !important;
+  box-shadow: var(--btn-shadow-hover);
+  transform: translateY(-1px);
+}
+.ritual-cta:active,
+.ritual-start-btn:active .ritual-start-btn__inner {
+  transform: translateY(0) scale(0.98);
+}
+
+/* === SECONDARY BUTTONS (中型鈕) === */
+.panel-button,
+.ritual-cta--secondary,
+.product-cta,
+.affiliate-link,
+.share-btn,
+.star-results__btn,
+.star-results__btn--primary,
+.unlock-card button,
+#saveBirthProfile,
+#rewardPoints,
+#unlockWithPoints,
+button[data-unlock] {
+  background: var(--btn-bg-primary) !important;
+  color: var(--btn-text) !important;
+  border: var(--btn-border) !important;
+  text-shadow: var(--btn-glow);
+  box-shadow: var(--btn-shadow);
+  border-radius: var(--btn-radius) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.panel-button:hover,
+.ritual-cta--secondary:hover,
+.product-cta:hover,
+.affiliate-link:hover,
+.share-btn:hover,
+.star-results__btn:hover,
+.star-results__btn--primary:hover,
+.unlock-card button:hover,
+#saveBirthProfile:hover,
+#rewardPoints:hover,
+#unlockWithPoints:hover,
+button[data-unlock]:hover {
+  background: var(--btn-bg-hover) !important;
+  color: var(--btn-text-hover) !important;
+  border: var(--btn-border-hover) !important;
+  box-shadow: var(--btn-shadow-hover);
+  transform: translateY(-1px);
+}
+.panel-button:active,
+.ritual-cta--secondary:active,
+.product-cta:active,
+.affiliate-link:active,
+.share-btn:active,
+.star-results__btn:active,
+#saveBirthProfile:active,
+#rewardPoints:active,
+#unlockWithPoints:active,
+button[data-unlock]:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* === GHOST BUTTONS (弱化/輔助) === */
+.ritual-cta--ghost,
+.ritual-cta-bar .ghost-button,
+.ghost-button,
+.ritual-reshuffle-btn,
+button.compact-button,
+#ritualReset {
+  background: transparent !important;
+  color: var(--btn-text-ghost) !important;
+  border: 1px solid rgba(245, 211, 139, 0.3) !important;
+  border-radius: var(--btn-radius) !important;
+  text-shadow: none;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.ritual-cta--ghost:hover,
+.ritual-cta-bar .ghost-button:hover,
+.ghost-button:hover,
+.ritual-reshuffle-btn:hover,
+button.compact-button:hover,
+#ritualReset:hover {
+  background: rgba(245, 211, 139, 0.06) !important;
+  color: var(--btn-text-ghost-hover) !important;
+  border: 1px solid rgba(245, 211, 139, 0.6) !important;
+  transform: translateY(-1px);
+}
+
+/* === CHIPS / PILLS === */
+.spread-pill,
+.spread-pills--ritual .spread-pill,
+.tier-chip,
+.membership-bar__tier {
+  background: rgba(28, 18, 56, 0.6) !important;
+  color: var(--btn-text-ghost) !important;
+  border: 1px solid rgba(245, 211, 139, 0.32) !important;
+  border-radius: var(--btn-radius) !important;
+  text-shadow: none;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+}
+.spread-pill:hover,
+.spread-pills--ritual .spread-pill:hover,
+.tier-chip:hover,
+.membership-bar__tier:hover {
+  background: rgba(38, 22, 64, 0.85) !important;
+  color: var(--btn-text) !important;
+  border: 1px solid rgba(245, 211, 139, 0.6) !important;
+}
+.spread-pill.is-active,
+.spread-pills--ritual .spread-pill.is-active,
+.tier-chip.is-active,
+.membership-bar__tier.is-active {
+  background: rgba(245, 211, 139, 0.18) !important;
+  color: var(--btn-text) !important;
+  border: 1px solid rgba(245, 211, 139, 0.85) !important;
+  box-shadow:
+    0 0 0 1px rgba(245, 211, 139, 0.32) inset,
+    0 0 18px rgba(245, 211, 139, 0.32);
+}
+
+/* === FAB / 浮動按鈕 (圓形) === */
+.inbox-fab,
+.wallet-chip,
+.line-fab,
+#lineFab,
+#walletChip {
+  background: var(--btn-bg-primary) !important;
+  color: var(--btn-text) !important;
+  border: var(--btn-border) !important;
+  text-shadow: var(--btn-glow);
+  box-shadow: var(--btn-shadow);
+  border-radius: 999px !important;
+}
+.inbox-fab:hover,
+.wallet-chip:hover,
+.line-fab:hover,
+#lineFab:hover,
+#walletChip:hover {
+  background: var(--btn-bg-hover) !important;
+  color: var(--btn-text-hover) !important;
+  border: var(--btn-border-hover) !important;
+  box-shadow: var(--btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* === LEGAL MODAL CLOSE / icon-only buttons === */
+.legal-modal__close,
+.welcome-modal__close,
+.privacy-modal__close,
+.inbox-modal__close {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--btn-text) !important;
+  border: 1px solid rgba(245, 211, 139, 0.3) !important;
+  border-radius: 50% !important;
+}
+.legal-modal__close:hover,
+.welcome-modal__close:hover,
+.privacy-modal__close:hover,
+.inbox-modal__close:hover {
+  background: rgba(245, 211, 139, 0.12) !important;
+  color: var(--btn-text-hover) !important;
+  border: 1px solid rgba(245, 211, 139, 0.6) !important;
+}
