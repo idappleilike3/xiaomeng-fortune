@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>後台管理 · 小夢老師 TAROT RITUAL</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="./assets/tarot-01-the-magician.png" />
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    body { background: linear-gradient(180deg, #0a0418 0%, #1a0a2e 50%, #0a0418 100%); color: #f5e8b8; }
+    .admin-shell { display: flex; min-height: 100vh; }
+    .admin-side {
+      width: 240px;
+      background: linear-gradient(155deg, rgba(38, 22, 64, 0.95), rgba(13, 7, 24, 0.98));
+      border-right: 1px solid rgba(245, 211, 139, 0.18);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .admin-side__brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; }
+    .admin-side__brand-mark {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 211, 139, 0.32), rgba(245, 211, 139, 0) 70%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #f5d38b;
+    }
+    .admin-side__brand-text { font-size: 14px; color: #f5d38b; letter-spacing: 0.05em; }
+    .admin-side__brand-text small { display: block; font-size: 10px; color: #8b9bb5; letter-spacing: 0.1em; }
+    .admin-nav-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      background: transparent; color: #c9b88a;
+      font-size: 13px; letter-spacing: 0.04em;
+      cursor: pointer; border: 1px solid transparent;
+      text-align: left; transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+    .admin-nav-btn:hover { background: rgba(245, 211, 139, 0.06); color: #f5d38b; }
+    .admin-nav-btn.is-active {
+      background: rgba(245, 211, 139, 0.18);
+      color: #f5d38b;
+      border-color: rgba(245, 211, 139, 0.5);
+    }
+    .admin-side__footer { margin-top: auto; font-size: 11px; color: #8b9bb5; padding: 12px 8px; }
+    .admin-main { flex: 1; padding: 28px 32px 60px; max-width: 1200px; margin: 0 auto; }
+    .admin-page-title { font-size: 22px; color: #f5d38b; margin: 0 0 4px; text-shadow: 0 0 12px rgba(245, 211, 139, 0.35); }
+    .admin-page-sub { font-size: 12px; color: #8b9bb5; letter-spacing: 0.06em; margin-bottom: 22px; }
+    .admin-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .admin-kpi {
+      padding: 18px;
+      border-radius: 16px;
+      background: linear-gradient(155deg, rgba(38, 22, 64, 0.6), rgba(13, 7, 24, 0.7));
+      border: 1px solid rgba(245, 211, 139, 0.32);
+    }
+    .admin-kpi__label { font-size: 11px; color: #8b9bb5; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
+    .admin-kpi__value { font-size: 30px; color: #f5d38b; font-weight: 700; font-family: Georgia, serif; text-shadow: 0 0 12px rgba(245, 211, 139, 0.4); }
+    .admin-kpi__hint { font-size: 11px; color: #c9b88a; margin-top: 4px; }
+    .admin-panel { border-radius: 16px; background: linear-gradient(155deg, rgba(38, 22, 64, 0.5), rgba(13, 7, 24, 0.6)); border: 1px solid rgba(245, 211, 139, 0.22); padding: 20px; margin-bottom: 18px; }
+    .admin-panel__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .admin-panel__title { font-size: 15px; color: #f5d38b; margin: 0; letter-spacing: 0.05em; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th, .admin-table td { padding: 10px 12px; text-align: left; font-size: 12.5px; border-bottom: 1px solid rgba(245, 211, 139, 0.12); }
+    .admin-table th { color: #c9b88a; font-weight: 500; letter-spacing: 0.04em; }
+    .admin-table td { color: #e0cfa3; }
+    .admin-table .is-active-row td { color: #fff5d8; background: rgba(245, 211, 139, 0.06); }
+    .admin-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; letter-spacing: 0.04em; }
+    .admin-pill--free { background: rgba(255, 255, 255, 0.06); color: #c9b88a; }
+    .admin-pill--member { background: rgba(245, 211, 139, 0.18); color: #f5d38b; border: 1px solid rgba(245, 211, 139, 0.4); }
+    .admin-pill--premium { background: linear-gradient(135deg, rgba(245, 211, 139, 0.4), rgba(255, 215, 130, 0.22)); color: #fff5d8; border: 1px solid rgba(255, 215, 130, 0.7); }
+    .admin-pill--queued { background: rgba(255, 140, 0, 0.18); color: #ffb86c; }
+    .admin-pill--delivered { background: rgba(80, 220, 120, 0.18); color: #90ee90; }
+    .admin-action-btn {
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(245, 211, 139, 0.12);
+      border: 1px solid rgba(245, 211, 139, 0.4);
+      color: #f5d38b; font-size: 11px;
+      cursor: pointer; margin-right: 4px;
+      transition: background 180ms ease;
+    }
+    .admin-action-btn:hover { background: rgba(245, 211, 139, 0.24); }
+    .admin-search {
+      padding: 8px 12px; border-radius: 10px;
+      border: 1px solid rgba(245, 211, 139, 0.32);
+      background: rgba(13, 7, 24, 0.6); color: #f5d38b;
+      font-size: 13px; width: 240px;
+    }
+    .admin-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .admin-tab {
+      padding: 6px 14px; border-radius: 999px;
+      background: transparent; color: #c9b88a;
+      border: 1px solid rgba(245, 211, 139, 0.28);
+      font-size: 12px; cursor: pointer; transition: background 180ms ease;
+    }
+    .admin-tab.is-active { background: rgba(245, 211, 139, 0.18); color: #f5d38b; border-color: rgba(245, 211, 139, 0.6); }
+    .admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+    .admin-modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(8, 4, 18, 0.86);
+      backdrop-filter: blur(16px);
+    }
+    .admin-modal-overlay.is-open { display: flex; }
+    .admin-gate-modal {
+      width: min(420px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(245, 211, 139, 0.5);
+      background: linear-gradient(155deg, rgba(38, 22, 64, 0.96), rgba(13, 7, 24, 0.98));
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .admin-gate-modal h3 { color: #f5d38b; margin: 0 0 10px; font-size: 20px; }
+    .admin-gate-modal p { color: #c9b88a; font-size: 13px; margin: 0 0 18px; line-height: 1.6; }
+    .admin-gate-modal input {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(245, 211, 139, 0.4);
+      background: rgba(13, 7, 24, 0.7); color: #f5d38b;
+      font-size: 15px; text-align: center; letter-spacing: 0.2em;
+      margin-bottom: 14px;
+    }
+    .admin-gate-modal button {
+      width: 100%; padding: 12px; border-radius: 999px;
+      background: linear-gradient(135deg, rgba(245, 211, 139, 0.32), rgba(255, 215, 130, 0.18));
+      color: #fff5d8; border: 1px solid rgba(245, 211, 139, 0.6);
+      font-weight: 600; font-size: 14px; letter-spacing: 0.06em; cursor: pointer;
+    }
+    .admin-gate-error { color: #ff8a4a; font-size: 12px; margin-top: 10px; }
+    .admin-page { display: none; }
+    .admin-page.is-active { display: block; }
+    .admin-prompt-editor textarea { width: 100%; min-height: 180px; padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 211, 139, 0.32); background: rgba(13, 7, 24, 0.6); color: #e0cfa3; font-size: 12.5px; line-height: 1.6; font-family: "Noto Serif TC", Georgia, serif; }
+    @media (max-width: 720px) {
+      .admin-shell { flex-direction: column; }
+      .admin-side { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 訪問閘門 -->
+  <div class="admin-modal-overlay is-open" id="adminGate">
+    <div class="admin-gate-modal">
+      <h3>🔒 靈魂後台</h3>
+      <p>請輸入守護密碼以進入管理系統。<br/>密碼會在 8 小時內保持有效。</p>
+      <input type="password" id="adminPassword" placeholder="請輸入密碼" autocomplete="off" />
+      <button type="button" id="adminLogin">進入後台</button>
+      <p class="admin-gate-error" id="adminGateError" hidden>密碼不正確</p>
+      <p style="margin-top:14px;font-size:11px;color:#8b9bb5;">
+        <a href="./index.html" style="color:#8b9bb5;text-decoration:underline;">← 返回前台</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="admin-shell" id="adminShell" hidden>
+    <!-- 側欄 -->
+    <aside class="admin-side">
+      <div class="admin-side__brand">
+        <span class="admin-side__brand-mark">◉</span>
+        <div class="admin-side__brand-text">
+          小夢後台
+          <small>XIAOMENG ADMIN</small>
+        </div>
+      </div>
+      <button class="admin-nav-btn is-active" data-page="dashboard">📊 總覽儀表板</button>
+      <button class="admin-nav-btn" data-page="members">👥 靈魂會員</button>
+      <button class="admin-nav-btn" data-page="readings">🃏 占卜解讀紀錄</button>
+      <button class="admin-nav-btn" data-page="prompts">📜 深度解析排版</button>
+      <button class="admin-nav-btn" data-page="points">✨ 靈性積分 / 折抵</button>
+      <button class="admin-nav-btn" data-page="products">💎 聖物選品點擊</button>
+      <button class="admin-nav-btn" data-page="legal">⚖️ 法律與隱私</button>
+      <div class="admin-side__footer">
+        大師後台 v1.0<br/>
+        © 2026 小夢塔羅師
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Page 1: 總覽儀表板 -->
+      <section class="admin-page is-active" data-page="dashboard">
+        <h2 class="admin-page-title">總覽儀表板</h2>
+        <p class="admin-page-sub">KPI · 靈魂會員 / 占卜解讀 / 深度解鎖 / 聖物選品點擊 / 靈性積分總額</p>
+        <div class="admin-kpi-grid" id="kpiGrid"></div>
+        <div class="admin-panel">
+          <div class="admin-panel__head">
+            <h3 class="admin-panel__title">近期占卜解讀</h3>
+            <span class="admin-pill admin-pill--delivered">Live</span>
+          </div>
+          <table class="admin-table" id="recentReadingsTable"></table>
+        </div>
+        <div class="admin-panel">
+          <div class="admin-panel__head">
+            <h3 class="admin-panel__title">聖物選品點擊排行</h3>
+            <span class="admin-pill admin-pill--member">近 7 日</span>
+          </div>
+          <table class="admin-table" id="productClicksTable"></table>
+        </div>
+      </section>
+
+      <!-- Page 2: 靈魂會員 -->
+      <section class="admin-page" data-page="members">
+        <h2 class="admin-page-title">靈魂會員</h2>
+        <p class="admin-page-sub">使用者資料管理 · 搜尋 / 新增 / 編輯 / 刪除 / 匯出</p>
+        <div class="admin-panel">
+          <div class="admin-toolbar">
+            <input type="text" class="admin-search" id="memberSearch" placeholder="搜尋暱稱 / LINE userId" />
+            <div>
+              <button class="admin-action-btn" id="addMemberBtn">+ 新增會員</button>
+              <button class="admin-action-btn" id="exportMembersBtn">匯出 CSV</button>
+            </div>
+          </div>
+          <table class="admin-table" id="membersTable">
+            <thead>
+              <tr>
+                <th>暱稱</th>
+                <th>LINE userId</th>
+                <th>等級</th>
+                <th>靈性積分</th>
+                <th>占卜次數</th>
+                <th>加入時間</th>
+                <th>動作</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 3: 占卜解讀紀錄 -->
+      <section class="admin-page" data-page="readings">
+        <h2 class="admin-page-title">占卜解讀紀錄</h2>
+        <p class="admin-page-sub">使用者所有翻牌 / 抽牌 / 解讀歷史</p>
+        <div class="admin-panel">
+          <div class="admin-tabs">
+            <button class="admin-tab is-active" data-system="all">全部</button>
+            <button class="admin-tab" data-system="tarot">塔羅</button>
+            <button class="admin-tab" data-system="pet">毛孩心語</button>
+            <button class="admin-tab" data-system="oracle">今日神諭</button>
+          </div>
+          <table class="admin-table" id="readingsTable">
+            <thead>
+              <tr>
+                <th>時間</th>
+                <th>會員</th>
+                <th>系統</th>
+                <th>牌面</th>
+                <th>主題</th>
+                <th>狀態</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 4: 深度解析排版工具 -->
+      <section class="admin-page" data-page="prompts">
+        <h2 class="admin-page-title">深度解析排版工具</h2>
+        <p class="admin-page-sub">毛孩心語 7 大情境 prompt 編輯器(server-side lib/prompts/pet-divination.md)</p>
+        <div class="admin-panel">
+          <div class="admin-tabs" id="promptTabs">
+            <button class="admin-tab is-active" data-prompt="0">1. 日常陪伴</button>
+            <button class="admin-tab" data-prompt="1">2. 關係探索</button>
+            <button class="admin-tab" data-prompt="2">3. 健康能量</button>
+            <button class="admin-tab" data-prompt="3">4. 行為理解</button>
+            <button class="admin-tab" data-prompt="4">5. 新毛孩</button>
+            <button class="admin-tab" data-prompt="5">6. 離世陪伴</button>
+            <button class="admin-tab" data-prompt="6">7. 找回毛孩</button>
+          </div>
+          <div class="admin-prompt-editor">
+            <textarea id="promptEditor" spellcheck="false"></textarea>
+            <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:#8b9bb5;">編輯後按儲存 → 寫入 server-side prompt</span>
+              <button class="admin-action-btn" id="savePromptBtn">💾 儲存</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 5: 靈性積分 -->
+      <section class="admin-page" data-page="points">
+        <h2 class="admin-page-title">靈性積分 / 599 折抵</h2>
+        <p class="admin-page-sub">分享送 50 點 · 7 天效期 · 單筆 $599 折抵 $50</p>
+        <div class="admin-kpi-grid">
+          <div class="admin-kpi"><div class="admin-kpi__label">總發放點數</div><div class="admin-kpi__value" id="kpiTotalPoints">0</div><div class="admin-kpi__hint">自開站累計</div></div>
+          <div class="admin-kpi"><div class="admin-kpi__label">已折抵金額</div><div class="admin-kpi__value" id="kpiRedeemed">$0</div><div class="admin-kpi__hint">滿 $599 折抵 $50</div></div>
+          <div class="admin-kpi"><div class="admin-kpi__label">活躍持有人數</div><div class="admin-kpi__value" id="kpiHolders">0</div><div class="admin-kpi__hint">未過期</div></div>
+        </div>
+        <div class="admin-panel">
+          <h3 class="admin-panel__title">積分 ledger</h3>
+          <table class="admin-table" id="pointsLedger">
+            <thead><tr><th>時間</th><th>會員</th><th>來源</th><th>增減</th><th>效期</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 6: 聖物選品點擊 -->
+      <section class="admin-page" data-page="products">
+        <h2 class="admin-page-title">聖物選品點擊</h2>
+        <p class="admin-page-sub">F30 命運商城商品點擊統計 + URL 管理</p>
+        <div class="admin-panel">
+          <table class="admin-table" id="productsTable">
+            <thead>
+              <tr><th>商品名稱</th><th>點擊數</th><th>轉單率</th><th>目標 URL</th><th>動作</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 7: 法律與隱私 -->
+      <section class="admin-page" data-page="legal">
+        <h2 class="admin-page-title">法律與隱私</h2>
+        <p class="admin-page-sub">privacy.html 與 terms.html 設定 / 預覽</p>
+        <div class="admin-panel">
+          <table class="admin-table">
+            <thead><tr><th>頁面</th><th>狀態</th><th>動作</th></tr></thead>
+            <tbody>
+              <tr><td>🔒 隱私權政策 (privacy.html)</td><td><span class="admin-pill admin-pill--delivered">已上線</span></td><td><a class="admin-action-btn" href="./privacy.html" target="_blank">開啟</a></td></tr>
+              <tr><td>⚖️ 法律與免責聲明 (terms.html)</td><td><span class="admin-pill admin-pill--delivered">已上線</span></td><td><a class="admin-action-btn" href="./terms.html" target="_blank">開啟</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-panel">
+          <h3 class="admin-panel__title">用戶同意書狀態</h3>
+          <p style="font-size:12px;color:#c9b88a;line-height:1.7;">
+            當使用者首次進入 LIFF 時,系統將自動彈出 onboarding modal 要求填寫個資並勾選同意隱私權聲明。<br/>
+            同意紀錄將儲存於 localStorage(<code style="color:#f5d38b;">xiaome…nsent</code>),可在「靈魂會員」頁面查詢個別用戶的同意時間。
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+  // ============================================================
+  // 訪問閘門: ?admin=1 OR 本地密碼
+  // ============================================================
+  const ADMIN_PASSWORD = "xiaomeng2026";
+  const SESSION_KEY = "xiaome…dmin";
+  const SESSION_TTL = 8 * 60 * 60 * 1000; // 8h
+
+  function isAdminSessionValid() {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return data && data.expiresAt > Date.now();
+    } catch (e) { return false; }
+  }
+  function setAdminSession() {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      grantedAt: Date.now(),
+      expiresAt: Date.now() + SESSION_TTL,
+    }));
+  }
+  function clearAdminSession() {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  const gate = document.getElementById("adminGate");
+  const shell = document.getElementById("adminShell");
+
+  function unlockAdmin() {
+    gate.classList.remove("is-open");
+    shell.hidden = false;
+    setAdminSession();
+    renderAll();
+  }
+  function lockAdmin() {
+    gate.classList.add("is-open");
+    shell.hidden = true;
+  }
+
+  // Auto-unlock if URL has ?admin=1 and we already have valid session
+  if (window.location.search.includes("admin=1") && isAdminSessionValid()) {
+    unlockAdmin();
+  } else if (window.location.search.includes("admin=1")) {
+    document.getElementById("adminGateError").textContent = "請輸入密碼";
+    document.getElementById("adminGateError").hidden = false;
+  } else if (isAdminSessionValid()) {
+    unlockAdmin();
+  }
+
+  document.getElementById("adminLogin").addEventListener("click", () => {
+    const pw = document.getElementById("adminPassword").value;
+    if (pw === ADMIN_PASSWORD) {
+      unlockAdmin();
+    } else {
+      document.getElementById("adminGateError").textContent = "密碼不正確,請重試。";
+      document.getElementById("adminGateError").hidden = false;
+    }
+  });
+  document.getElementById("adminPassword").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("adminLogin").click();
+  });
+
+  // ============================================================
+  // 7 個頁面切換
+  // ============================================================
+  document.querySelectorAll(".admin-nav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".admin-nav-btn").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const page = btn.dataset.page;
+      document.querySelectorAll(".admin-page").forEach((p) => p.classList.remove("is-active"));
+      document.querySelector('.admin-page[data-page="' + page + '"]').classList.add("is-active");
+    });
+  });
+
+  // ============================================================
+  // 假資料(後端串接時改 fetch)
+  // ============================================================
+  const FAKE = {
+    kpi: {
+      members: 1247,
+      readings: 8932,
+      unlocked: 218,
+      clicks: 415,
+      points: 12480,
+    },
+    recentReadings: [
+      { at: "13:42", member: "小月", system: "tarot", card: "THE HIGH PRIESTESS · 女祭司", topic: "感情", status: "delivered" },
+      { at: "13:36", member: "阿德", system: "pet", card: "布偶貓女皇", topic: "日常陪伴", status: "delivered" },
+      { at: "13:30", member: "Emma", system: "oracle", card: "今日訊息", topic: "工作", status: "delivered" },
+      { at: "13:24", member: "Owen", system: "tarot", card: "THE STAR · 星星", topic: "事業", status: "delivered" },
+      { at: "13:18", member: "婉兒", system: "tarot", card: "THE LOVERS · 戀人", topic: "感情", status: "queued" },
+      { at: "13:11", member: "柏翰", system: "pet", card: "柯基犬愚者", topic: "行為理解", status: "delivered" },
+      { at: "13:05", member: "惠子", system: "tarot", card: "THE TOWER · 高塔", topic: "工作", status: "delivered" },
+    ],
+    members: [
+      { name: "小月", userId: "U1a2b3c4d5e6f7", tier: "member", points: 50, readings: 12, joined: "2026-06-15" },
+      { name: "阿德", userId: "U2b3c4d5e6f7g8", tier: "free", points: 0, readings: 3, joined: "2026-06-22" },
+      { name: "Emma", userId: "U3c4d5e6f7g8h9", tier: "premium", points: 200, readings: 47, joined: "2026-04-08" },
+      { name: "Owen", userId: "U4d5e6f7g8h9i0", tier: "member", points: 80, readings: 18, joined: "2026-05-30" },
+      { name: "婉兒", userId: "U5e6f7g8h9i0j1", tier: "free", points: 50, readings: 1, joined: "2026-07-01" },
+      { name: "柏翰", userId: "U6f7g8h9i0j1k2", tier: "member", points: 0, readings: 8, joined: "2026-06-04" },
+      { name: "惠子", userId: "U7g8h9i0j1k2l3", tier: "premium", points: 350, readings: 82, joined: "2026-03-12" },
+    ],
+    readings: [
+      { at: "13:42", member: "小月", system: "tarot", card: "THE HIGH PRIESTESS · 女祭司", topic: "感情", status: "delivered" },
+      { at: "13:36", member: "阿德", system: "pet", card: "布偶貓女皇", topic: "日常陪伴", status: "delivered" },
+      { at: "13:30", member: "Emma", system: "oracle", card: "今日訊息", topic: "工作", status: "delivered" },
+      { at: "13:24", member: "Owen", system: "tarot", card: "THE STAR · 星星", topic: "事業", status: "delivered" },
+      { at: "13:18", member: "婉兒", system: "tarot", card: "THE LOVERS · 戀人", topic: "感情", status: "queued" },
+      { at: "13:11", member: "柏翰", system: "pet", card: "柯基犬愚者", topic: "行為理解", status: "delivered" },
+      { at: "13:05", member: "惠子", system: "tarot", card: "THE TOWER · 高塔", topic: "工作", status: "delivered" },
+      { at: "12:58", member: "家豪", system: "tarot", card: "THE FOOL · 愚者", topic: "個人成長", status: "delivered" },
+    ],
+    productClicks: [
+      { name: "月光石能量手鏈", clicks: 142, conversion: "8.4%", url: "https://shopee.tw/moonstone-link" },
+      { name: "雪松沉靜擴香", clicks: 96, conversion: "6.2%", url: "https://shopee.tw/cedarwood" },
+      { name: "韋特塔羅入門圖典", clicks: 78, conversion: "5.1%", url: "https://shopee.tw/tarot-book" },
+      { name: "月光香氛蠟燭", clicks: 64, conversion: "4.8%", url: "https://shopee.tw/candle" },
+      { name: "直覺塔羅入門組", clicks: 35, conversion: "3.2%", url: "https://shopee.tw/tarot-set" },
+    ],
+    pointsLedger: [
+      { at: "13:18", member: "婉兒", source: "share-friend", delta: "+50", exp: "2026-07-08" },
+      { at: "12:55", member: "Owen", source: "redeem-599", delta: "-50", exp: "—" },
+      { at: "11:32", member: "惠子", source: "redeem-599", delta: "-50", exp: "—" },
+      { at: "10:48", member: "小月", source: "share-friend", delta: "+50", exp: "2026-07-08" },
+      { at: "09:12", member: "Emma", source: "redeem-599", delta: "-50", exp: "—" },
+      { at: "08:33", member: "家豪", source: "share-friend", delta: "+50", exp: "2026-07-07" },
+    ],
+  };
+
+  function tierPill(tier) {
+    const labels = { free: "免費體驗", member: "尊榮會員 🔒", premium: "殿堂大師 🔐" };
+    return '<span class="admin-pill admin-pill--' + tier + '">' + labels[tier] + '</span>';
+  }
+
+  function renderKPI() {
+    const grid = document.getElementById("kpiGrid");
+    grid.innerHTML = "";
+    const items = [
+      { label: "靈魂會員", value: FAKE.kpi.members, hint: "已建立資料的人數" },
+      { label: "占卜解讀", value: FAKE.kpi.readings, hint: "翻牌與抽牌紀錄" },
+      { label: "深度解鎖", value: FAKE.kpi.unlocked, hint: "現金消費解鎖次數" },
+      { label: "聖物點擊", value: FAKE.kpi.clicks, hint: "選品點擊總數" },
+      { label: "靈性積分", value: FAKE.kpi.points.toLocaleString(), hint: "總發放點數" },
+    ];
+    items.forEach((it) => {
+      const card = document.createElement("div");
+      card.className = "admin-kpi";
+      card.innerHTML = '<div class="admin-kpi__label">' + it.label + '</div><div class="admin-kpi__value">' + it.value + '</div><div class="admin-kpi__hint">' + it.hint + '</div>';
+      grid.appendChild(card);
+    });
+  }
+
+  function renderRecentReadings() {
+    const t = document.getElementById("recentReadingsTable");
+    let html = "<thead><tr><th>時間</th><th>會員</th><th>系統</th><th>牌面</th><th>主題</th><th>狀態</th></tr></thead><tbody>";
+    FAKE.recentReadings.slice(0, 5).forEach((r) => {
+      html += "<tr><td>" + r.at + "</td><td>" + r.member + "</td><td>" + r.system + "</td><td>" + r.card + "</td><td>" + r.topic + "</td><td><span class='admin-pill admin-pill--" + r.status + "'>" + (r.status === "delivered" ? "已送達" : "排隊中") + "</span></td></tr>";
+    });
+    html += "</tbody>";
+    t.innerHTML = html;
+  }
+
+  function renderProductClicks() {
+    const t = document.getElementById("productClicksTable");
+    let html = "<thead><tr><th>聖物名稱</th><th>點擊數</th><th>轉單率</th><th>目標 URL</th></tr></thead><tbody>";
+    FAKE.productClicks.forEach((p) => {
+      html += "<tr><td>" + p.name + "</td><td>" + p.clicks + "</td><td>" + p.conversion + "</td><td style='font-size:11px;color:#8b9bb5;'>" + p.url + "</td></tr>";
+    });
+    html += "</tbody>";
+    t.innerHTML = html;
+  }
+
+  function renderMembers() {
+    const tbody = document.querySelector("#membersTable tbody");
+    const search = (document.getElementById("memberSearch").value || "").toLowerCase();
+    const filtered = FAKE.members.filter((m) => !search || m.name.toLowerCase().includes(search) || m.userId.toLowerCase().includes(search));
+    let html = "";
+    filtered.forEach((m, i) => {
+      html += "<tr><td>" + m.name + "</td><td style='font-size:11px;color:#8b9bb5;'>" + m.userId + "</td><td>" + tierPill(m.tier) + "</td><td>" + m.points + "</td><td>" + m.readings + "</td><td>" + m.joined + "</td><td><button class='admin-action-btn' data-edit='" + i + "'>編輯</button><button class='admin-action-btn' data-del='" + m.userId + "'>刪除</button></td></tr>";
+    });
+    tbody.innerHTML = html || "<tr><td colspan='7' style='text-align:center;color:#8b9bb5;padding:20px;'>無符合條件的會員</td></tr>";
+  }
+  document.getElementById("memberSearch").addEventListener("input", renderMembers);
+  document.getElementById("addMemberBtn").addEventListener("click", () => alert("新增會員功能:後端串接後啟用"));
+  document.getElementById("exportMembersBtn").addEventListener("click", () => {
+    const csv = ["name,userId,tier,points,readings,joined"].concat(FAKE.members.map((m) => [m.name, m.userId, m.tier, m.points, m.readings, m.joined].join(","))).join("\\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "members_" + new Date().toISOString().slice(0, 10) + ".csv";
+    a.click();
+  });
+
+  function renderReadings(filterSystem) {
+    const tbody = document.querySelector("#readingsTable tbody");
+    const filtered = filterSystem && filterSystem !== "all" ? FAKE.readings.filter((r) => r.system === filterSystem) : FAKE.readings;
+    let html = "";
+    filtered.forEach((r) => {
+      html += "<tr><td>" + r.at + "</td><td>" + r.member + "</td><td>" + r.system + "</td><td>" + r.card + "</td><td>" + r.topic + "</td><td><span class='admin-pill admin-pill--" + r.status + "'>" + (r.status === "delivered" ? "已送達" : "排隊中") + "</span></td></tr>";
+    });
+    tbody.innerHTML = html || "<tr><td colspan='6' style='text-align:center;color:#8b9bb5;padding:20px;'>無紀錄</td></tr>";
+  }
+  document.querySelectorAll(".admin-tab[data-system]").forEach((t) => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab[data-system]").forEach((x) => x.classList.remove("is-active"));
+      t.classList.add("is-active");
+      renderReadings(t.dataset.system);
+    });
+  });
+
+  function renderPrompts(idx) {
+    const PROMPTS = [
+      "【日常陪伴】\\n\\n開場: 親愛的{{主人名}},看著{{毛孩名}}今天在你身邊打盹的模樣,我能感受到你對這份日常陪伴的珍惜。\\n\\n中段: ...\\n\\n結尾: 今晚,請蹲下來,把臉靠近{{毛孩名}},讓彼此的呼吸同步,這就是最深的陪伴。",
+      "【關係探索】...",
+      "【健康能量】\\n\\n⚠️ 警語: 本解析僅提供能量指引,不能取代專業獸醫診斷與醫療。",
+      "【行為理解】...",
+      "【新毛孩】...",
+      "【離世陪伴】...",
+      "【找回毛孩】..."
+    ];
+    document.getElementById("promptEditor").value = PROMPTS[idx] || "";
+  }
+  document.querySelectorAll(".admin-tab[data-prompt]").forEach((t) => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab[data-prompt]").forEach((x) => x.classList.remove("is-active"));
+      t.classList.add("is-active");
+      renderPrompts(Number(t.dataset.prompt));
+    });
+  });
+  document.getElementById("savePromptBtn").addEventListener("click", () => {
+    alert("已儲存(後端正式上線後寫入 lib/prompts/pet-divination.md)");
+  });
+
+  function renderPoints() {
+    const total = FAKE.pointsLedger.reduce((sum, p) => sum + (p.delta.startsWith("+") ? Number(p.delta.slice(1)) : -Number(p.delta.slice(1))), 0);
+    const redeemed = FAKE.pointsLedger.filter((p) => p.delta.startsWith("-")).reduce((s, p) => s + 50, 0);
+    const active = FAKE.members.filter((m) => m.points > 0).length;
+    document.getElementById("kpiTotalPoints").textContent = total.toLocaleString();
+    document.getElementById("kpiRedeemed").textContent = "$" + redeemed;
+    document.getElementById("kpiHolders").textContent = active;
+    const tbody = document.querySelector("#pointsLedger tbody");
+    let html = "";
+    FAKE.pointsLedger.forEach((p) => {
+      html += "<tr><td>" + p.at + "</td><td>" + p.member + "</td><td>" + p.source + "</td><td>" + p.delta + "</td><td>" + p.exp + "</td></tr>";
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderProducts() {
+    const tbody = document.querySelector("#productsTable tbody");
+    let html = "";
+    FAKE.productClicks.forEach((p, i) => {
+      html += "<tr><td>" + p.name + "</td><td>" + p.clicks + "</td><td>" + p.conversion + "</td><td style='font-size:11px;color:#8b9bb5;'>" + p.url + "</td><td><button class='admin-action-btn' data-prod-edit='" + i + "'>編輯 URL</button></td></tr>";
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderAll() {
+    renderKPI();
+    renderRecentReadings();
+    renderProductClicks();
+    renderMembers();
+    renderReadings("all");
+    renderPrompts(0);
+    renderPoints();
+    renderProducts();
+  }
+  renderAll();
+  </script>
+</body>
+</html>
