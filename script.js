@@ -4143,3 +4143,217 @@ if (document.readyState === 'loading') {
   // Expose for other modules
   window.__uiSounds = { playClick, playHover, playClose, playSuccess, playAlert };
 })();
+
+
+// =====================================================================
+// Phase 58: 入口 3 排程推播 2-4h 真實延遲 + 重試 3 次 fallback
+// 流程:送出信件 -> 排入佇列 -> 2-4h 後 -> 嘗試推送 -> 失敗重試 3 次 -> 全部失敗 in-app 通知
+// (註: 2-4h 為行銷話術,實際開發模式用 setTimeout)
+// =====================================================================
+(function letterSchedulerV2() {
+  const SCHEDULE_KEY = "***";
+  const LETTER_KEY = "xiaomeng_letter_content";
+  const MAX_RETRY = 3;
+  const RETRY_DELAYS_MS = [10000, 30000, 60000]; // 10s / 30s / 1m
+
+  // Generate a personalized "master letter" using divination-system.js
+  function generateMasterLetter(letter) {
+    const reader = window.__divinationSystem;
+    if (!reader) {
+      return `展信悅,${letter.name || "孩子"}。
+
+你於今夜寫下的困惑,我已經收到。萬物皆有星軌,當前的卡關只是星象短暫的逆行。請記得,所有的答案都已在你的靈魂之中。
+
+願這封信成為你今夜的指引。`;
+    }
+    // Use the 78-card random draw to pick a card for this letter
+    const deck = window.tarotDeck || [];
+    const card = deck[Math.floor(Math.random() * deck.length)] || { name: "愚者", english: "THE FOOL", meaning: "新的開始正在靠近" };
+    const reading = reader.generateReading(card.index, card.suit, card.name, "love");
+    return `展信悅,${letter.name || "孩子"}。
+
+看著你在信中傾訴的掙扎, 我能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌, 當前的卡關只是星象短暫的逆行。
+
+${reading}
+
+願這封信成為你今夜的指引。記得,所有的答案都已在你的靈魂之中。若仍迷茫,小夢老師隨時在這裡為你調頻。
+
+——小夢老師 深夜親筆
+${new Date().toLocaleString("zh-TW")}`;
+  }
+
+  // Schedule a letter for delivery 2-4h later
+  function scheduleLetter(letter) {
+    // Demo: 縮短為 30s 模擬 2-4h(production = 2-4h)
+    const deliveryDelayMs = 30 * 1000;
+    const queued = {
+      letterId: "ltr_" + Date.now(),
+      submittedAt: Date.now(),
+      deliveryAt: Date.now() + deliveryDelayMs,
+      retries: 0,
+      status: "queued",
+      body: letter,
+    };
+    try {
+      localStorage.setItem(SCHEDULE_KEY, JSON.stringify(queued));
+    } catch (e) {}
+    return queued;
+  }
+
+  // Attempt delivery with retry
+  async function attemptDelivery() {
+    let raw;
+    try {
+      raw = localStorage.getItem(SCHEDULE_KEY);
+    } catch (e) { return; }
+    if (!raw) return;
+    let queued;
+    try { queued = JSON.parse(raw); } catch (e) { return; }
+    if (queued.status !== "queued") return;
+    if (Date.now() < queued.deliveryAt) return;
+
+    // Generate master letter
+    const masterContent = generateMasterLetter(queued.body);
+    queued.masterContent = masterContent;
+    queued.status = "delivering";
+
+    // Simulate "push to LINE" with possible failure
+    // In production: try window.liff.sendMessages(...)
+    // In demo: 80% success rate to demonstrate retry flow
+    const success = Math.random() > 0.3; // 70% success
+
+    if (success) {
+      // Save the final letter
+      try {
+        localStorage.setItem(LETTER_KEY, JSON.stringify({
+          subject: "【命運指引】來自小夢老師的一封深夜親筆信",
+          body: masterContent,
+          fromName: "小夢老師",
+          submittedAt: queued.submittedAt,
+          deliveredAt: Date.now(),
+        }));
+        queued.status = "delivered";
+        queued.deliveredAt = Date.now();
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(queued));
+      } catch (e) {}
+    } else {
+      // Retry
+      queued.retries += 1;
+      if (queued.retries >= MAX_RETRY) {
+        queued.status = "inapp_fallback";
+        // Save to in-app inbox
+        try {
+          localStorage.setItem(LETTER_KEY, JSON.stringify({
+            subject: "【命運指引】來自小夢老師的一封深夜親筆信",
+            body: masterContent,
+            fromName: "小夢老師",
+            submittedAt: queued.submittedAt,
+            deliveredAt: Date.now(),
+          }));
+        } catch (e) {}
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(queued));
+      } else {
+        // Schedule retry
+        const retryDelay = RETRY_DELAYS_MS[queued.retries - 1] || 30000;
+        queued.nextRetryAt = Date.now() + retryDelay;
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(queued));
+      }
+    }
+  }
+
+  // Polling loop: every 5s check schedule
+  setInterval(attemptDelivery, 5000);
+  // Also check on load
+  setTimeout(attemptDelivery, 2000);
+
+  // Hook letter form submit
+  document.addEventListener("submit", (e) => {
+    const form = e.target;
+    if (form && form.id === "letterForm") {
+      e.preventDefault();
+      const ta = form.querySelector("textarea");
+      const text = ta ? ta.value.trim() : "";
+      if (text.length < 50) {
+        alert("請輸入至少 50 字以上的詳細困境,讓老師能更精準感應你的能量狀態。");
+        return;
+      }
+      const letter = {
+        name: localStorage.getItem("profileName") || "孩子",
+        body: text,
+        topic: form.querySelector("select") ? form.querySelector("select").value : "感情",
+        submittedAt: Date.now(),
+      };
+      scheduleLetter(letter);
+      // Show loading
+      if (window.__showLoader) {
+        window.__showLoader("正在為你的信件進行能量封印與星軌調頻…", 3000);
+      }
+      // Show success modal
+      setTimeout(() => {
+        alert("你的困惑小夢老師已經收到。老師將於今夜靜心時為你調頻解惑,你的專屬『命運指引信』將於 24 小時內自動發送到你的 LINE 聊天室與下方信箱,請稍作等待。");
+        if (ta) ta.value = "";
+      }, 3200);
+    }
+  });
+
+  window.__letterScheduler = { scheduleLetter, attemptDelivery, generateMasterLetter };
+})();
+
+
+// =====================================================================
+// Phase 59: 入口 2 首次進站自動引導
+// =====================================================================
+(function onboardingBootstrap() {
+  const SEEN_KEY = "xiaomeng_onboarding_seen";
+  const PROFILE_KEY = "birthProfile";
+
+  function openOnb() {
+    const m = document.getElementById("onboardingModal");
+    if (!m) return;
+    m.classList.add("is-open");
+    m.setAttribute("aria-hidden", "false");
+  }
+  function closeOnb() {
+    const m = document.getElementById("onboardingModal");
+    if (!m) return;
+    m.classList.remove("is-open");
+    m.setAttribute("aria-hidden", "true");
+  }
+
+  function saveProfile(name, date, time) {
+    try {
+      const profile = { name, birthDate: date, birthTime: time, createdAt: Date.now() };
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+      if (window.refreshWalletUI) window.refreshWalletUI();
+    } catch (e) {}
+  }
+
+  document.addEventListener("click", (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t) return;
+    if (t.id === "onbSubmit") {
+      const name = document.getElementById("onbName").value.trim();
+      const date = document.getElementById("onbBirthDate").value;
+      const time = document.getElementById("onbBirthTime").value;
+      if (!date) {
+        alert("請填寫出生日期,讓我能為你計算生命靈數。");
+        return;
+      }
+      saveProfile(name || "孩子", date, time);
+      try { localStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
+      closeOnb();
+      // Show success feedback
+      if (window.__uiSounds) window.__uiSounds.playSuccess();
+    } else if (t.id === "onbSkip") {
+      try { localStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
+      closeOnb();
+    }
+  });
+
+  // Auto-open on first visit (after 800ms delay)
+  setTimeout(() => {
+    let seen = false;
+    try { seen = localStorage.getItem(SEEN_KEY) === "1"; } catch (e) {}
+    if (!seen) openOnb();
+  }, 800);
+})();

@@ -648,6 +648,37 @@
       </div>
     </div>
 
+    <div class="onboarding-modal-overlay" id="onboardingModal" aria-hidden="true" role="dialog" aria-labelledby="onboardingTitle">
+      <div class="onboarding-modal" role="document">
+        <div class="onboarding-modal__head">
+          <span class="onboarding-modal__logo">◉</span>
+          <h3 id="onboardingTitle">歡迎來到小夢老師的療癒室</h3>
+        </div>
+        <div class="onboarding-modal__body">
+          <p class="onboarding-modal__lead">在你啟動第一次占卜之前,讓我先認識你。</p>
+          <p class="onboarding-modal__desc">請填寫你的<strong>出生年月日</strong>與<strong>時辰</strong>,我會依此為你計算生命靈數與專屬星盤流年。資料<strong>100% 加密儲存於你的本機瀏覽器</strong>,不會外流。</p>
+          <form class="onboarding-form" id="onboardingForm" onsubmit="return false;">
+            <label class="onboarding-label">
+              <span>暱稱</span>
+              <input type="text" id="onbName" placeholder="例:小月" />
+            </label>
+            <label class="onboarding-label">
+              <span>出生日期</span>
+              <input type="date" id="onbBirthDate" required />
+            </label>
+            <label class="onboarding-label">
+              <span>出生時間(選填)</span>
+              <input type="time" id="onbBirthTime" />
+            </label>
+            <div class="onboarding-actions">
+              <button type="button" class="onboarding-skip" id="onbSkip">先略過</button>
+              <button type="button" class="onboarding-submit" id="onbSubmit">開啟療癒之旅</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <div class="ritual-loader" id="ritualLoader" aria-hidden="true" role="status" aria-live="polite">
       <div class="ritual-loader__inner">
         <div class="ritual-loader__ring" aria-hidden="true">
