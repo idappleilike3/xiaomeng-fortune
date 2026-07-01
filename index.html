@@ -133,6 +133,19 @@
         </span>
       </a>
       <nav class="nav" aria-label="主要導覽" hidden></nav>
+      <div class="user-bar" data-tier="free" hidden>
+        <button type="button" class="user-bar__main" id="userBarMain" aria-label="會員中心">
+          <span class="user-bar__avatar" aria-hidden="true">👤</span>
+          <span class="user-bar__info">
+            <span class="user-bar__tier" id="userBarTier">初心旅人 🌑</span>
+            <span class="user-bar__sp" id="userBarSp">0 SP</span>
+          </span>
+        </button>
+        <button type="button" class="user-bar__bell" id="userBarBell" aria-label="通知">
+          <span aria-hidden="true">🔔</span>
+          <span class="user-bar__dot" id="userBarDot" hidden></span>
+        </button>
+      </div>
       <button type="button" class="wallet-chip" id="walletChip" aria-label="靈性收益錢包" title="靈性收益錢包">
         <span class="wallet-chip__icon" aria-hidden="true">✨</span>
         <span class="wallet-chip__value" id="walletChipValue">0</span>

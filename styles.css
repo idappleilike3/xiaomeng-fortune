@@ -8098,3 +8098,70 @@ html, body { overflow-x: hidden; }
   .hero-entry--deep { grid-column: 1; max-width: 100%; }
 }
 /* === END Hero 4 Entry v1.0 === */
+
+/* === User Bar v1.0 (2026-07-02 07:38) === */
+/* === User Bar v1.0 (2026-07-02 07:38) === */
+.user-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 4px 8px 4px 12px;
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.12), rgba(124, 77, 196, 0.1));
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  border-radius: 999px;
+}
+.user-bar__main {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  padding: 4px 6px;
+  cursor: pointer;
+  color: #fff5d8;
+}
+.user-bar__avatar {
+  font-size: 18px;
+  line-height: 1;
+}
+.user-bar__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.user-bar__tier {
+  font-size: 12px;
+  font-weight: 800;
+  color: #f5d38b;
+  letter-spacing: 0.05em;
+}
+.user-bar__sp {
+  font-size: 11px;
+  color: #c9b88a;
+}
+.user-bar__bell {
+  position: relative;
+  background: transparent;
+  border: 0;
+  padding: 4px 6px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #f5d38b;
+}
+.user-bar__dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  border: 1px solid #0d0718;
+}
+@media (max-width: 720px) {
+  .user-bar__info { display: none; }
+  .user-bar { padding: 4px 6px; }
+}
+/* === END User Bar v1.0 === */

@@ -453,7 +453,7 @@ function updateShareStatus(message) {
   status.textContent = `${message} 目前可用額外抽牌：${bonusDraws} 次`;
 }
 
-function buildShareText() {
+function buildShareTextWithReading() {
   const reading = latestTarotReading;
   if (!reading) {
     return `我正在小夢老師抽今日指引。你也可以進來抽一張，看看感情、工作或財運的提醒：${LIFF_URL}?page=demo`;
