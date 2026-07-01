@@ -7422,3 +7422,166 @@ html, body { overflow-x: hidden; }
 @media (min-width: 1200px) {
   main, .setup-section, .hero { max-width: 1200px; margin-left: auto; margin-right: auto; }
 }
+
+/* === 🌙 後台 連回前台 浮動按鈕 === */
+.admin-front-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 12px 18px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.15), rgba(124, 77, 196, 0.18));
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  border-radius: 12px;
+  color: #fff5d8;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.admin-front-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(245, 211, 139, 0.18) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.admin-front-link:hover::before { transform: translateX(100%); }
+.admin-front-link:hover {
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.25), rgba(124, 77, 196, 0.28));
+  border-color: #f5d38b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 211, 139, 0.25);
+}
+.admin-front-link__icon { font-size: 18px; line-height: 1; }
+.admin-front-link__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-front-link__text small {
+  font-size: 9px;
+  font-weight: 700;
+  color: #c9b88a;
+  letter-spacing: 1.5px;
+}
+.admin-front-link__arrow {
+  font-size: 14px;
+  color: #f5d38b;
+  transition: transform 0.25s ease;
+}
+.admin-front-link:hover .admin-front-link__arrow { transform: translate(2px, -2px); }
+@media (max-width: 720px) {
+  .admin-front-link { margin: 10px 8px 14px; padding: 10px 12px; font-size: 12px; }
+  .admin-front-link__icon { font-size: 16px; }
+}
+
+/* === 三套牌背配色 === */
+.card-back--tarot {
+  background: linear-gradient(135deg, #1a0f24 0%, #2d1b3d 50%, #0f0820 100%);
+  border: 2px solid #c9a14a;
+  box-shadow: 0 0 30px rgba(245, 211, 139, 0.4), inset 0 0 20px rgba(245, 211, 139, 0.15);
+}
+.card-back--tarot::before {
+  content: '✦';
+  font-size: 64px;
+  color: #f5d38b;
+  text-shadow: 0 0 18px rgba(245, 211, 139, 0.6);
+}
+.card-back--pet {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 200, 220, 0.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(245, 211, 139, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #fde7d7 0%, #f4c8d4 50%, #e8a4c0 100%);
+  border: 2px solid #d4a574;
+  box-shadow: 0 0 30px rgba(255, 200, 220, 0.5), inset 0 0 20px rgba(245, 211, 139, 0.3);
+}
+.card-back--pet::before {
+  content: '🐾';
+  font-size: 64px;
+  filter: drop-shadow(0 0 12px rgba(255, 200, 220, 0.8));
+}
+.card-back--oracle {
+  background:
+    radial-gradient(ellipse at center, #1a0f24 0%, #000000 70%);
+  border: 1px solid #f5d38b;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.2), inset 0 0 25px rgba(245, 211, 139, 0.15);
+}
+.card-back--oracle::before {
+  content: '◉';
+  font-size: 80px;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(245, 211, 139, 0.9), 0 0 60px rgba(255, 255, 255, 0.5);
+}
+
+/* === 三套翻牌粒子爆發 === */
+@keyframes gold-sparkles-burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8) rotate(120deg); }
+}
+@keyframes pink-hearts-paws-burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
+}
+@keyframes white-light-rays-burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+  40%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5) rotate(45deg); }
+}
+.flip-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+.flip-particle--gold {
+  font-size: 18px;
+  color: #f5d38b;
+  animation: gold-sparkles-burst 1.4s ease-out forwards;
+  text-shadow: 0 0 10px rgba(245, 211, 139, 0.9);
+}
+.flip-particle--pink {
+  font-size: 22px;
+  animation: pink-hearts-paws-burst 1.6s ease-out forwards;
+  filter: drop-shadow(0 0 8px rgba(255, 150, 200, 0.9));
+}
+.flip-particle--white {
+  font-size: 28px;
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(245, 211, 139, 0.9), 0 0 28px rgba(255, 255, 255, 0.6);
+  animation: white-light-rays-burst 1.8s ease-out forwards;
+}
+
+/* === 系統健康警語 === */
+.system-disclaimer {
+  margin: 16px auto;
+  padding: 12px 18px;
+  max-width: 440px;
+  background: rgba(255, 180, 0, 0.12);
+  border-left: 3px solid #ffb400;
+  border-radius: 6px;
+  color: #ffd980;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* === Footer 法律連結:小於 720px 提示直跳 === */
+@media (max-width: 719px) {
+  .footer-legal__mobile-hint {
+    display: block;
+    font-size: 10px;
+    color: #8b9bb5;
+    margin-top: 4px;
+  }
+}
+@media (min-width: 720px) {
+  .footer-legal__mobile-hint { display: none; }
+}

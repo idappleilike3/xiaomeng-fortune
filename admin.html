@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -163,6 +163,20 @@
           <small>XIAOMENG ADMIN</small>
         </div>
       </div>
+      
+      <!-- 🌙 連回前台(任何時候都可點,密碼鎖外也能用) -->
+      <a class="admin-front-link"
+         href="https://xiaomeng-fortune.onrender.com/"
+         target="_blank"
+         rel="noopener noreferrer"
+         title="連回前台(新分頁開啟)">
+        <span class="admin-front-link__icon" aria-hidden="true">🌙</span>
+        <span class="admin-front-link__text">
+          連回前台
+          <small>OPEN FRONT SITE</small>
+        </span>
+        <span class="admin-front-link__arrow" aria-hidden="true">↗</span>
+      </a>
       <button class="admin-nav-btn is-active" data-page="dashboard">📊 總覽儀表板</button>
       <button class="admin-nav-btn" data-page="members">👥 靈魂會員</button>
       <button class="admin-nav-btn" data-page="readings">🃏 占卜解讀紀錄</button>
@@ -609,3 +623,49 @@
   </script>
 </body>
 </html>
+  /* === 連回前台浮動按鈕 === */
+  .admin-launch-frontend {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 9000;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(245, 211, 139, 0.95), rgba(212, 165, 116, 0.9));
+    color: #1a0f24;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 8px 26px rgba(245, 211, 139, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+  .admin-launch-frontend:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 32px rgba(245, 211, 139, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+    filter: brightness(1.05);
+  }
+  .admin-launch-frontend:active { transform: translateY(0); }
+  .admin-launch-frontend__icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .admin-launch-frontend__label {
+    white-space: nowrap;
+  }
+  @media (max-width: 720px) {
+    .admin-launch-frontend {
+      top: 12px;
+      right: 12px;
+      padding: 8px 14px;
+      font-size: 12px;
+    }
+  }
+  @media (max-width: 380px) {
+    .admin-launch-frontend__label-full { display: none; }
+  }

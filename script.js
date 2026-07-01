@@ -4551,3 +4551,144 @@ ${new Date().toLocaleString("zh-TW")}`;
     callApi
   };
 })();
+
+// ============================================================
+// Phase 80+: 三大系統切換 + 翻牌粒子爆發 + Footer 法律 toggle
+// ============================================================
+
+function getCurrentSystem() {
+  try {
+    const hash = (window.location.hash || '').toLowerCase();
+    if (hash.indexOf('pet') !== -1) return 'pet';
+    if (hash.indexOf('oracle') !== -1) return 'oracle';
+    if (hash.indexOf('tarot') !== -1) return 'tarot';
+    const active = document.querySelector('[data-system].is-active, [data-system][aria-current="page"]');
+    if (active) return active.getAttribute('data-system');
+  } catch (e) {}
+  return 'tarot';
+}
+
+function applySystemTheme(system) {
+  try {
+    const SL = window.SPREAD_LIBRARY;
+    const sys = (SL && SL.getSystem(system)) || null;
+    if (!sys) return;
+    const root = document.documentElement;
+    root.setAttribute('data-system', system);
+    root.setAttribute('data-flip-effect', sys.flipEffect);
+
+    document.querySelectorAll('.card-back').forEach(function (el) {
+      el.classList.remove('card-back--tarot', 'card-back--pet', 'card-back--oracle');
+      el.classList.add('card-back--' + system);
+      var img = el.querySelector('img');
+      if (img && sys.cardBack) img.src = sys.cardBack;
+    });
+
+    var warnId = 'system-disclaimer';
+    var warn = document.getElementById(warnId);
+    if (sys.disclaimer) {
+      if (!warn) {
+        warn = document.createElement('div');
+        warn.id = warnId;
+        warn.className = 'system-disclaimer';
+        var target = document.querySelector('.ritual-stage, #ritualStage, .f22, .pet-stage, #petStage') || document.body;
+        target.appendChild(warn);
+      }
+      warn.textContent = sys.disclaimer;
+    } else if (warn) {
+      warn.remove();
+    }
+  } catch (e) { console.warn('[applySystemTheme]', e); }
+}
+
+function burstFlipParticles(system, anchorEl) {
+  try {
+    var SL = window.SPREAD_LIBRARY;
+    var sys = (SL && SL.getSystem(system)) || {};
+    var effect = sys.flipEffect || 'gold-sparkles';
+    var symbols = {
+      'gold-sparkles':    ['✦','✧','✩','★','✨','·','*'],
+      'pink-hearts-paws': ['💗','💕','🐾','💞','💝','🌸','🩷','✿'],
+      'white-light-rays': ['✺','✸','✹','✷','✶','✵','◈','◇']
+    };
+    var list = symbols[effect] || symbols['gold-sparkles'];
+    var cls  = effect === 'pink-hearts-paws' ? 'flip-particle--pink'
+             : effect === 'white-light-rays'  ? 'flip-particle--white'
+             : 'flip-particle--gold';
+    var rect = anchorEl && anchorEl.getBoundingClientRect
+      ? anchorEl.getBoundingClientRect()
+      : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+    var cx = rect.left + rect.width/2;
+    var cy = rect.top + rect.height/2;
+    for (var i = 0; i < 14; i++) {
+      var p = document.createElement('span');
+      p.className = 'flip-particle ' + cls;
+      p.textContent = list[Math.floor(Math.random() * list.length)];
+      p.style.left = (cx + (Math.random() - 0.5) * 120) + 'px';
+      p.style.top  = (cy + (Math.random() - 0.5) * 120) + 'px';
+      p.style.animationDelay = (Math.random() * 0.4) + 's';
+      document.body.appendChild(p);
+      (function (el) { setTimeout(function () { el.remove(); }, 2200); })(p);
+    }
+  } catch (e) { console.warn('[burstFlipParticles]', e); }
+}
+
+// === Footer 法律連結:小於 720px 跳轉,大於 720px 開 modal ===
+function wireLegalLinks() {
+  try {
+    var isMobile = window.matchMedia('(max-width: 719px)').matches;
+    document.querySelectorAll('[data-legal]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (isMobile) return;
+        e.preventDefault();
+        var key = a.getAttribute('data-legal');
+        var modal = document.getElementById(key === 'privacy' ? 'privacyModal' : 'termsModal');
+        if (modal) {
+          modal.classList.add('is-open');
+          modal.setAttribute('aria-hidden', 'false');
+        }
+      });
+    });
+  } catch (e) { console.warn('[wireLegalLinks]', e); }
+}
+
+// === LINE FAB aria-label 中文化 ===
+function fixLineFabLabel() {
+  try {
+    var fab = document.getElementById('lineFab');
+    if (!fab) return;
+    fab.setAttribute('aria-label', '與大師一對一・真人守護通道');
+    fab.setAttribute('title',     '與大師一對一・真人守護通道');
+  } catch (e) {}
+}
+
+// === 系統切換 hook(每次 hash 變化重新套用) ===
+function initSystemThemeAuto() {
+  try {
+    var current = getCurrentSystem();
+    applySystemTheme(current);
+    window.addEventListener('hashchange', function () {
+      applySystemTheme(getCurrentSystem());
+    });
+  } catch (e) { console.warn('[initSystemThemeAuto]', e); }
+}
+
+// 對外 API(讓 F22 翻牌完成時呼叫)
+window.__xiaomengFlip = {
+  getCurrentSystem: getCurrentSystem,
+  applySystemTheme: applySystemTheme,
+  burstFlipParticles: burstFlipParticles
+};
+
+// DOM ready 時自動 wire
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () {
+    wireLegalLinks();
+    fixLineFabLabel();
+    initSystemThemeAuto();
+  });
+} else {
+  wireLegalLinks();
+  fixLineFabLabel();
+  initSystemThemeAuto();
+}
