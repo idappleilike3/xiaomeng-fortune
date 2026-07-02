@@ -4928,3 +4928,65 @@ if (heroCta) {
     }
   } catch (e) {}
 })();
+
+/* === Hero BGM v1.0 (2026-07-02 11:25) === */
+// Hero BGM 自動播放(對齊 8:10 老闆指示)
+(function() {
+  const AUDIO_SRC = "assets/hero-bgm-mystical.mp3";
+  const VOLUME = 0.25;
+  let audio = null;
+  let userInteracted = false;
+
+  function ensureAudio() {
+    if (audio) return audio;
+    audio = new Audio(AUDIO_SRC);
+    audio.loop = true;
+    audio.volume = 0;
+    return audio;
+  }
+
+  function fadeIn(target = VOLUME, ms = 1500) {
+    if (!audio) return;
+    audio.volume = 0;
+    const start = performance.now();
+    const tick = (t) => {
+      if (!audio) return;
+      const k = Math.min(1, (t - start) / ms);
+      audio.volume = target * k;
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function tryPlay() {
+    if (!audio) audio = ensureAudio();
+    if (userInteracted && audio.paused) {
+      audio.play().catch(() => { /* silent */ });
+      fadeIn(VOLUME, 1500);
+    }
+  }
+
+  // 任何用戶互動 → 解鎖 autoplay
+  ['click', 'touchstart', 'keydown'].forEach((ev) => {
+    document.addEventListener(ev, () => {
+      userInteracted = true;
+      ensureAudio();
+      tryPlay();
+    }, { once: true, passive: true });
+  });
+
+  // 切到非首頁 → 淡出
+  document.addEventListener('visibilitychange', () => {
+    if (!audio) return;
+    if (document.hidden) {
+      audio.volume = 0;
+    } else if (userInteracted) {
+      fadeIn(VOLUME, 800);
+    }
+  });
+
+  // 頁面 unload → 停止
+  window.addEventListener('beforeunload', () => {
+    if (audio) { audio.pause(); audio = null; }
+  });
+})();
