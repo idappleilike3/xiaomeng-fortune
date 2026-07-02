@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>靈魂積分充值 · 小夢 Fortune Platform</title>
+  <meta name="description" content="儲值越多,獲得越多靈魂積分,探索更多命運旅程。5 種儲值包:體驗/熱門/最多人購買/最划算/VIP 尊享。" />
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    body {
+      background: radial-gradient(ellipse at center, #2d1b3d 0%, #0d0718 60%);
+      color: #fff5d8;
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans TC", "PingFang TC", -apple-system, sans-serif;
+    }
+    .recharge-page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+    .recharge-page__head {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .recharge-page__eyebrow {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #c9b88a;
+      margin: 0 0 8px;
+    }
+    .recharge-page__title {
+      font-size: 36px;
+      font-weight: 900;
+      color: #f5d38b;
+      margin: 0 0 16px;
+      letter-spacing: 0.05em;
+    }
+    .recharge-page__lead {
+      font-size: 16px;
+      color: #c9b88a;
+      margin: 0 0 12px;
+      line-height: 1.7;
+    }
+    .recharge-page__tag {
+      display: inline-block;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, rgba(245, 211, 139, 0.15), rgba(124, 77, 196, 0.18));
+      border: 1px solid rgba(245, 211, 139, 0.4);
+      border-radius: 999px;
+      font-size: 13px;
+      color: #fff5d8;
+      margin-top: 12px;
+    }
+
+    .recharge-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 1080px) {
+      .recharge-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .recharge-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @media (max-width: 480px) {
+      .recharge-grid { grid-template-columns: 1fr; }
+    }
+
+    .recharge-card {
+      position: relative;
+      padding: 28px 20px;
+      background: linear-gradient(160deg, rgba(245, 211, 139, 0.06), rgba(124, 77, 196, 0.1));
+      border: 1px solid rgba(245, 211, 139, 0.25);
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .recharge-card:hover {
+      transform: translateY(-4px);
+      border-color: #f5d38b;
+      box-shadow: 0 12px 32px rgba(245, 211, 139, 0.18);
+      background: linear-gradient(160deg, rgba(245, 211, 139, 0.12), rgba(124, 77, 196, 0.18));
+    }
+    .recharge-card--featured {
+      background: linear-gradient(160deg, rgba(245, 211, 139, 0.16), rgba(124, 77, 196, 0.2));
+      border-color: rgba(245, 211, 139, 0.6);
+    }
+    .recharge-card--vip {
+      background: linear-gradient(160deg, rgba(124, 77, 196, 0.25), rgba(245, 211, 139, 0.15));
+      border-color: #f5d38b;
+    }
+    .recharge-card__badge {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #f5d38b, #c9a14a);
+      color: #1a0f24;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .recharge-card__name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff5d8;
+      margin: 8px 0 4px;
+    }
+    .recharge-card__price {
+      font-size: 32px;
+      font-weight: 900;
+      color: #f5d38b;
+      margin: 12px 0 4px;
+      letter-spacing: 0.02em;
+    }
+    .recharge-card__sp {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff5d8;
+      margin: 0 0 16px;
+    }
+    .recharge-card__sp strong {
+      color: #f5d38b;
+      font-size: 22px;
+    }
+    .recharge-card__perks {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+      text-align: left;
+      font-size: 12px;
+      color: #c9b88a;
+      line-height: 1.6;
+    }
+    .recharge-card__perks li {
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .recharge-card__perks li::before {
+      content: '✓';
+      color: #f5d38b;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .recharge-card__perks--empty {
+      display: none;
+    }
+    .recharge-card__cta {
+      margin-top: 20px;
+      padding: 12px 0;
+      background: linear-gradient(135deg, #f5d38b, #c9a14a);
+      color: #1a0f24;
+      border: 0;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s;
+    }
+    .recharge-card__cta:hover { transform: translateY(-1px); }
+
+    .recharge-faq {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px;
+      background: rgba(255, 245, 216, 0.04);
+      border: 1px solid rgba(245, 211, 139, 0.15);
+      border-radius: 16px;
+    }
+    .recharge-faq h2 {
+      font-size: 20px;
+      color: #f5d38b;
+      margin: 0 0 24px;
+      text-align: center;
+    }
+    .recharge-faq dl {
+      margin: 0;
+    }
+    .recharge-faq dt {
+      font-weight: 800;
+      color: #fff5d8;
+      margin-top: 16px;
+    }
+    .recharge-faq dt:first-of-type { margin-top: 0; }
+    .recharge-faq dd {
+      color: #c9b88a;
+      margin: 6px 0 0;
+      line-height: 1.7;
+    }
+
+    .recharge-back {
+      display: inline-block;
+      margin-bottom: 24px;
+      padding: 8px 16px;
+      background: rgba(255, 245, 216, 0.05);
+      border: 1px solid rgba(245, 211, 139, 0.2);
+      border-radius: 999px;
+      color: #f5d38b;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .recharge-back:hover { background: rgba(255, 245, 216, 0.1); }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <div class="app-loading" id="appLoading" aria-hidden="true" style="display:none">
+    <div class="app-loading__halo"></div>
+    <p class="app-loading__text">小夢老師正在為你點亮星軌…</p>
+  </div>
+  <div class="cookie-banner" id="cookieBanner" role="region" aria-label="Cookie 同意" hidden>
+    <p>本站使用 Cookie 改善體驗,繼續瀏覽即視為同意。</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--accept" id="cookieAccept">同意</button>
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--decline" id="cookieDecline">拒絕</button>
+    </div>
+  </div>
+
+  <main class="recharge-page" id="main">
+    <a class="recharge-back" href="./">← 返回小夢神殿</a>
+
+    <header class="recharge-page__head">
+      <p class="recharge-page__eyebrow">小夢 Fortune Platform · SOUL POINTS</p>
+      <h1 class="recharge-page__title">👑 靈魂積分充值</h1>
+      <p class="recharge-page__lead">
+        儲值越多,獲得越多靈魂積分,探索更多命運旅程。
+      </p>
+      <span class="recharge-page__tag">1 SP ≈ NT$1 · 365 日效期 · 滿 NT$599 可折抵 50 SP</span>
+    </header>
+
+    <section class="recharge-grid" aria-label="5 種儲值包">
+
+      <article class="recharge-card" data-package="starter">
+        <h2 class="recharge-card__name">🌙 體驗包</h2>
+        <p class="recharge-card__price">NT$199</p>
+        <p class="recharge-card__sp">獲得 <strong>209 SP</strong></p>
+        <button type="button" class="recharge-card__cta" onclick="alert('請至 LINE 加好友後由官方帳號引導付款')">立即儲值</button>
+      </article>
+
+      <article class="recharge-card" data-package="popular">
+        <h2 class="recharge-card__name">⭐ 熱門</h2>
+        <p class="recharge-card__price">NT$399</p>
+        <p class="recharge-card__sp">獲得 <strong>439 SP</strong></p>
+        <button type="button" class="recharge-card__cta" onclick="alert('請至 LINE 加好友後由官方帳號引導付款')">立即儲值</button>
+      </article>
+
+      <article class="recharge-card recharge-card--featured" data-package="hot">
+        <span class="recharge-card__badge">🔥 最多人購買</span>
+        <h2 class="recharge-card__name">🔥 最多人購買</h2>
+        <p class="recharge-card__price">NT$699</p>
+        <p class="recharge-card__sp">獲得 <strong>839 SP</strong></p>
+        <ul class="recharge-card__perks">
+          <li>專屬牌背(7 天)</li>
+        </ul>
+        <button type="button" class="recharge-card__cta" onclick="alert('請至 LINE 加好友後由官方帳號引導付款')">立即儲值</button>
+      </article>
+
+      <article class="recharge-card recharge-card--featured" data-package="best">
+        <span class="recharge-card__badge">💎 最划算</span>
+        <h2 class="recharge-card__name">💎 最划算</h2>
+        <p class="recharge-card__price">NT$1,299</p>
+        <p class="recharge-card__sp">獲得 <strong>1,949 SP</strong></p>
+        <ul class="recharge-card__perks">
+          <li>專屬牌背(永久)</li>
+          <li>限定頭像框(30 天)</li>
+          <li>節日神諭解鎖(1 組)</li>
+        </ul>
+        <button type="button" class="recharge-card__cta" onclick="alert('請至 LINE 加好友後由官方帳號引導付款')">立即儲值</button>
+      </article>
+
+      <article class="recharge-card recharge-card--vip" data-package="vip">
+        <span class="recharge-card__badge">👑 VIP 尊享</span>
+        <h2 class="recharge-card__name">👑 VIP 尊享</h2>
+        <p class="recharge-card__price">NT$2,990</p>
+        <p class="recharge-card__sp">獲得 <strong>5,083 SP</strong></p>
+        <ul class="recharge-card__perks">
+          <li>專屬主題「星軌守護者」</li>
+          <li>VIP 徽章(永久)</li>
+          <li>優先體驗新功能</li>
+          <li>限定收藏內容解鎖</li>
+          <li>大師調頻 1 個月免費</li>
+        </ul>
+        <button type="button" class="recharge-card__cta" onclick="alert('請至 LINE 加好友後由官方帳號引導付款')">立即儲值</button>
+      </article>
+
+    </section>
+
+    <section class="recharge-faq" aria-label="儲值常見問題">
+      <h2>儲值常見問題</h2>
+      <dl>
+        <dt>Q:靈魂積分有使用期限嗎?</dt>
+        <dd>A:每次獲得的 SP 自當日起 365 日有效,逾期未用會歸 0。新獲得會重新計算效期。</dd>
+
+        <dt>Q:儲值越多,真的越划算嗎?</dt>
+        <dd>A:是。NT$199 體驗包 1 SP 價值 NT$0.95,NT$2,990 VIP 尊享 1 SP 價值 NT$0.59。越高級實際折扣越多,加上專屬權益更實質。</dd>
+
+        <dt>Q:儲值後可以退款嗎?</dt>
+        <dd>A:24 小時內未使用可全額退款至原付款。24 小時後退款 50% 至原 + 50% 退至 SP 餘額。已使用的 SP 不退。</dd>
+
+        <dt>Q:NT$599 折抵 50 SP 怎麼用?</dt>
+        <dd>A:購買 $599「完整牌陣」時,結帳頁可勾選「使用 50 SP」,實付 NT$549。</dd>
+
+        <dt>Q:VIP 尊享的專屬主題「星軌守護者」長怎樣?</dt>
+        <dd>A:專屬 VIP 桌面主題、限定星空背景、尊榮配色、限定按鈕樣式。在設定 → 個人主題切換。</dd>
+      </dl>
+    </section>
+
+    <p style="text-align:center; margin-top:48px; color:#7d6c8a; font-size:12px;">
+      付款由綠界 ECPay 安全處理 · 完整對帳紀錄保留 5 年
+    </p>
+  </main>
+
+  <script>
+    // Cookie banner
+    (function() {
+      const KEY = '***';
+      const banner = document.getElementById('cookieBanner');
+      if (!banner) return;
+      try { if (localStorage.getItem(KEY)) return; } catch (e) {}
+      setTimeout(() => { banner.hidden = false; }, 1500);
+      function dismiss(value) {
+        try { localStorage.setItem(KEY, value); } catch (e) {}
+        banner.hidden = true;
+      }
+      document.getElementById('cookieAccept')?.addEventListener('click', () => dismiss('accept'));
+      document.getElementById('cookieDecline')?.addEventListener('click', () => dismiss('decline'));
+    })();
+  </script>
+</body>
+</html>
