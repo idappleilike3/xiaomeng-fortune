@@ -1,0 +1,6 @@
+# 小夢 Fortune Platform
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://xiaomeng-fortune.onrender.com/sitemap.xml

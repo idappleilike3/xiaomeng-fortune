@@ -8418,3 +8418,50 @@ html, body { overflow-x: hidden; }
 }
 .cookie-banner__btn:hover { transform: translateY(-1px); }
 /* === END Cookie Banner v1.0 === */
+
+
+/* === Skip Link + Focus v1.0 (2026-07-02 20:55) === */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  padding: 12px 20px;
+  background: #f5d38b;
+  color: #1a0f24;
+  text-decoration: none;
+  font-weight: 800;
+  border-radius: 0 0 8px 0;
+  z-index: 10000;
+  transition: top 0.2s;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0;
+}
+
+*:focus-visible {
+  outline: 2px solid #f5d38b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #f5d38b;
+  outline-offset: 4px;
+}
+
+.hero-entry:focus-visible,
+.l2-topic:focus-visible,
+.l3-tile:focus-visible {
+  transform: translateY(-2px);
+  border-color: #f5d38b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* === END Skip Link + Focus v1.0 === */
