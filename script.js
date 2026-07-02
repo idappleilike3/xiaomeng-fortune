@@ -3314,7 +3314,7 @@ if (document.readyState === 'loading') {
   document.addEventListener("click", (e) => {
     const t = e.target instanceof Element ? e.target : null;
     if (!t) return;
-    const cta = t.closest && t.closest("[data-system-cta="tarot"]");
+    const cta = t.closest && t.closest('[data-system-cta="tarot"]');
     if (!cta) return;
     e.preventDefault();
     setTimeout(async () => {
@@ -3326,7 +3326,6 @@ if (document.readyState === 'loading') {
     }, 50);
   });
 })();
-)();
 
 
 // =====================================================================
@@ -4831,23 +4830,22 @@ if (document.readyState === 'loading') {
       // 建立過場卡片
       const card = document.createElement('div');
       card.className = 'ritual-cta__flying-card';
-      card.style.cssText = 
-        position: fixed;
-        top: 50%; left: 50%;
-        width: 100px; height: 150px;
-        margin: -75px 0 0 -50px;
-        background: linear-gradient(135deg, rgba(245, 211, 139, 0.4), rgba(124, 77, 196, 0.3));
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1.5px solid #f5d38b;
-        border-radius: 12px;
-        z-index: 100000;
-        box-shadow: 0 0 60px rgba(245, 211, 139, 0.6);
-        transform: scale(0.2);
-        opacity: 0;
-        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-        pointer-events: none;
-      ;
+      card.style.cssText =
+        `position: fixed;
+         top: 50%; left: 50%;
+         width: 100px; height: 150px;
+         margin: -75px 0 0 -50px;
+         background: linear-gradient(135deg, rgba(245, 211, 139, 0.4), rgba(124, 77, 196, 0.3));
+         backdrop-filter: blur(20px);
+         -webkit-backdrop-filter: blur(20px);
+         border: 1.5px solid #f5d38b;
+         border-radius: 12px;
+         z-index: 100000;
+         box-shadow: 0 0 60px rgba(245, 211, 139, 0.6);
+         transform: scale(0.2);
+         opacity: 0;
+         transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+         pointer-events: none;`;
       document.body.appendChild(card);
 
       // 觸發飛行動畫
@@ -5013,7 +5011,7 @@ if (heroCta) {
   const AC = window.AudioContext || window.webkitAudioContext;
   const ctx = new AC();
   const VOLUME = 0.18;
-  const STEP_FREQ = { 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 783.99 };
+  const STEP_FREQ = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 783.99];
 
   function playStepChord(step) {
     if (!ctx || ctx.state === 'suspended') ctx.resume();
