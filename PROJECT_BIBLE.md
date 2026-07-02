@@ -218,7 +218,7 @@ Anthropic
 - 7 天有效
 - 每日 1 次
 
-### §8.3 三大分類(對應「F22」儀式選擇畫面)
+### §8.3 三大分類(對應「神聖探索儀式」儀式選擇畫面)
 
 | 系統 | 類別數 | 名稱 |
 |---|---|---|
@@ -372,10 +372,10 @@ Machine Reading
 |---|---|---|---|
 | 首頁 Opening | `temple-curtain-rise` | 首頁載入完成 | 1.8s ease,深紫漸層淡入 + 神女顯現 |
 | 轉場 | `fade-through-gold` | 系統切換 | 600ms,金光粒子穿透 |
-| 洗牌 | `shuffle-3d` | F22 進入 | 800ms,cubic-bezier(0.4, 0, 0.2, 1) |
-| 切牌 | `cut-deal` | F22 中段 | 600ms,卡牌向上滑動分兩疊 |
-| 扇形展開 | `fan-spread` | F22 抽牌前 | 900ms,卡牌展開成 120° 扇形 |
-| 翻牌 | `card-flip-720ms` | F22 點選 | 720ms,3D rotateY 180°,系統主題粒子爆破 |
+| 洗牌 | `shuffle-3d` | 神聖探索儀式 進入 | 800ms,cubic-bezier(0.4, 0, 0.2, 1) |
+| 切牌 | `cut-deal` | 神聖探索儀式 中段 | 600ms,卡牌向上滑動分兩疊 |
+| 扇形展開 | `fan-spread` | 神聖探索儀式 抽牌前 | 900ms,卡牌展開成 120° 扇形 |
+| 翻牌 | `card-flip-720ms` | 神聖探索儀式 點選 | 720ms,3D rotateY 180°,系統主題粒子爆破 |
 | 爆破粒子 (Tarot) | `gold-sparkles-burst` | 翻牌完成 | 14 顆金粉,半徑 220px,1.2s |
 | 爆破粒子 (Pet) | `pink-hearts-paws-burst` | 翻牌完成 | 14 顆粉肉墊愛心,1.2s |
 | 爆破粒子 (Oracle) | `white-light-rays-burst` | 翻牌完成 | 14 條白光放射,1.2s |
@@ -467,7 +467,7 @@ AI / Bot / 機器人 / 演算法
 
 | 變體 | 用途 |
 |---|---|
-| `.card--ritual` | F22 抽牌卡片(1024×1536 比例) |
+| `.card--ritual` | 神聖探索儀式 抽牌卡片(1024×1536 比例) |
 | `.card--entry` | 首頁三大入口(毛玻璃 + 香檳金邊框) |
 | `.card--market` | 會員方案(深紫 + 香檳金細字) |
 | `.card--profile` | 用戶資料表單 |
@@ -574,11 +574,11 @@ AI / Bot / 機器人 / 演算法
 
 ---
 
-## §18 Sacred Flow v2.0 — F22 Sacred Stage(神聖占卜大舞台)
+## §18 Sacred Flow v2.0 — 神聖探索儀式 Sacred Stage(神聖占卜大舞台)
 
-> **F22 是所有占卜系統共用的核心互動舞台。**
+> **神聖探索儀式 是所有占卜系統共用的核心互動舞台。**
 > 使用者不是「點擊一張牌」,而是「完成一場命運儀式」。
-> 整個 F22 不可跳步,必須依序走完 11 步。
+> 整個 神聖探索儀式 不可跳步,必須依序走完 11 步。
 
 ### §18.1 核心理念
 
@@ -710,7 +710,7 @@ AI / Bot / 機器人 / 演算法
 
 | # | 音效名 | 觸發時機 | 檔名 | 音量 |
 |---|---|---|---|---|
-| 1 | Opening | 進入 F22 舞台 | f22-opening.mp3 | 0.4 |
+| 1 | Opening | 進入 神聖探索儀式 舞台 | f22-opening.mp3 | 0.4 |
 | 2 | Shuffle | 開始洗牌 | f22-shuffle.mp3 | 0.5 |
 | 3 | Cut | 切牌瞬間 | f22-cut.mp3 | 0.5 |
 | 4 | Fan | 展牌扇形 | f22-fan.mp3 | 0.5 |
@@ -773,11 +773,11 @@ fps: 60
 
 ### §18.11 開發原則
 
-> F22 是整個平台最重要的核心體驗。
+> 神聖探索儀式 是整個平台最重要的核心體驗。
 > 不要模仿一般塔羅網站。不要模仿一般 AI 網站。
 > 使用者應感受到:「我不是在操作一個網站,而是在完成一場屬於自己的神聖儀式。」
 
-### §18.12 F22 v2.0 與 v1.0 差異
+### §18.12 神聖探索儀式 v2.0 與 v1.0 差異
 
 | 面向 | v1.0 | v2.0 |
 |---|---|---|
@@ -789,9 +789,9 @@ fps: 60
 | 完成儀式 | 無 | 今日祝福 + 三按鈕 |
 
 
-### §18.14 Sacred Stage Engine(SSE · 可重複使用引擎)
+### §18.14 神聖探索引擎(神聖探索引擎 · 可重複使用引擎)
 
-> **F22 不是動畫。F22 是引擎。**
+> **神聖探索儀式 不是動畫。神聖探索儀式 是引擎。**
 > 三大占卜系統、未來新增的任何牌陣,**不需要重寫動畫**,只需提供配置。
 > 引擎讀取 config,自動渲染完整 11 步神聖儀式。
 
@@ -799,9 +799,9 @@ fps: 60
 
 `
 舊架構:
-  F22 塔羅(寫死) + F22 寵物(寫死) + F22 神諭(寫死) ❌
+  神聖探索儀式 塔羅(寫死) + 神聖探索儀式 寵物(寫死) + 神聖探索儀式 神諭(寫死) ❌
 新架構:
-  Sacred Stage Engine(核心) + spread-themes/{system}.js(配置) ✅
+  神聖探索引擎(核心) + spread-themes/{system}.js(配置) ✅
 `
 
 #### 引擎位置
@@ -819,7 +819,7 @@ xiaomeng-fortune/
 │       └── _template.js         ← 新增牌陣範本
 `
 
-#### SSE 公開 API
+#### 神聖探索引擎 公開 API
 
 `js
 // 啟動一個神聖舞台
@@ -941,17 +941,17 @@ stage.destroy();                  // 銷毀 + 清理
 - ❌ 不得在配置檔寫 CSS 動畫
 - ❌ 不得在配置檔寫 setTimeout 編舞
 - ❌ 不得繞過引擎直接操作 DOM
-- ❌ 不得複製現有 F22 程式碼「再寫一份」新系統
+- ❌ 不得複製現有 神聖探索儀式 程式碼「再寫一份」新系統
 
-### §18.15 SSE 與現有 F22 關係
+### §18.15 神聖探索引擎 與現有 神聖探索儀式 關係
 
-- **現有 F22 程式碼(2026-07-01 前的版本)** → **重構** 為 SSE
-- **§18.14 SSE** 是新架構的 SSOT
-- **§18.2 11 步流程** 由 SSE 執行(不再由各系統各自實作)
+- **現有 神聖探索儀式 程式碼(2026-07-01 前的版本)** → **重構** 為 神聖探索引擎
+- **§18.14 神聖探索引擎** 是新架構的 SSOT
+- **§18.2 11 步流程** 由 神聖探索引擎 執行(不再由各系統各自實作)
 
-### §18.16 SSE 對齊關係
+### §18.16 神聖探索引擎 對齊關係
 
-| SSE 元素 | 對齊 |
+| 神聖探索引擎 元素 | 對齊 |
 |---|---|
 | 11 步編舞 | BRAND_BIBLE §13 15 動畫 |
 | 主題切換 | BRAND_BIBLE §5 色彩 + §10 金框 + §11 光暈 |
@@ -959,6 +959,98 @@ stage.destroy();                  // 銷毀 + 清理
 | 音效 | BRAND_BIBLE §17 12 音效 |
 | 解讀模板 | §15 Writing Style + §5 命名公約 |
 | 完成儀式 | §18.10 今日祝福 + §20 LINE §7 50 積分 |
+
+### §18.17 神聖探索引擎 Refactor 落地 TODO(2026-07-02 04:02 進度)
+
+> **目標**:把 §18.14 規格化為可運行的程式碼,以 **配置驅動** 取代 **寫死 神聖探索儀式**。
+> **目前進度**:2.5 小時只建好骨架 + 1 個示範配置(tarot.js)。今晚必須收尾。
+> **完成定義**:Tarot / Pet / Oracle 三系統皆可由配置啟動,舊 神聖探索儀式 程式碼全移除,跨裝置 + 完整 11 步流程通過驗證。
+
+#### 階段 A — 補齊檔案骨架(剩 4 個檔案,約 45 分鐘)
+
+| # | 檔案 | 內容 | 預估 | 狀態 |
+|---|---|---|---|---|
+| 1 | `lib/sacred-stage.html` | 11 步容器模板 `<stage-opening>` / `<stage-shuffle>` / `<stage-fan>` / `<stage-card>` / `<stage-reading>` / `<stage-blessing>` | 15 min | ⏳ |
+| 2 | `lib/sacred-stage.css` | 主舞台 + 牌卡 + 翻牌 + 粒子 + 5 CSS 變數(`--sse-bg/--sse-accent/--sse-particle-color/--sse-glow/--sse-font`)+ RWD 380 / 720 / 1200 | 20 min | ⏳ |
+| 3 | `lib/spread-themes/_template.js` | 5 區塊範本(theme / cards / audio / effects / readingTemplate)+ JSDoc | 5 min | ⏳ |
+| 4 | `lib/sacred-stage-engine.js` 補完 | `start / skip / destroy` 三方法 + event emitter + 11 步 state machine + audio cue 觸發點 | 已完成 | ✅ |
+
+#### 階段 B — 補齊兩個示範配置(約 30 分鐘)
+
+| # | 配置檔 | 必填區塊 | 來源 |
+|---|---|---|---|
+| 5 | `lib/spread-themes/pet.js` | theme(奶油星空配色)+ 22 pet cards(bat / cat / dog / ...)+ audio(`bgm-pet.mp3`)+ effects(`pink-hearts-paws`)+ readingTemplate(7 情境 × 5 主題) | 從 `lib/divination-system.js` 抽出 |
+| 6 | `lib/spread-themes/oracle.js` | theme(黑金神聖幾何)+ 12 oracle cards(今日訊息 / 宇宙提醒 / 心靈祝福 3 模式)+ audio(`bgm-oracle.mp3`)+ effects(`white-light-rays`)+ readingTemplate | 從 `oracle-data.js` 抽出 |
+
+#### 階段 C — 接入 index.html(約 30 分鐘)
+
+```js
+// index.html 移除舊 神聖探索儀式 寫死邏輯,改為:
+import { SacredStage } from './lib/sacred-stage-engine.js';
+import { TAROT_THEME } from './lib/spread-themes/tarot.js';
+
+// 舊入口取代為:
+document.querySelector('#start-tarot').onclick = () => {
+  new SacredStage({ system: 'tarot', spread: 'three-card', ...TAROT_THEME }).start();
+};
+```
+
+- [ ] 找出 index.html / script.js 所有寫死的 神聖探索儀式 JS(展牌 / 翻牌 / 牌組生成)
+- [ ] 移除並改用 `SacredStage` 啟動
+- [ ] `<head>` 加入 `<link rel="stylesheet" href="lib/sacred-stage.css">`
+- [ ] `<body>` 底加入 `<script type="module" src="lib/sacred-stage-engine.js">`
+
+#### 階段 D — 驗證(必跑,約 20 分鐘)
+
+| 驗證項 | 工具 | 通過條件 |
+|---|---|---|
+| 三系統皆可啟動 | 開瀏覽器 console 跑 `new SacredStage({system:'tarot',...}).start()` 等 3 次 | 無紅字錯誤 + 11 步走完 |
+| 完整 11 步 | 手動點擊 tarot 起點 → 看到 blessing | 無跳步 |
+| 粒子特效 | tarot(金)/ pet(粉)/ oracle(白)各看一次翻牌 | 粒子爆射 + 自動消失 |
+| 主題切換 | 切換 hash `#pet` / `#oracle` | 牌背 + 配色 + BGM 跟著換 |
+| 跨裝置 | `_sync_devices.html` 380 / 720 / 1200 | 不切邊 + 不卡頓 |
+| `_sync_check.py` | 跑一次 | 9 個 breakpoint 全綠 + 神聖探索引擎 檔案計數 ≥ 4 |
+| 舊 神聖探索儀式 殘留 | `grep -r "f22-step" --exclude-dir=node_modules .` | 0 筆匹配 |
+
+#### 階段 E — 提交(5 分鐘)
+
+```bash
+# Bible v1.6.0 + 實作 commit
+git add PROJECT_BIBLE.md          # 本次 §18.17
+git add lib/sacred-stage.html \
+        lib/sacred-stage.css  \
+        lib/sacred-stage-engine.js \
+        lib/spread-themes/ \
+        index.html script.js   # 移除的舊 神聖探索儀式 區段
+git commit -m "[Bible v1.6.0 + sse-impl] §18.17 神聖探索引擎 Refactor 落地 — 三系統配置驅動引擎上線
+
+1. lib/sacred-stage-engine.js + .html + .css 完整 11 步容器
+2. lib/spread-themes/{tarot,pet,oracle,_template}.js 三系統範例配置
+3. index.html 移除舊 神聖探索儀式 寫死邏輯,改為 SacredStage 啟動
+4. _sync_check.py 整合 神聖探索引擎 檔案計數
+5. 跨裝置 380/720/1200 驗證通過
+"
+git push origin main
+```
+
+#### 紅線(絕對不做)
+
+- ❌ **不重寫 spec** — §18.14-§18.16 已是 SSOT,有衝突以 spec 為準。
+- ❌ **不繞過 神聖探索引擎 直接操作 DOM** — 任何牌卡動畫都得透過 `SacredStage` API。
+- ❌ **不在配置檔寫 setTimeout / CSS** — 配置只宣告「我要什麼」,編舞由引擎負責。
+- ❌ **不擴張 scope** — 今晚唯一目標是「三系統可由配置驅動」,新牌陣 / 後台 / LINE 整合留到下次。
+- ❌ **不 commit 半成品** — 階段 D 驗證沒全綠之前禁止 commit。
+
+#### 給下次 session 的接續 TODO
+
+完成今晚工作後,下個 session 直接:
+1. 看 git log 確認 `sse-impl` commit hash
+2. 跑 `_sync_devices.html` 截 4 尺寸存檔
+3. 後台 admin 加「神聖探索引擎 配置測試器」面板(讀取 `lib/spread-themes/*.js` 列表 + 一鍵預覽)
+4. `/api/sse/log-event` 端點 — 紀錄使用者實際跑了哪系統哪牌陣 → analytics
+5. mobile touch ripple(現有 hover-only,要補 touchstart)
+6. 效能:粒子用 `transform` + `will-change`,主牌 `requestAnimationFrame` 節流
+
 ## §19 Brand Bible (獨立檔案)
 
 > **所有頁面的視覺唯一依據。任何頁面不得自行設計,必須完全對齊本檔案。**
@@ -1103,14 +1195,14 @@ CTA:  讓小夢陪你翻開命運的第一張牌。
 5. Particle Burst(hover 時 gold-sparkles-burst,詳 §12)
 6. Hover Floating(transform: translateY(-3px) + 微妙陰影變化)
 
-### §21.4 點擊轉場(按鈕 → 進入 F22)
+### §21.4 點擊轉場(按鈕 → 進入 神聖探索儀式)
 
 `yaml
 click_action:
   - 卡片從 Hero 區飛向畫面中央(150ms, transform + scale)
   - 同時所有元素 opacity → 0(200ms)
   - 200ms 黑屏過場
-  - 進入 F22 系統選擇頁(三大神殿)
+  - 進入 神聖探索儀式 系統選擇頁(三大神殿)
 `
 
 ### §21.5 強制規則
@@ -1130,6 +1222,93 @@ click_action:
 | §21.3 Ritual CTA | BRAND_BIBLE §8.6 |
 | §21.4 點擊轉場 | BRAND_BIBLE §13 typewriter-32ms + §11 divine-glow-pulse |
 | §21.5 強制規則 | BRAND_BIBLE §14 跨頁一致性 |
+
+
+---
+
+## §22 5 Bible 獨立檔案(對齊老闆 7:13 拆分計畫)
+
+> **狀態:** v1.0 已生效(2026-07-02)
+> **拆分原因:** 避免單檔過大,方便 Review 與迭代,方便交給開發者。
+
+### §22.1 5 個 Bible 對齊表
+
+| Bible 檔名 | 內容 | 章節 | 行數 |
+|---|---|---|---|
+| **BUSINESS_BIBLE.md** | 商業模式 / 4 循環 / 收入源 / 商業流程 | §0-§8 | ~200 |
+| **UX_BIBLE.md** | 使用者流程 / IA / 12 幕 / 每日回來 | §0-§7 | ~250 |
+| **MEMBERSHIP_BIBLE.md** | 會員 3 Tier / SP / 月相 6 級 / 福利 | §0-§10 | ~250 |
+| **COMMERCE_BIBLE.md** | 9 SKU / 綠界 / 滿 599 折 50 / 商城 | §0-§10 | ~200 |
+| **REFERRAL_BIBLE.md** | 分享裂變 / OG Image / 反作弊 | §0-§11 | ~150 |
+
+### §22.2 5 Bible 對齊 PROJECT_BIBLE
+
+| 5 Bible 章節 | 對齊 PROJECT_BIBLE |
+|---|---|
+| BUSINESS §0 4 循環 | §1 專案定位 + §8 商業規則 |
+| BUSINESS §2 商業流程 | §21 Opening Experience |
+| UX §1 12 幕 | §21 Opening Experience + §18 Sacred Flow |
+| UX §2 4 層架構 | §6 系統清單 |
+| MEMBERSHIP §1 3 Tier | §8 商業規則 |
+| MEMBERSHIP §3 SP 系統 | §8 商業規則 |
+| MEMBERSHIP §6 月相 6 級 | §6 系統清單 |
+| COMMERCE §1 商城 | §8 商業規則 |
+| COMMERCE §2 9 SKU | §8 商業規則 |
+| COMMERCE §3 滿 599 折 50 | §8 商業規則(老闆硬規則)|
+| REFERRAL §1 4 管道 | §8.2 分享獎勵 |
+| REFERRAL §3 裂變循環 | §8.2 分享獎勵 |
+
+### §22.3 5 Bible 對齊 8 份舊 DRAFT(已封存)
+
+| 5 Bible | 取代 8 份舊 DRAFT |
+|---|---|
+| BUSINESS | BUSINESS_ARCHITECTURE_v1.0 + v2.0 + PLATFORM_BIBLE_OVERVIEW_v3.0 |
+| UX | HOMEPAGE_3LAYER_UX_v1.0 + HOMEPAGE_HERO_REVIEW_v2.0 + STORYBOARD_v3.0 |
+| MEMBERSHIP | SOUL_POINTS_ECOSYSTEM_v1.0(部分) |
+| COMMERCE | SOUL_POINTS_ECOSYSTEM_v1.0(部分) |
+| REFERRAL | LINE_OFFICIAL_EXPERIENCE_v2.0(部分) |
+
+8 份舊 DRAFT 已移到 `_archive_bibles_2026-07-02/`(永久保留,可查歷史)。
+
+### §22.4 與 BRAND_BIBLE + LINE_SYSTEM 並列
+
+5 Bible + BRAND_BIBLE + LINE_SYSTEM = 7 份獨立規格文件。
+
+| 文件 | 對齊 PROJECT_BIBLE 章節 |
+|---|---|
+| BRAND_BIBLE.md | §19 |
+| LINE_SYSTEM.md | §20 |
+| **BUSINESS_BIBLE.md** | **§22.1** |
+| **UX_BIBLE.md** | **§22.1** |
+| **MEMBERSHIP_BIBLE.md** | **§22.1** |
+| **COMMERCE_BIBLE.md** | **§22.1** |
+| **REFERRAL_BIBLE.md** | **§22.1** |
+
+### §22.5 修改與迭代
+
+- 任何 5 Bible 修改 → 在該 Bible 內改 → 同步更新本節對齊表
+- 任何 v1.x 變更 → Bible 升 v1.x+1
+- 不允許「跨 Bible 同步」直接覆蓋,要明確標註來源
+
+---
+
+## §23 截圖驗證流程(對齊老闆 11:54 截圖需求)
+
+> **檔案:** `_SCREENSHOTS_TODO.md`(截圖指南)+ `_SCREENSHOTS_REPORT.md`(報告)
+> **規格:** 4 尺寸(380 / 720 / 1200 / 1920)
+
+| 尺寸 | 設備 | 驗證項目 | 狀態 |
+|---|---|---|---|
+| 380 × 667 | iPhone 直 | Hero 4 入口堆疊 / Topbar 收合 | ⏳ 老闆實機 |
+| 720 × 1024 | iPad 直 | Hero + L2 收合 | ⏳ 老闆實機 |
+| 1200 × 800 | 筆電 | Hero + L2 + L3 完整 | ⏳ 老闆實機 |
+| 1920 × 1080 | 桌機 | Hero + L2 + L3 完整 | ⏳ 老闆實機 |
+
+**自動驗證(已過):** `_sync_check.py` 5/5(commit bf10827 後)。
+
+**老闆截完圖後,**寫 `_SCREENSHOTS_REPORT.md` 對齊驗證結果。
+
+---
 
 ---
 
