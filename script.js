@@ -5006,3 +5006,68 @@ if (heroCta) {
     }
   }
 })();
+
+// === SacredStage 11 步 BGM(Web Audio API 即時生成,無外部依賴)===
+(function() {
+  if (typeof window === 'undefined' || !window.AudioContext && !window.webkitAudioContext) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AC();
+  const VOLUME = 0.18;
+  const STEP_FREQ = { 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 783.99 };
+
+  function playStepChord(step) {
+    if (!ctx || ctx.state === 'suspended') ctx.resume();
+    const freq = STEP_FREQ[step] || 261.63;
+    const now = ctx.currentTime;
+    // 簡單 sine 主音
+    const osc1 = ctx.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.value = freq;
+    // 五度 + 八度
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = freq * 1.5;
+    const osc3 = ctx.createOscillator();
+    osc3.type = 'sine';
+    osc3.frequency.value = freq * 2;
+    [osc1, osc2, osc3].forEach((osc, i) => {
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(VOLUME * (i === 0 ? 0.6 : 0.25), now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 1.5);
+    });
+  }
+
+  // 對接 SacredStage 11 步
+  document.addEventListener('sse:step', (e) => {
+    const step = e.detail?.step ?? 0;
+    playStepChord(step);
+  });
+
+  // 全域 API
+  window.__sacredStageBgm = { playStepChord, ctx };
+})();
+
+// === Cookie 同意橫幅(append to index.html)===
+
+// === Cookie Banner 控制 ===
+(function() {
+  const KEY = 'xm_cookie_consent';
+  const banner = document.getElementById('cookieBanner');
+  if (!banner) return;
+  try {
+    if (localStorage.getItem(KEY)) return;
+  } catch (e) {
+    /* silent */
+  }
+  setTimeout(() => { banner.hidden = false; }, 1500);
+  function dismiss(value) {
+    try { localStorage.setItem(KEY, value); } catch (e) {}
+    banner.hidden = true;
+  }
+  document.getElementById('cookieAccept')?.addEventListener('click', () => dismiss('accept'));
+  document.getElementById('cookieDecline')?.addEventListener('click', () => dismiss('decline'));
+})();

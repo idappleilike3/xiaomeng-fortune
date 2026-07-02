@@ -8374,3 +8374,47 @@ html, body { overflow-x: hidden; }
   margin: 0;
 }
 /* === END App Loading v1.0 === */
+
+
+/* === Cookie Banner v1.0 (2026-07-02 20:45) === */
+.cookie-banner {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(13, 7, 24, 0.95), rgba(26, 15, 36, 0.95));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  border-radius: 16px;
+  color: #fff5d8;
+  font-size: 13px;
+  z-index: 9000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+.cookie-banner p { margin: 0; flex: 1; }
+.cookie-banner__actions { display: flex; gap: 8px; }
+.cookie-banner__btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  background: transparent;
+  color: #fff5d8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cookie-banner__btn--accept {
+  background: linear-gradient(135deg, #f5d38b, #c9a14a);
+  color: #1a0f24;
+  border-color: #f5d38b;
+}
+.cookie-banner__btn:hover { transform: translateY(-1px); }
+/* === END Cookie Banner v1.0 === */

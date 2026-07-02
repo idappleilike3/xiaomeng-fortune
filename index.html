@@ -19,6 +19,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
   <body>
+  <div class="cookie-banner" id="cookieBanner" role="region" aria-label="Cookie 同意" hidden>
+  <p>本站使用 Cookie 改善體驗,繼續瀏覽即視為同意。</p>
+  <div class="cookie-banner__actions">
+    <button type="button" class="cookie-banner__btn cookie-banner__btn--accept" id="cookieAccept">同意</button>
+    <button type="button" class="cookie-banner__btn cookie-banner__btn--decline" id="cookieDecline">拒絕</button>
+  </div>
+</div>
   <div class="app-loading" id="appLoading" aria-hidden="true">
     <div class="app-loading__halo"></div>
     <p class="app-loading__text">小夢老師正在為你點亮星軌…</p>
@@ -187,22 +194,22 @@
           </button>
           <h2 class="hero-section-title">今天想探索什麼？</h2>
           <div class="hero-entries hero-entries--four" role="navigation" aria-label="四大入口">
-            <button type="button" class="hero-entry" data-system="tarot">
+            <button type="button" class="hero-entry" data-system="tarot" aria-label="命運塔羅入口 · 翻開答案">
               <span class="hero-entry__icon" aria-hidden="true">🔮</span>
               <h3 class="hero-entry__title">命運塔羅</h3>
               <p class="hero-entry__desc">翻開答案</p>
             </button>
-            <button type="button" class="hero-entry" data-system="pet">
+            <button type="button" class="hero-entry" data-system="pet" aria-label="毛孩心語入口 · 為毛孩探尋心意">
               <span class="hero-entry__icon" aria-hidden="true">🐾</span>
               <h3 class="hero-entry__title">毛孩心語</h3>
               <p class="hero-entry__desc">為毛孩探尋心意</p>
             </button>
-            <button type="button" class="hero-entry" data-system="oracle">
+            <button type="button" class="hero-entry" data-system="oracle" aria-label="今日神諭入口 · 宇宙的訊息">
               <span class="hero-entry__icon" aria-hidden="true">🌙</span>
               <h3 class="hero-entry__title">今日神諭</h3>
               <p class="hero-entry__desc">宇宙的訊息</p>
             </button>
-            <button type="button" class="hero-entry hero-entry--deep" data-system="explore">
+            <button type="button" class="hero-entry hero-entry--deep" data-system="explore" aria-label="神殿深處入口 · 探索全部">
               <span class="hero-entry__icon" aria-hidden="true">✨</span>
               <h3 class="hero-entry__title">神殿深處</h3>
               <p class="hero-entry__desc">探索全部</p>
