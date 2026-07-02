@@ -8553,3 +8553,95 @@ a:focus-visible {
 }
 
 /* === END User Feedback Fix v1.0 === */
+
+
+/* === New Tarot Deck v3.0 (2026-07-02 21:20) === */
+.new-tarot-deck {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 24px;
+  text-align: center;
+}
+.new-tarot-deck .eyebrow {
+  color: #c9b88a;
+  letter-spacing: 0.2em;
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.new-tarot-deck h2 {
+  font-size: 28px;
+  color: #fff5d8;
+  font-weight: 900;
+  margin: 0 0 12px;
+  letter-spacing: 0.05em;
+}
+.new-tarot-deck .deck-hint {
+  color: #c9b88a;
+  font-size: 14px;
+  margin: 0 0 32px;
+}
+.new-tarot-deck__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+@media (max-width: 1080px) {
+  .new-tarot-deck__grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 720px) {
+  .new-tarot-deck__grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+}
+@media (max-width: 480px) {
+  .new-tarot-deck__grid { grid-template-columns: repeat(2, 1fr); }
+}
+.new-tarot-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: linear-gradient(160deg, rgba(245, 211, 139, 0.05), rgba(124, 77, 196, 0.08));
+  border: 1px solid rgba(245, 211, 139, 0.2);
+  border-radius: 12px;
+  color: #fff5d8;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  position: relative;
+}
+.new-tarot-card:hover {
+  transform: translateY(-4px);
+  border-color: #f5d38b;
+  box-shadow: 0 12px 32px rgba(245, 211, 139, 0.18);
+  background: linear-gradient(160deg, rgba(245, 211, 139, 0.12), rgba(124, 77, 196, 0.15));
+}
+.new-tarot-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2/3;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+}
+.new-tarot-card__num {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #f5d38b;
+  background: rgba(13, 7, 24, 0.7);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.new-tarot-card__name {
+  font-size: 14px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+.new-tarot-card__en {
+  font-size: 10px;
+  color: #c9b88a;
+  letter-spacing: 0.05em;
+}
+/* === END New Tarot Deck v3.0 === */
