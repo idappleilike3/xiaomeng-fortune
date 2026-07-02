@@ -8165,3 +8165,72 @@ html, body { overflow-x: hidden; }
   .user-bar { padding: 4px 6px; }
 }
 /* === END User Bar v1.0 === */
+
+/* === L2 Topics v1.0 (2026-07-02 11:36) === */
+/* === L2 Topics v1.0 (2026-07-02 11:36) === */
+.l2-topics {
+  max-width: 720px;
+  margin: 60px auto;
+  padding: 0 28px;
+  text-align: center;
+}
+.l2-topics__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff5d8;
+  margin: 0 0 8px;
+  letter-spacing: 0.05em;
+}
+.l2-topics__hint {
+  font-size: 14px;
+  color: #c9b88a;
+  margin: 0 0 32px;
+}
+.l2-topics__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+.l2-topic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 12px;
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.08), rgba(124, 77, 196, 0.12));
+  border: 1px solid rgba(245, 211, 139, 0.3);
+  border-radius: 16px;
+  color: #fff5d8;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.l2-topic:hover {
+  transform: translateY(-4px);
+  border-color: #f5d38b;
+  box-shadow: 0 8px 24px rgba(245, 211, 139, 0.2);
+  background: linear-gradient(135deg, rgba(245, 211, 139, 0.15), rgba(124, 77, 196, 0.18));
+}
+.l2-topic__icon {
+  font-size: 36px;
+  line-height: 1;
+}
+.l2-topic__name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.l2-topic__desc {
+  font-size: 11px;
+  color: #c9b88a;
+  letter-spacing: 0.05em;
+}
+.l2-topic--more {
+  background: linear-gradient(135deg, rgba(124, 77, 196, 0.18), rgba(245, 211, 139, 0.12));
+  border-color: rgba(245, 211, 139, 0.5);
+}
+@media (max-width: 720px) {
+  .l2-topics__grid { grid-template-columns: repeat(2, 1fr); }
+  .l2-topic--more { grid-column: 1 / -1; }
+}
+/* === END L2 Topics v1.0 === */

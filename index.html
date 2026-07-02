@@ -237,6 +237,39 @@
           <h2>把抽牌變成一段真正的儀式</h2>
         </div>
 
+        <!-- L2 主題選擇(對齊 3-Layer UX v1.0 §3.3) -->
+        <div class="l2-topics" id="l2Topics" hidden>
+          <h3 class="l2-topics__title">你想探詢哪個主題？</h3>
+          <p class="l2-topics__hint">選擇主題後由小夢陪你抽牌</p>
+          <div class="l2-topics__grid" id="l2TopicsGrid">
+            <button type="button" class="l2-topic" data-topic="love" data-system="tarot">
+              <span class="l2-topic__icon" aria-hidden="true">❤️</span>
+              <span class="l2-topic__name">感情</span>
+              <span class="l2-topic__desc">關係探索</span>
+            </button>
+            <button type="button" class="l2-topic" data-topic="work" data-system="tarot">
+              <span class="l2-topic__icon" aria-hidden="true">💼</span>
+              <span class="l2-topic__name">工作</span>
+              <span class="l2-topic__desc">事業指引</span>
+            </button>
+            <button type="button" class="l2-topic" data-topic="wealth" data-system="tarot">
+              <span class="l2-topic__icon" aria-hidden="true">💰</span>
+              <span class="l2-topic__name">財富</span>
+              <span class="l2-topic__desc">豐盛之路</span>
+            </button>
+            <button type="button" class="l2-topic" data-topic="self" data-system="tarot">
+              <span class="l2-topic__icon" aria-hidden="true">🌙</span>
+              <span class="l2-topic__name">自我探索</span>
+              <span class="l2-topic__desc">內在成長</span>
+            </button>
+            <button type="button" class="l2-topic l2-topic--more" data-topic="more" data-system="tarot">
+              <span class="l2-topic__icon" aria-hidden="true">✨</span>
+              <span class="l2-topic__name">更多牌陣</span>
+              <span class="l2-topic__desc">完整 36+ 牌陣</span>
+            </button>
+          </div>
+        </div>
+
         <article class="ritual-flow" data-ritual-state="input">
           <section class="ritual-stage ritual-stage--input" data-stage="input">
             <div class="stage-card stage-card--hero">
@@ -897,6 +930,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="./lib/spread-library.js"></script>
     <script type="module" src="./lib/sse-bridge.js"></script>
+    <script src="./lib/l2-topics.js" defer></script>
     <script type="module" src="./script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.js"></script>
   </body>
