@@ -4990,3 +4990,19 @@ if (heroCta) {
     if (audio) { audio.pause(); audio = null; }
   });
 })();
+
+// 隱藏 App Loading
+(function() {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(hideAppLoading, 300);
+  } else {
+    window.addEventListener('load', () => setTimeout(hideAppLoading, 300));
+  }
+  function hideAppLoading() {
+    const el = document.getElementById('appLoading');
+    if (el) {
+      el.classList.add('is-hidden');
+      setTimeout(() => el.remove(), 700);
+    }
+  }
+})();
