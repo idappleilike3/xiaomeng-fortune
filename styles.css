@@ -8465,3 +8465,91 @@ a:focus-visible {
   }
 }
 /* === END Skip Link + Focus v1.0 === */
+
+/* === User Feedback Fix v1.0 (2026-07-02 20:58) === */
+/* === User Feedback Fix v1.0 (2026-07-02 20:58) === */
+
+/* Cookie banner 改為純文字(無按鈕) */
+.cookie-banner--info {
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  padding: 10px 16px;
+  background: rgba(13, 7, 24, 0.7);
+  border: 1px solid rgba(245, 211, 139, 0.2);
+  border-radius: 8px;
+  bottom: 8px;
+  max-width: 600px;
+}
+.cookie-banner--info p { margin: 0; }
+
+/* BGM Player 右上角 */
+.bgm-player {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(13, 7, 24, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 211, 139, 0.4);
+  border-radius: 999px;
+  color: #fff5d8;
+  font-size: 12px;
+  z-index: 9998;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.bgm-player__toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 0;
+  background: linear-gradient(135deg, #f5d38b, #c9a14a);
+  color: #1a0f24;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.bgm-player__icon--pause { display: none; }
+.bgm-player.is-playing .bgm-player__icon--play { display: none; }
+.bgm-player.is-playing .bgm-player__icon--pause { display: inline; }
+.bgm-player__select {
+  background: transparent;
+  border: 0;
+  color: #fff5d8;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  padding: 4px 0;
+  font-family: inherit;
+}
+.bgm-player__select option { background: #1a0f24; color: #fff5d8; }
+.bgm-player__time {
+  font-variant-numeric: tabular-nums;
+  color: #c9b88a;
+  font-size: 11px;
+  min-width: 36px;
+  text-align: right;
+}
+@media (max-width: 720px) {
+  .bgm-player { top: 8px; right: 8px; padding: 6px 8px; }
+  .bgm-player__select { display: none; }
+}
+
+/* 靈信收件夾(右下手機)z-index 提升 + 避開 BGM player */
+.inbox-fab {
+  z-index: 9000 !important;
+}
+@media (max-width: 720px) {
+  .inbox-fab { bottom: 80px !important; }
+  .wallet-chip { right: 60px !important; }
+  .user-bar { right: 100px !important; }
+}
+
+/* === END User Feedback Fix v1.0 === */

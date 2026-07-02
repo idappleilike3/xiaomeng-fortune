@@ -5066,6 +5066,92 @@ if (heroCta) {
     try { localStorage.setItem(KEY, value); } catch (e) {}
     banner.hidden = true;
   }
-  document.getElementById('cookieAccept')?.addEventListener('click', () => dismiss('accept'));
-  document.getElementById('cookieDecline')?.addEventListener('click', () => dismiss('decline'));
+  // cookieAccept removed (老闆 20:58)
+  // cookieDecline removed
+})();
+
+
+// === BGM Player v1.0(對齊老闆 20:58 指示:右上,3 首切換,play/pause)===
+(function() {
+  const TRACKS = {
+    mystical: { src: 'assets/hero-bgm-mystical.mp3', label: '神聖神殿' },
+    cosmic:   { src: 'assets/hero-bgm-cosmic.mp3',   label: '宇宙蒼穹' },
+    ritual:   { src: 'assets/hero-bgm-ritual.mp3',   label: '古老儀式' },
+  };
+  const player = document.getElementById('bgmPlayer');
+  const toggle = document.getElementById('bgmToggle');
+  const select = document.getElementById('bgmSelect');
+  const timeEl = document.getElementById('bgmTime');
+  if (!player || !toggle || !select) return;
+
+  let audio = null;
+  let currentTrack = 'mystical';
+  let isPlaying = false;
+
+  function fmtTime(s) {
+    s = Math.floor(s);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function loadTrack(key) {
+    if (audio) { audio.pause(); audio = null; }
+    const t = TRACKS[key];
+    if (!t) return;
+    audio = new Audio(t.src);
+    audio.loop = true;
+    audio.volume = 0.25;
+    audio.addEventListener('timeupdate', () => {
+      if (timeEl) timeEl.textContent = fmtTime(audio.currentTime);
+    });
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    });
+  }
+
+  function play() {
+    if (!audio) loadTrack(currentTrack);
+    audio.play().then(() => {
+      isPlaying = true;
+      player.classList.add('is-playing');
+    }).catch(() => {
+      isPlaying = false;
+      player.classList.remove('is-playing');
+    });
+  }
+
+  function pause() {
+    if (audio) audio.pause();
+    isPlaying = false;
+    player.classList.remove('is-playing');
+  }
+
+  function togglePlay() {
+    if (isPlaying) pause(); else play();
+  }
+
+  function switchTrack(key) {
+    currentTrack = key;
+    if (isPlaying) {
+      pause();
+      loadTrack(key);
+      play();
+    } else {
+      loadTrack(key);
+    }
+  }
+
+  toggle.addEventListener('click', togglePlay);
+  select.addEventListener('change', (e) => switchTrack(e.target.value));
+
+  // 用戶首次互動 → 解鎖 autoplay + 顯示播放器
+  function reveal() {
+    player.hidden = false;
+  }
+  ['click', 'touchstart', 'keydown'].forEach((ev) => {
+    document.addEventListener(ev, reveal, { once: true, passive: true });
+  });
+
+  // 預載第一首
+  loadTrack('mystical');
 })();

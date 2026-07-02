@@ -20,13 +20,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
   <body>
+  <div class="bgm-player" id="bgmPlayer" hidden>
+  <button type="button" class="bgm-player__toggle" id="bgmToggle" aria-label="播放或暫停 BGM">
+    <span class="bgm-player__icon bgm-player__icon--play" aria-hidden="true">▶</span>
+    <span class="bgm-player__icon bgm-player__icon--pause" aria-hidden="true">⏸</span>
+  </button>
+  <select class="bgm-player__select" id="bgmSelect" aria-label="選擇 BGM">
+    <option value="mystical">🌙 神聖神殿</option>
+    <option value="cosmic">🌌 宇宙蒼穹</option>
+    <option value="ritual">🕯 古老儀式</option>
+  </select>
+  <span class="bgm-player__time" id="bgmTime">0:00</span>
+</div>
   <a class="skip-link" href="#app">跳到主要內容</a>
-  <div class="cookie-banner" id="cookieBanner" role="region" aria-label="Cookie 同意" hidden>
+  <div class="cookie-banner cookie-banner--info" id="cookieBanner" role="status" aria-label="提示" hidden>
   <p>本站使用 Cookie 改善體驗,繼續瀏覽即視為同意。</p>
-  <div class="cookie-banner__actions">
-    <button type="button" class="cookie-banner__btn cookie-banner__btn--accept" id="cookieAccept">同意</button>
-    <button type="button" class="cookie-banner__btn cookie-banner__btn--decline" id="cookieDecline">拒絕</button>
-  </div>
 </div>
   <div class="app-loading" id="appLoading" aria-hidden="true" style="display:none">
     <div class="app-loading__halo"></div>
