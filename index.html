@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self'; connect-src 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; media-src * data: blob:; connect-src *;" />
     <title>小夢老師｜塔羅命盤療癒室</title>
     <meta
       name="description"
@@ -28,7 +28,7 @@
     <button type="button" class="cookie-banner__btn cookie-banner__btn--decline" id="cookieDecline">拒絕</button>
   </div>
 </div>
-  <div class="app-loading" id="appLoading" aria-hidden="true">
+  <div class="app-loading" id="appLoading" aria-hidden="true" style="display:none">
     <div class="app-loading__halo"></div>
     <p class="app-loading__text">小夢老師正在為你點亮星軌…</p>
   </div>
