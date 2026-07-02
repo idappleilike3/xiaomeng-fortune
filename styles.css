@@ -8234,3 +8234,63 @@ html, body { overflow-x: hidden; }
   .l2-topic--more { grid-column: 1 / -1; }
 }
 /* === END L2 Topics v1.0 === */
+
+/* === L3 Temple v1.0 (2026-07-02 11:46) === */
+/* === L3 Temple v1.0 (2026-07-02 11:46) === */
+.l3-temple {
+  max-width: 720px;
+  margin: 60px auto;
+  padding: 0 28px;
+  text-align: center;
+}
+.l3-temple__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff5d8;
+  margin: 0 0 8px;
+  letter-spacing: 0.05em;
+}
+.l3-temple__hint {
+  font-size: 14px;
+  color: #c9b88a;
+  margin: 0 0 32px;
+}
+.l3-temple__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.l3-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  background: linear-gradient(135deg, rgba(124, 77, 196, 0.12), rgba(245, 211, 139, 0.08));
+  border: 1px solid rgba(245, 211, 139, 0.25);
+  border-radius: 16px;
+  color: #fff5d8;
+  text-decoration: none;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.l3-tile:hover {
+  transform: translateY(-4px);
+  border-color: #f5d38b;
+  box-shadow: 0 8px 24px rgba(245, 211, 139, 0.18);
+  background: linear-gradient(135deg, rgba(124, 77, 196, 0.2), rgba(245, 211, 139, 0.15));
+}
+.l3-tile__icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.l3-tile__name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 720px) {
+  .l3-temple__grid { grid-template-columns: repeat(2, 1fr); }
+}
+/* === END L3 Temple v1.0 === */
