@@ -3492,7 +3492,7 @@ if (document.readyState === 'loading') {
     } catch (e) { /* silent fail */ }
   }
   // Expose to global so the Great Stage can call it
-  window.__playSystemSound = playSystemSound;
+  window.__playSystemSound = function() {}; // 2026-07-04 06:44 老闆指示:音效拿掉
 
   // === Footer legal modals ===
   function openLegalModal(id) {
@@ -4122,15 +4122,7 @@ if (document.readyState === 'loading') {
     oracle:  { shuffle: playOracleShuffle,  cut: playOracleCut,  spread: playOracleSpread,  flip: playOracleFlip }
   };
 
-  window.__playSystemSound = function (system, action) {
-    tryUnlock();
-    if (!masterGain) ensureCtx();
-    const sys = PLAYERS[system] || PLAYERS[currentSystem];
-    if (!sys) return;
-    if (action && sys[action]) {
-      sys[action]();
-    }
-  };
+  window.__playSystemSound = function() {}; // 2026-07-04 06:44 老闆指示:音效拿掉
 
   window.__setSoundSystem = function (system) {
     currentSystem = system;
