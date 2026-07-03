@@ -366,7 +366,15 @@ function menuFlexMessage() {
 
 function welcomeFlexMessage() {
   // 對齊 老闆 8:06 重整:加 LOGO 大頭照 + 拿掉標點 + 華麗精緻風
-  const avatarUrl = "https://xiaomeng-fortune.onrender.com/assets/welcome-avatar.png";
+  // 2026-07-04 改:加 avatarExists fallback(用 emoji 取代破圖)
+  // 圖檔已上(2026-07-04 由小龍蝦 image_generate 生成 + commit):assets/welcome-avatar.png
+  const fs = require("fs");
+  const path = require("path");
+  const avatarPath = path.join(__dirname, "assets", "welcome-avatar.png");
+  const avatarExists = fs.existsSync(avatarPath);
+  const avatarUrl = avatarExists
+    ? "https://xiaomeng-fortune.onrender.com/assets/welcome-avatar.png"
+    : null;
   return flexMessage("歡迎來到小夢 Fortune Platform", {
     type: "bubble",
     size: "mega",
@@ -376,15 +384,23 @@ function welcomeFlexMessage() {
       spacing: "lg",
       backgroundColor: "#0D0718",
       contents: [
-        {
-          type: "image",
-          url: avatarUrl,
-          size: "sm",
-          align: "center",
-          margin: "lg",
-          aspectRatio: "1:1",
-          aspectMode: "circle",
-        },
+        ...(avatarUrl
+          ? [{
+              type: "image",
+              url: avatarUrl,
+              size: "sm",
+              align: "center",
+              margin: "lg",
+              aspectRatio: "1:1",
+              aspectMode: "circle",
+            }]
+          : [{
+              type: "text",
+              text: "🌙",
+              size: "xxl",
+              align: "center",
+              margin: "lg",
+            }]),
         {
           type: "text",
           text: "歡迎來到",
