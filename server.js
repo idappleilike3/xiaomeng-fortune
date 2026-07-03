@@ -928,27 +928,30 @@ function isEcpayConfigured() {
 }
 
 function getPaymentPlans() {
+  // 2026-07-04 06:35 重整:取代舊「單次深度解析/靈感點數包/月度療癒會員」
+  // 新 3 個訂閱方案 + 免費體驗(免費,不列在 plans)
   return [
     {
-      id: "single-reading",
-      name: "單次深度解析",
-      amount: 99,
+      id: "moonwalker",
+      name: "🌙 月光行者",
+      amount: 390,
       points: 0,
-      description: "解鎖一次塔羅、求籤、生命靈數或命盤的完整解析。",
+      description: "每月初送 3 張「單牌聖諭券」。適合每日運勢、一問一答的即時指引。",
     },
     {
-      id: "points-300",
-      name: "靈感點數包",
-      amount: 300,
-      points: 300,
-      description: "常回來抽牌、求籤、看週運的人適合用點數扣款。",
+      id: "starpriest",
+      name: "✨ 星辰祭司",
+      amount: 990,
+      points: 0,
+      description: "🔥 推薦。每月初送 3 張「三牌深度進階券」(現賺 NT$ 870)。解鎖【過去/現在/未來】因果流牌陣。",
+      featured: true,
     },
     {
-      id: "monthly-member",
-      name: "月度療癒會員",
-      amount: 499,
-      points: 600,
-      description: "每月點數、週運提醒、深度解析折扣與會員選品推薦。",
+      id: "elder",
+      name: "🧙‍♂️ 神殿長老",
+      amount: 2990,
+      points: 0,
+      description: "尊榮頂級享受。每月初送 3 張「五牌全知矩陣券」。解鎖最高權限【五角星能量牌陣】,看穿命運明暗貴人、未來 90 天極致走向。",
     },
   ];
 }

@@ -20,18 +20,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
   </head>
   <body>
-  <div class="bgm-player" id="bgmPlayer" hidden>
-  <button type="button" class="bgm-player__toggle" id="bgmToggle" aria-label="播放或暫停 BGM">
-    <span class="bgm-player__icon bgm-player__icon--play" aria-hidden="true">▶</span>
-    <span class="bgm-player__icon bgm-player__icon--pause" aria-hidden="true">⏸</span>
-  </button>
-  <select class="bgm-player__select" id="bgmSelect" aria-label="選擇 BGM">
-    <option value="mystical">🌙 神聖神殿</option>
-    <option value="cosmic">🌌 宇宙蒼穹</option>
-    <option value="ritual">🕯 古老儀式</option>
-  </select>
-  <span class="bgm-player__time" id="bgmTime">0:00</span>
-</div>
   <a class="skip-link" href="#app">跳到主要內容</a>
   <div class="cookie-banner cookie-banner--info" id="cookieBanner" role="status" aria-label="提示" hidden>
   <p>本站使用 Cookie 改善體驗,繼續瀏覽即視為同意。</p>
@@ -202,29 +190,7 @@
             <span class="hero-cta-primary__text">開始探索</span>
             <span class="hero-cta-primary__icon" aria-hidden="true">→</span>
           </button>
-          <h2 class="hero-section-title">今天想探索什麼？</h2>
-          <div class="hero-entries hero-entries--four" role="navigation" aria-label="四大入口">
-            <button type="button" class="hero-entry" data-system="tarot" aria-label="命運塔羅入口 · 翻開答案">
-              <span class="hero-entry__icon" aria-hidden="true">🔮</span>
-              <h3 class="hero-entry__title">命運塔羅</h3>
-              <p class="hero-entry__desc">翻開答案</p>
-            </button>
-            <button type="button" class="hero-entry" data-system="pet" aria-label="毛孩心語入口 · 為毛孩探尋心意">
-              <span class="hero-entry__icon" aria-hidden="true">🐾</span>
-              <h3 class="hero-entry__title">毛孩心語</h3>
-              <p class="hero-entry__desc">為毛孩探尋心意</p>
-            </button>
-            <button type="button" class="hero-entry" data-system="oracle" aria-label="今日神諭入口 · 宇宙的訊息">
-              <span class="hero-entry__icon" aria-hidden="true">🌙</span>
-              <h3 class="hero-entry__title">今日神諭</h3>
-              <p class="hero-entry__desc">宇宙的訊息</p>
-            </button>
-            <button type="button" class="hero-entry hero-entry--deep" data-system="explore" aria-label="神殿深處入口 · 探索全部">
-              <span class="hero-entry__icon" aria-hidden="true">✨</span>
-              <h3 class="hero-entry__title">神殿深處</h3>
-              <p class="hero-entry__desc">探索全部</p>
-            </button>
-          </div>
+          <h2 class="hero-section-title" hidden>今天想探索什麼？</h2>
         </div>
         </div><!-- /.hero-parallax -->
         <div class="hero-scroll-indicator" aria-hidden="true">
@@ -254,8 +220,8 @@
         </form>
       </section>
 
-      <section id="demo" class="demo-section demo-ritual">
-          <div class="new-tarot-deck">
+      <section id="demo" class="demo-section demo-ritual" hidden>
+          <div class="new-tarot-deck" hidden>
             <p class="eyebrow">22 Major Arcana · 新版塔羅牌(小夢神殿 v3.0)</p>
             <h2>選擇今晚為你指路的那一張大阿爾克那</h2>
             <p class="deck-hint">點任一張牌開始 11 步神聖探索儀式</p>
@@ -650,7 +616,7 @@
 
               <p class="stage-label stage-label--inline stage-label--ritual">抽牌方式</p>
               <div class="spread-pills spread-pills--ritual" role="radiogroup" aria-label="抽牌方式">
-                <button type="button" class="spread-pill" data-spread="single">單張解牌</button>
+                <button type="button" class="spread-pill" data-spread="single" hidden>單張解牌</button>
                 <button type="button" class="spread-pill is-active" data-spread="three">三張牌陣</button>
                 <button type="button" class="spread-pill" data-spread="five">五張聖甲蟲</button>
               </div>
@@ -692,7 +658,7 @@
 
           <section class="ritual-stage ritual-stage--result" data-stage="result" hidden>
             <p class="stage-eyebrow">YOUR GUIDANCE</p>
-            <h3 class="stage-title" id="resultSpreadName">單牌占卜</h3>
+            <h3 class="stage-title" id="resultSpreadName" hidden>單牌占卜</h3>
             <div class="result-card-wrap" data-atropos data-atropos-rotate="true" data-atropos-scale="true">
               <div class="result-card-base" data-atropos-layer="base">
                 <div class="result-card" id="resultCard">
@@ -792,29 +758,33 @@
             </article>
           </div>
 
-          <div class="membership-bar">
-            <p class="membership-bar__label">會員等級</p>
+          <div class="membership-bar" hidden>
+            <p class="membership-bar__label">會員等級(2026-07-04 改成 3 訂閱)</p>
             <div class="membership-bar__tiers">
               <span class="tier-chip tier-free" data-tier="free">
                 <span class="tier-chip__label">免費體驗</span>
                 <span class="tier-chip__price">NT$ 0</span>
               </span>
-              <span class="tier-chip tier-member" data-tier="member">
-                <span class="lock-icon" aria-hidden="true">🔒</span>
-                <span class="tier-chip__label">尊榮會員</span>
-                <span class="tier-chip__price">NT$ 399 / 月</span>
+              <span class="tier-chip tier-member" data-tier="moonwalker">
+                <span class="tier-chip__label">🌙 月光行者</span>
+                <span class="tier-chip__price">NT$ 390 / 月</span>
               </span>
-              <span class="tier-chip tier-premium" data-tier="premium">
-                <span class="lock-icon" aria-hidden="true">🔐</span>
-                <span class="tier-chip__label">殿堂大師</span>
-                <span class="tier-chip__price">NT$ 999 / 月</span>
+              <span class="tier-chip tier-premium" data-tier="starpriest">
+                <span class="lock-icon" aria-hidden="true">🔥</span>
+                <span class="tier-chip__label">✨ 星辰祭司(推薦)</span>
+                <span class="tier-chip__price">NT$ 990 / 月</span>
+              </span>
+              <span class="tier-chip tier-elder" data-tier="elder">
+                <span class="lock-icon" aria-hidden="true">🧙‍♂️</span>
+                <span class="tier-chip__label">神殿長老</span>
+                <span class="tier-chip__price">NT$ 2,990 / 月</span>
               </span>
             </div>
-            <p class="membership-bar__hint">本單滿 $599 可使用 50 積分折抵</p>
+            <p class="membership-bar__hint">本單滿 $599 可使用 50 積分折抵 · 2026-07-04 重整版</p>
           </div>
         </section>
 
-        <div class="demo-secondary">
+        <div class="demo-secondary" hidden>
 
         <article class="tool-card" id="lifeNumberTool">
             <div class="tool-card__head">
@@ -915,7 +885,7 @@
           <p>每一份牌意都是引子,真正的轉化發生在日常的微小選擇。<br/>以下聖物由小夢老師親自調頻選品,陪你走過星軌的下一段路。</p>
         </div>
 
-        <div class="unlock-grid" aria-label="付費解鎖方案(2026-07-04 統整)">
+        <div class="unlock-grid" aria-label="付費解鎖方案(2026-07-04 06:35 重整精選版)">
           <article class="unlock-card" data-unlock="free">
             <span class="product-tag">免費</span>
             <h3>免費體驗</h3>
@@ -924,68 +894,32 @@
             <button class="panel-button" type="button" data-unlock="free">查看免費內容</button>
             <a href="#" class="share-viral-link" data-viral-source="unlock-free">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
-          <article class="unlock-card featured" data-unlock="tarot">
-            <span class="product-tag">單次</span>
-            <h3>命運塔羅</h3>
-            <strong>NT$ 99</strong>
-            <p>單次深度靈性解讀,延伸感情 / 工作 / 財運、未來 14-30 天走勢、阻礙來源與下一步行動。</p>
-            <button class="panel-button" type="button" data-unlock="tarot">現金消費解鎖</button>
-            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-tarot">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
-          </article>
-          <article class="unlock-card" data-unlock="love">
-            <span class="product-tag">單次</span>
-            <h3>感情關係</h3>
-            <strong>NT$ 199</strong>
-            <p>專注於感情面向的深度靈性解讀,涵蓋曖昧 / 交往 / 復合 / 婚姻 / 靈魂契合度。</p>
-            <button class="panel-button" type="button" data-unlock="love">現金消費解鎖</button>
-            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-love">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
-          </article>
-          <article class="unlock-card" data-unlock="wealth">
-            <span class="product-tag">單次</span>
-            <h3>財富豐盛</h3>
-            <strong>NT$ 199</strong>
-            <p>專注於財富面向的深度靈性解讀,涵蓋事業 / 偏財 / 投資 / 豐盛心態 / 阻礙來源。</p>
-            <button class="panel-button" type="button" data-unlock="wealth">現金消費解鎖</button>
-            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-wealth">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
-          </article>
-          <article class="unlock-card unlock-card--subscription" data-unlock="member">
+          <article class="unlock-card unlock-card--subscription" data-unlock="moonwalker">
             <span class="product-tag">訂閱</span>
-            <h3>尊榮會員</h3>
-            <strong>NT$ 399 <small>/ 月</small></strong>
-            <p>解鎖毛孩心語全情境、22 張大阿爾克那深度解讀、每日簽到 +5 靈性積分、週運勢提醒。</p>
-            <button class="panel-button" type="button" data-unlock="member">訂閱尊榮</button>
+            <h3>🌙 月光行者</h3>
+            <strong>NT$ 390 <small>/ 月</small></strong>
+            <p>🎟️ 每月初送 <strong>3 張「單牌聖諭券」</strong><br/>🔮 適合每日運勢、一問一答的即時指引,快速看清當下能量障礙。</p>
+            <button class="panel-button" type="button" data-unlock="moonwalker">訂閱月光行者</button>
             <p class="unlock-discount-hint">🌙 月訂自動續訂,隨時可取消</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-member">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-moonwalker">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
           </article>
-          <article class="unlock-card unlock-card--subscription unlock-card--featured" data-unlock="premium">
-            <span class="product-tag">主推</span>
-            <h3>殿堂大師</h3>
-            <strong>NT$ 999 <small>/ 月</small></strong>
-            <p>解鎖全部 8 個高階功能(星盤 / 靈數 / 流年 / 命盤 / 深夜靈性來信 / 市集 / 會員 / 設定)、神殿深處完整儀式、每週 1 次免費大師券。</p>
-            <button class="panel-button" type="button" data-unlock="premium">訂閱殿堂</button>
-            <p class="unlock-discount-hint">👑 小夢老師最推薦的方案 · 完整守護</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-premium">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
+          <article class="unlock-card unlock-card--subscription unlock-card--featured" data-unlock="starpriest">
+            <span class="product-tag">🔥 推薦</span>
+            <h3>✨ 星辰祭司</h3>
+            <strong>NT$ 990 <small>/ 月</small></strong>
+            <p>🎟️ 每月初送 <strong>3 張「三牌深度進階券」</strong>(現賺 NT$ 870)<br/>🔮 解鎖【過去/現在/未來】因果流牌陣,全面破譯重大的情感與事業迷茫。</p>
+            <button class="panel-button" type="button" data-unlock="starpriest">訂閱星辰祭司</button>
+            <p class="unlock-discount-hint">🔥 老闆強力推薦 · 深度流年指引</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-starpriest">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
           </article>
-          <article class="unlock-card unlock-card--special" data-unlock="master">
-            <span class="product-tag">一次性</span>
-            <h3>大師調頻券</h3>
-            <strong>NT$ 3,600</strong>
-            <p>一次性深度大師調頻,包含 3 次深度靈性解讀 + 1 次一對一命盤諮詢。適合重大抉擇或人生轉折點。</p>
-            <button class="panel-button" type="button" data-unlock="master">迎請大師券</button>
-            <p class="unlock-discount-hint">✨ 一年內皆可使用,不限本人</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-master">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
-          </article>
-          <article class="unlock-card unlock-card--seasonal" data-unlock="seasonal">
-            <span class="product-tag">節日限定</span>
-            <h3>節日限定流年</h3>
-            <strong>NT$ 599</strong>
-            <p>春節 / 七夕 / 跨年三大節氣限定流年解析,涵蓋未來一年走勢、關鍵月份、貴人時機。</p>
-            <button class="panel-button" type="button" data-unlock="seasonal" disabled>即將開放</button>
-            <p class="unlock-discount-hint">🌸 春節檔 · 七夕檔 · 跨年檔(僅節氣前 30 天開放)</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-seasonal">✨ 搶先追蹤小夢神殿取得最新消息 ➔</a>
+          <article class="unlock-card unlock-card--subscription unlock-card--elite" data-unlock="elder">
+            <span class="product-tag">頂級</span>
+            <h3>🧙‍♂️ 神殿長老</h3>
+            <strong>NT$ 2,990 <small>/ 月</small></strong>
+            <p>🎟️ 每月初送 <strong>3 張「五牌全知矩陣券」</strong>(尊榮頂級享受)<br/>🔮 解鎖最高權限【五角星能量牌陣】,全方位看穿命運的明暗貴人、隱藏危機與未來 90 天極致走向。</p>
+            <button class="panel-button" type="button" data-unlock="elder">訂閱神殿長老</button>
+            <p class="unlock-discount-hint">🧙‍♂️ 尊榮頂級享受 · 未來 90 天極致走向</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-elder">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
           </article>
         </div>
 
