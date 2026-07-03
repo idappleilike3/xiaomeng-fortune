@@ -212,8 +212,7 @@ const majorArcanaDeck = tarotDeck.filter((card) => card.suit === "major");
 
 
 const unlockMessages = {
-  free:
-    "免費版適合先確認方向：看牌名、籤意、簡短提醒與一個注意事項。若問題牽涉感情決定、工作轉換或財務選擇，再引導深度解析。",
+  
   single:
     "單次深度解析適合高意圖使用者：一次解鎖完整脈絡、未來 14 到 30 天走勢、阻礙來源、對方狀態與下一步行動。建議定價 $99 起。",
   points:
