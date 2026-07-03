@@ -157,7 +157,7 @@ PET DIVINATION (寵物占卜英文)
     ↓
 進入對應神殿 (系統切換)
     ↓
-開始儀式 (F22 洗牌 → 切牌 → 扇形)
+開始儀式 (神聖探索儀式 洗牌 → 切牌 → 扇形)
     ↓
 揭曉命運 (720ms 翻牌 + 粒子爆破)
     ↓
@@ -613,10 +613,10 @@ window.__xiaomengFlip(system, anchorEl);
 |---|---|---|
 | `temple-curtain-rise` | 1.8s ease,深紫漸層淡入 + 神女顯現 | 首頁載入完成 |
 | `fade-through-gold` | 600ms,金光粒子穿透 | 系統切換 |
-| `shuffle-3d` | 800ms,cubic-bezier(0.4, 0, 0.2, 1) | F22 進入 |
-| `cut-deal` | 600ms,卡牌向上滑動分兩疊 | F22 中段 |
-| `fan-spread` | 900ms,卡牌展開成 120° 扇形 | F22 抽牌前 |
-| `card-flip-720ms` | 720ms,3D rotateY 180°,系統主題粒子爆破 | F22 點選 |
+| `shuffle-3d` | 800ms,cubic-bezier(0.4, 0, 0.2, 1) | 神聖探索儀式 進入 |
+| `cut-deal` | 600ms,卡牌向上滑動分兩疊 | 神聖探索儀式 中段 |
+| `fan-spread` | 900ms,卡牌展開成 120° 扇形 | 神聖探索儀式 抽牌前 |
+| `card-flip-720ms` | 720ms,3D rotateY 180°,系統主題粒子爆破 | 神聖探索儀式 點選 |
 | `gold-sparkles-burst` | 14 顆金粉,半徑 220px,1.2s | 塔羅翻牌完成 |
 | `pink-hearts-paws-burst` | 14 顆粉肉墊愛心,1.2s | 寵物翻牌完成 |
 | `white-light-rays-burst` | 14 條白光放射,1.2s | 神諭翻牌完成 |

@@ -365,16 +365,26 @@ function menuFlexMessage() {
 }
 
 function welcomeFlexMessage() {
-  // 對齊 PROJECT_BIBLE §20 + LINE_OFFICIAL_EXPERIENCE_v2.0_DRAFT §③
+  // 對齊 老闆 8:06 重整:加 LOGO 大頭照 + 拿掉標點 + 華麗精緻風
+  const avatarUrl = "https://xiaomeng-fortune.onrender.com/assets/welcome-avatar.png";
   return flexMessage("歡迎來到小夢 Fortune Platform", {
     type: "bubble",
     size: "mega",
     body: {
       type: "box",
       layout: "vertical",
-      spacing: "md",
+      spacing: "lg",
       backgroundColor: "#0D0718",
       contents: [
+        {
+          type: "image",
+          url: avatarUrl,
+          size: "sm",
+          align: "center",
+          margin: "lg",
+          aspectRatio: "1:1",
+          aspectMode: "circle",
+        },
         {
           type: "text",
           text: "歡迎來到",
@@ -392,14 +402,16 @@ function welcomeFlexMessage() {
         },
         {
           type: "text",
-          text: "今晚,",
-          size: "md",
+          text: "今晚",
+          size: "lg",
+          weight: "bold",
           color: "#FFF5D8",
           align: "center",
+          margin: "md",
         },
         {
           type: "text",
-          text: "也許宇宙正準備給你一個答案。",
+          text: "也許宇宙正準備給你一個答案",
           size: "md",
           color: "#FFF5D8",
           align: "center",
@@ -407,32 +419,58 @@ function welcomeFlexMessage() {
         },
         {
           type: "separator",
-          margin: "lg",
+          margin: "xl",
           color: "#5C4570",
         },
         {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          margin: "md",
+          paddingAll: "16px",
+          backgroundColor: "#1F0F32",
+          borderColor: "#F5D38B",
+          borderWidth: "1px",
+          cornerRadius: "12px",
+          contents: [
+            {
+              type: "text",
+              text: "🎁 新朋友專屬禮遇",
+              size: "sm",
+              weight: "bold",
+              color: "#F5D38B",
+            },
+            {
+              type: "text",
+              text: "✨ 50 靈性積分",
+              size: "sm",
+              color: "#FFF5D8",
+              margin: "sm",
+            },
+            {
+              type: "text",
+              text: "✨ 三大系統首次免費體驗",
+              size: "sm",
+              color: "#FFF5D8",
+            },
+          ],
+        },
+        {
           type: "text",
-          text: "🎁 新朋友專屬禮遇",
+          text: "請點擊下方【小夢選單】",
+          size: "xs",
+          color: "#C9B88A",
+          margin: "xl",
+          align: "center",
+        },
+        {
+          type: "text",
+          text: "開始今晚的探索",
           size: "sm",
           weight: "bold",
           color: "#F5D38B",
-          margin: "md",
-        },
-        {
-          type: "text",
-          text: "✨ 50 靈性積分\n✨ 三大系統首次免費體驗",
-          size: "sm",
-          color: "#FFF5D8",
-          wrap: true,
-        },
-        {
-          type: "text",
-          text: "請點擊下方【小夢選單】\n開始今晚的探索。",
-          size: "xs",
-          color: "#C9B88A",
-          margin: "lg",
           align: "center",
-          wrap: true,
+          margin: "sm",
         },
       ],
     },
