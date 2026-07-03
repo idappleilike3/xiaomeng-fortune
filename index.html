@@ -648,12 +648,19 @@
           <div class="membership-bar">
             <p class="membership-bar__label">會員等級</p>
             <div class="membership-bar__tiers">
-              <span class="tier-chip tier-free" data-tier="free">免費體驗</span>
+              <span class="tier-chip tier-free" data-tier="free">
+                <span class="tier-chip__label">免費體驗</span>
+                <span class="tier-chip__price">NT$ 0</span>
+              </span>
               <span class="tier-chip tier-member" data-tier="member">
-                <span class="lock-icon" aria-hidden="true">🔒</span> 尊榮會員
+                <span class="lock-icon" aria-hidden="true">🔒</span>
+                <span class="tier-chip__label">尊榮會員</span>
+                <span class="tier-chip__price">NT$ 399 / 月</span>
               </span>
               <span class="tier-chip tier-premium" data-tier="premium">
-                <span class="lock-icon" aria-hidden="true">🔐</span> 殿堂大師
+                <span class="lock-icon" aria-hidden="true">🔐</span>
+                <span class="tier-chip__label">殿堂大師</span>
+                <span class="tier-chip__price">NT$ 999 / 月</span>
               </span>
             </div>
             <p class="membership-bar__hint">本單滿 $599 可使用 50 積分折抵</p>
@@ -761,31 +768,77 @@
           <p>每一份牌意都是引子,真正的轉化發生在日常的微小選擇。<br/>以下聖物由小夢老師親自調頻選品,陪你走過星軌的下一段路。</p>
         </div>
 
-        <div class="unlock-grid" aria-label="付費解鎖方案">
-          <article class="unlock-card">
+        <div class="unlock-grid" aria-label="付費解鎖方案(2026-07-04 統整)">
+          <article class="unlock-card" data-unlock="free">
             <span class="product-tag">免費</span>
-            <h3>簡易解析</h3>
-            <strong>$0</strong>
-            <p>提供牌名、籤號、正逆位、簡短提醒與一個注意事項,適合第一次體驗。</p>
+            <h3>免費體驗</h3>
+            <strong>NT$ 0</strong>
+            <p>新名字取代舊「簡易解析」。提供牌名、籤號、正逆位、簡短提醒與一個注意事項,適合第一次體驗神殿。</p>
             <button class="panel-button" type="button" data-unlock="free">查看免費內容</button>
             <a href="#" class="share-viral-link" data-viral-source="unlock-free">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
-          <article class="unlock-card featured">
-            <span class="product-tag">推薦</span>
-            <h3>單次深度解析</h3>
-            <strong>$99</strong>
-            <p>延伸感情、工作、財運、未來 14 到 30 天走勢、阻礙來源與下一步行動。</p>
-            <button class="panel-button" type="button" data-unlock="single">現金消費解鎖</button>
-            <p class="unlock-discount-hint">🔒 本單滿 $599 可使用 50 靈性積分折抵</p>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-single">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
+          <article class="unlock-card featured" data-unlock="tarot">
+            <span class="product-tag">單次</span>
+            <h3>命運塔羅</h3>
+            <strong>NT$ 99</strong>
+            <p>單次深度靈性解讀,延伸感情 / 工作 / 財運、未來 14-30 天走勢、阻礙來源與下一步行動。</p>
+            <button class="panel-button" type="button" data-unlock="tarot">現金消費解鎖</button>
+            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-tarot">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
           </article>
-          <article class="unlock-card">
-            <span class="product-tag">點數</span>
-            <h3>靈感點數包</h3>
-            <strong>300 點</strong>
-            <p>適合常回來抽牌、求籤、看週運的人。每次深度解析可扣點,不必每次付款。</p>
-            <button class="panel-button" type="button" data-unlock="points">查看點數制</button>
-            <a href="#" class="share-viral-link" data-viral-source="unlock-points">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
+          <article class="unlock-card" data-unlock="love">
+            <span class="product-tag">單次</span>
+            <h3>感情關係</h3>
+            <strong>NT$ 199</strong>
+            <p>專注於感情面向的深度靈性解讀,涵蓋曖昧 / 交往 / 復合 / 婚姻 / 靈魂契合度。</p>
+            <button class="panel-button" type="button" data-unlock="love">現金消費解鎖</button>
+            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-love">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
+          </article>
+          <article class="unlock-card" data-unlock="wealth">
+            <span class="product-tag">單次</span>
+            <h3>財富豐盛</h3>
+            <strong>NT$ 199</strong>
+            <p>專注於財富面向的深度靈性解讀,涵蓋事業 / 偏財 / 投資 / 豐盛心態 / 阻礙來源。</p>
+            <button class="panel-button" type="button" data-unlock="wealth">現金消費解鎖</button>
+            <p class="unlock-discount-hint">🔒 本單滿 NT$ 599 可使用 50 靈性積分折抵 NT$ 50</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-wealth">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
+          </article>
+          <article class="unlock-card unlock-card--subscription" data-unlock="member">
+            <span class="product-tag">訂閱</span>
+            <h3>尊榮會員</h3>
+            <strong>NT$ 399 <small>/ 月</small></strong>
+            <p>解鎖毛孩心語全情境、22 張大阿爾克那深度解讀、每日簽到 +5 靈性積分、週運勢提醒。</p>
+            <button class="panel-button" type="button" data-unlock="member">訂閱尊榮</button>
+            <p class="unlock-discount-hint">🌙 月訂自動續訂,隨時可取消</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-member">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
+          </article>
+          <article class="unlock-card unlock-card--subscription unlock-card--featured" data-unlock="premium">
+            <span class="product-tag">主推</span>
+            <h3>殿堂大師</h3>
+            <strong>NT$ 999 <small>/ 月</small></strong>
+            <p>解鎖全部 8 個高階功能(星盤 / 靈數 / 流年 / 命盤 / 深夜靈性來信 / 市集 / 會員 / 設定)、神殿深處完整儀式、每週 1 次免費大師券。</p>
+            <button class="panel-button" type="button" data-unlock="premium">訂閱殿堂</button>
+            <p class="unlock-discount-hint">👑 小夢老師最推薦的方案 · 完整守護</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-premium">✨ 邀請好友一同加入,共同累積 50 靈性積分獎勵 ➔</a>
+          </article>
+          <article class="unlock-card unlock-card--special" data-unlock="master">
+            <span class="product-tag">一次性</span>
+            <h3>大師調頻券</h3>
+            <strong>NT$ 3,600</strong>
+            <p>一次性深度大師調頻,包含 3 次深度靈性解讀 + 1 次一對一命盤諮詢。適合重大抉擇或人生轉折點。</p>
+            <button class="panel-button" type="button" data-unlock="master">迎請大師券</button>
+            <p class="unlock-discount-hint">✨ 一年內皆可使用,不限本人</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-master">✨ 靈性點數不夠？點擊分享好友立刻免費領取 50 積分 ➔</a>
+          </article>
+          <article class="unlock-card unlock-card--seasonal" data-unlock="seasonal">
+            <span class="product-tag">節日限定</span>
+            <h3>節日限定流年</h3>
+            <strong>NT$ 599</strong>
+            <p>春節 / 七夕 / 跨年三大節氣限定流年解析,涵蓋未來一年走勢、關鍵月份、貴人時機。</p>
+            <button class="panel-button" type="button" data-unlock="seasonal" disabled>即將開放</button>
+            <p class="unlock-discount-hint">🌸 春節檔 · 七夕檔 · 跨年檔(僅節氣前 30 天開放)</p>
+            <a href="#" class="share-viral-link" data-viral-source="unlock-seasonal">✨ 搶先追蹤小夢神殿取得最新消息 ➔</a>
           </article>
         </div>
 
