@@ -1498,7 +1498,103 @@ const server = createServer(async (request, response) => {
     }
     jsonResponse(response, 500, { ok: false, error: "Internal server error" });
   }
-});
+
+  // ============================================================
+  // 2026-07-04 07:42 F22 神殿舞台 AI 打字機解讀(SSE Streaming)
+  // ============================================================
+  if (request.url.startsWith("/api/divination/stream") && request.method === "POST") {
+    try {
+      const payload = await readJsonBody(request);
+      const card = payload.card || {};
+      const theme = payload.theme || "love";
+      const question = payload.question || "";
+
+      // 載入 F22 解讀模組(動態 import)
+      const f22 = require("./lib/f22-reading.js");
+      const reading = f22.generateF22Reading(card, theme, question);
+
+      // SSE headers
+      response.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+      });
+
+      const sections = [
+        { type: "coreMessage", label: "核心訊息", text: reading.coreMessage },
+        { type: "currentSituation", label: "現況解析", text: reading.currentSituation },
+        { type: "suggestion", label: "建議方向", text: reading.suggestion },
+        { type: "blessing", label: "今日祝福", text: reading.blessing },
+      ];
+
+      // 流式推送(模擬 AI 打字:每 25ms 一個字元)
+      const send = (event, data) => {
+        response.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+      };
+
+      send("start", { card: card.name || "未命名", theme });
+
+      for (const section of sections) {
+        send("section-start", { type: section.type, label: section.label });
+        for (const ch of section.text) {
+          send("char", { type: section.type, char: ch });
+          // 稍微 delay 模擬打字(每字元 8ms,讓前端能接到)
+          await new Promise((r) => setTimeout(r, 8));
+        }
+        send("section-end", { type: section.type });
+        // 每段間隔 200ms
+        await new Promise((r) => setTimeout(r, 200));
+      }
+
+      send("done", { ok: true });
+      response.end();
+    } catch (e) {
+      console.error("[/api/divination/stream] error:", e);
+      try {
+        response.writeHead(500, { "Content-Type": "text/event-stream" });
+        response.write(`event: error\ndata: ${JSON.stringify({ error: String(e) })}\n\n`);
+        response.end();
+      } catch (_) {}
+    }
+    return;
+  }
+
+  // ============================================================
+  // 2026-07-04 07:42 F22 收藏命運紀錄
+  // ============================================================
+  if (request.url === "/api/divination/favorite" && request.method === "POST") {
+    try {
+      const payload = await readJsonBody(request);
+      const favorite = {
+        id: `fav-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        userId: payload.userId || "demo-member-001",
+        cardName: payload.cardName || "",
+        cardImage: payload.cardImage || "",
+        question: payload.question || "",
+        reading: payload.reading || {},
+        favoritedAt: new Date().toISOString(),
+      };
+
+      // 簡化:儲存在 in-memory,真實應寫 Supabase
+      if (!appData.favorites) appData.favorites = [];
+      appData.favorites.unshift(favorite);
+
+      jsonResponse(response, 200, { ok: true, favorite });
+    } catch (e) {
+      jsonResponse(response, 500, { ok: false, error: String(e) });
+    }
+    return;
+  }
+
+  // ============================================================
+  // 2026-07-04 07:42 F22 取得我的收藏
+  // ============================================================
+  if (request.url.startsWith("/api/divination/favorites") && request.method === "GET") {
+    if (!appData.favorites) appData.favorites = [];
+    jsonResponse(response, 200, { ok: true, favorites: appData.favorites.slice(0, 20) });
+    return;
+  }
 
 server.listen(port, () => {
   console.log(`小夢老師網站：http://localhost:${port}`);

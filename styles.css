@@ -8645,3 +8645,14 @@ a:focus-visible {
   letter-spacing: 0.05em;
 }
 /* === END New Tarot Deck v3.0 === */
+
+/* === F22 神殿舞台 4 段深度解讀(2026-07-04 07:42 新增) === */
+.f22-reading { margin-top: 32px; padding: 0 12px; }
+.f22-section { background: rgba(25, 20, 46, 0.6); border: 1px solid rgba(245, 211, 139, 0.25); border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; backdrop-filter: blur(8px); }
+.f22-section__label { color: #f5d38b; font-size: 14px; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px; }
+.f22-section__text { color: #fff5d8; font-size: 15px; line-height: 1.85; white-space: pre-wrap; min-height: 24px; }
+.f22-section__text::after { content: " ▎\; color: #f5d38b; animation: cursorPulse 1s infinite; margin-left: 2px; }
+.f22-section[data-typing=\done\] .f22-section__text::after { content: \\; }
+.f22-ritual-complete { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; padding: 16px; }
+.f22-ritual-complete button { display: inline-flex; align-items: center; gap: 8px; }
+.f22-ritual-status { text-align: center; color: #f5d38b; font-size: 14px; margin-top: 12px; }

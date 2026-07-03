@@ -220,7 +220,7 @@
         </form>
       </section>
 
-      <section id="demo" class="demo-section demo-ritual" hidden>
+      <section id="demo" class="demo-section demo-ritual">
           <div class="new-tarot-deck" hidden>
             <p class="eyebrow">22 Major Arcana · 新版塔羅牌(小夢神殿 v3.0)</p>
             <h2>選擇今晚為你指路的那一張大阿爾克那</h2>
@@ -675,7 +675,38 @@
               </div>
               <div class="holographic-overlay" data-atropos-layer="front" data-atropos-offset="30" aria-hidden="true"></div>
             </div>
-            <div class="result-actions">
+            <!-- F22 4 段深度解讀(打字機效果)2026-07-04 新增 -->
+            <div class="f22-reading" id="f22Reading" hidden>
+              <div class="f22-section" data-section="coreMessage">
+                <p class="f22-section__label">✨ 核心訊息</p>
+                <p class="f22-section__text" id="f22CoreMessage"></p>
+              </div>
+              <div class="f22-section" data-section="currentSituation">
+                <p class="f22-section__label">🌙 現況解析</p>
+                <p class="f22-section__text" id="f22CurrentSituation"></p>
+              </div>
+              <div class="f22-section" data-section="suggestion">
+                <p class="f22-section__label">💫 建議方向</p>
+                <p class="f22-section__text" id="f22Suggestion"></p>
+              </div>
+              <div class="f22-section" data-section="blessing">
+                <p class="f22-section__label">🌟 今日祝福</p>
+                <p class="f22-section__text" id="f22Blessing"></p>
+              </div>
+            </div>
+            <!-- F22 儀式完成按鈕(收藏 + 分享) -->
+            <div class="f22-ritual-complete" id="f22RitualComplete" hidden>
+              <button class="ritual-cta ritual-cta--secondary" id="f22FavoriteBtn" type="button">
+                <span class="f22-btn__icon">📖</span>
+                <span class="f22-btn__text">收藏命運紀錄</span>
+              </button>
+              <button class="ritual-cta ritual-cta--secondary" id="f22ShareBtn" type="button">
+                <span class="f22-btn__icon">💌</span>
+                <span class="f22-btn__text">分享今日祝福</span>
+              </button>
+              <p class="f22-ritual-status" id="f22RitualStatus" hidden></p>
+            </div>
+            <div class="result-actions" hidden>
               <button class="ritual-cta ritual-cta--secondary" id="viewFullBtn" type="button">查看完整解讀</button>
               <button class="ritual-cta ritual-cta--secondary" id="bookSessionBtn" type="button">預約深度占卜</button>
             </div>
@@ -1258,6 +1289,7 @@
     <script src="./lib/l2-topics.js" defer></script>
     <script type="module" src="./script.js"></script>
     <script type="module" src="./pet-data.js"></script>
+    <script src="./lib/f22-client.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.js"></script>
   </body>
 </html>
