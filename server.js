@@ -1089,6 +1089,11 @@ function buildReplyMessages(event) {
     return [textMessage(`命運市集已開啟：\n${liffPageUrl("market")}\n\n這裡可以放聯盟商品、追蹤點擊、導向合作品牌。`)];
   }
 
+  // 重新觸發歡迎詞(對齊 LINE_SYSTEM §3.2 v3.1 Rich Menu 第 6 格 + §1.1)
+  if (text === "歡迎詞" || text === "重新觸發歡迎詞" || text === "加入小夢") {
+    return [welcomeFlexMessage()];
+  }
+
   return [menuFlexMessage()];
 }
 

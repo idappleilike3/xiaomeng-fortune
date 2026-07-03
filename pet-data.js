@@ -1,8 +1,13 @@
-// pet-data.js — 毛孩心語 · 22 張動物大師卡
+// pet-data.js v2.0 — 毛孩心語 · 22 張動物大師卡
 // 對齊 BRAND_BIBLE §0 命名公約(小夢神殿 / 深度靈性解讀,不使用 AI/演算法/機器人)
 // 對齊 LINE_SYSTEM §6 首次免費規則(僅 1 次)
 // 22 張圖檔位置:assets/pet-{00-21}-{animal}-{arcana}.png
 // 圖檔已備齊(2026-07-04 確認:pet-19-stag-judgement.png / pet-20-whale-aeon.png / pet-21-turtle-world.png)
+//
+// v2.0 更新(2026-07-04 05:30):
+//   - 補齊 4 個情境:behavior(行為理解) / newmember(新成員迎接) / health(健康能量) / celebration(生命禮讚)
+//   - 完整情境 7 個:daily / relationship / behavior / newmember / health / grief / celebration
+//   - 完整 prompt 見 lib/prompts/pet-divination.md(深度解析排版工具)
 
 export const petCards = [
   {
@@ -17,7 +22,11 @@ export const petCards = [
     situation: {
       daily: '今天適合給 {{petName}} 一個全新的小驚喜,一個新的玩具或一段沒走過的路。',
       relationship: '{{petName}} 正在學習如何與 {{otherPet}} 共處,給牠們一點時間。',
+      behavior: '{{petName}} 的調皮不是搗蛋,是對新世界的好奇,給牠一個安全的小角落探索。',
+      newmember: '{{petName}} 剛到家,讓牠自己決定什麼時候靠近你,不要強迫。',
+      health: '{{petName}} 的純真能量是最好的療癒,今天陪牠玩 20 分鐘就好。',
       grief: '{{petName}} 雖然離開了,但牠把最純真的愛留在你心裡。',
+      celebration: '今天是 {{petName}} 來到家裡的紀念日,謝謝牠選擇了你。',
     },
   },
   {
@@ -32,7 +41,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會主動找你玩,記得回應牠的邀請。',
       relationship: '主動讓 {{petName}} 跟 {{otherPet}} 共同完成一個小任務(一起吃零食)。',
+      behavior: '{{petName}} 會自己「設計」遊戲,加入牠的規則,你負責當觀眾。',
+      newmember: '{{petName}} 會主動展示家裡的規矩,讓新來的 {{otherPet}} 看懂。',
+      health: '{{petName}} 的活力需要出口,給牠一個會動的玩具。',
       grief: '你可以為 {{petName}} 寫一封信,把沒說完的話寫下來。',
+      celebration: '{{petName}} 學會了一個新把戲,一起慶祝牠的小進步。',
     },
   },
   {
@@ -47,7 +60,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 會主動找你抱抱,這是牠的「能量下載」。',
       relationship: '安靜觀察 {{petName}} 與 {{otherPet}} 的互動,你會發現牠們的默契。',
+      behavior: '{{petName}} 的安靜不是冷漠,牠可能在「觀察」環境,給牠時間。',
+      newmember: '讓 {{petName}} 先觀察 {{otherPet}} 幾天,不要急著讓牠們靠近。',
+      health: '{{petName}} 的安靜可能是身體在自我修復,留意進食狀況。',
       grief: '{{petName}} 留下的靜謐,是給你最大的禮物。',
+      celebration: '跟 {{petName}} 一起靜靜看窗外,這就是最珍貴的慶祝。',
     },
   },
   {
@@ -62,7 +79,11 @@ export const petCards = [
     situation: {
       daily: '適合買 {{petName}} 一份新鮮的小點心。',
       relationship: '{{petName}} 會主動照顧 {{otherPet}},讓牠們有共處的時間。',
+      behavior: '{{petName}} 用磨蹭、舔你來表達愛,接受這些小動作。',
+      newmember: '{{petName}} 像媽媽一樣會照顧新來的 {{otherPet}},觀察牠的母性。',
+      health: '{{petName}} 的食慾是健康的指標,留意牠的進食狀況。',
       grief: '{{petName}} 曾給你的滋養,不會因為離開而消失。',
+      celebration: '今天給 {{petName}} 一個營養豐盛的大餐,慶祝牠的到來。',
     },
   },
   {
@@ -77,7 +98,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會守在某個定點(可能是門口或窗邊),留意家裡的動靜。',
       relationship: '{{petName}} 會主動保護較小的 {{otherPet}},讓牠有被照顧的感覺。',
+      behavior: '{{petName}} 的警戒行為(吠叫)是守護的天性,不要責備,先確認安全。',
+      newmember: '{{petName}} 會主動「審查」新來的 {{otherPet}},給牠幾天時間。',
+      health: '{{petName}} 的活力是健康的指標,留意是否有突然的活動力下降。',
       grief: '{{petName}} 守護你的那段時間,是你最安全的時光。',
+      celebration: '讓 {{petName}} 當一天的家長,決定全家人的作息。',
     },
   },
   {
@@ -92,7 +117,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 的每日散步路線是神聖的儀式,別臨時改變。',
       relationship: '讓 {{petName}} 帶領 {{otherPet}} 認識家裡的規矩。',
+      behavior: '{{petName}} 的固執是因為牠有自己的一套邏輯,理解後調整,不要強迫。',
+      newmember: '{{petName}} 會教 {{otherPet}} 家裡的「規矩」,這是好的。',
+      health: '{{petName}} 的固定作息是健康指標,突然改變要留意。',
       grief: '{{petName}} 教會你的「日常儀式感」,會繼續陪著你。',
+      celebration: '延續 {{petName}} 的傳統儀式,即使牠離開了。',
     },
   },
   {
@@ -107,7 +136,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會比平常更黏你,這是牠的「靈魂告白」。',
       relationship: '{{petName}} 跟 {{otherPet}} 的關係正在進入新階段,留意牠們的肢體語言。',
+      behavior: '{{petName}} 用「形影不離」表達愛,接受這份熱情。',
+      newmember: '{{petName}} 會選一個位置「靠近」新來的 {{otherPet}},這是接納的開始。',
+      health: '{{petName}} 的情感滿足度影響健康,給牠足夠的陪伴時間。',
       grief: '{{petName}} 選擇了你,這是這輩子最珍貴的緣分。',
+      celebration: '今天對 {{petName}} 說「我愛你」,讓牠感受被選擇的溫暖。',
     },
   },
   {
@@ -122,7 +155,11 @@ export const petCards = [
     situation: {
       daily: '今天適合跟 {{petName}} 一起跑步或快走 20 分鐘。',
       relationship: '{{petName}} 跟 {{otherPet}} 可能會有追逐遊戲,這是健康的能量流動。',
+      behavior: '{{petName}} 的破壞行為常常是能量沒出口,給牠足夠運動。',
+      newmember: '{{petName}} 會主動跟新來的 {{otherPet}} 玩追逐,這是好的破冰。',
+      health: '{{petName}} 的活動力下降要留意,可能是健康警訊。',
       grief: '{{petName}} 衝刺的姿態,會永遠留在你腦海裡。',
+      celebration: '帶 {{petName}} 去一個新地方探險,慶祝你們的活力。',
     },
   },
   {
@@ -137,7 +174,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會在某個角落靜靜守護你,留意牠的位置。',
       relationship: '{{petName}} 對 {{otherPet}} 展現的是柔韌的包容,值得你學習。',
+      behavior: '{{petName}} 的溫柔表達(蹭腳、舔手)是信任的展現,接受就好。',
+      newmember: '{{petName}} 不會急著接近新來的 {{otherPet}},這是溫柔的界線。',
+      health: '{{petName}} 的穩定食慾是健康指標,留意突然的改變。',
       grief: '{{petName}} 給你的勇氣,會陪你走過接下來的每一天。',
+      celebration: '今天靜靜抱著 {{petName}},感謝牠的溫柔力量。',
     },
   },
   {
@@ -152,7 +193,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會躲在衣櫥或沙發下,這是正常的「隱者時間」。',
       relationship: '讓 {{petName}} 跟 {{otherPet}} 有各自的空間。',
+      behavior: '{{petName}} 躲起來不是怕生,是在「思考」,給牠空間。',
+      newmember: '給 {{petName}} 一個安全的「隱居角落」,讓牠有地方躲。',
+      health: '{{petName}} 過度躲藏可能是壓力或身體不適,留意整體狀態。',
       grief: '給自己一段「隱者時間」,懷念 {{petName}}。',
+      celebration: '今天讓 {{petName}} 獨處一下,這也是尊重。',
     },
   },
   {
@@ -167,7 +212,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會比平常安靜或活潑,都是正常的週期變化。',
       relationship: '{{petName}} 跟 {{otherPet}} 的關係可能進入新循環,給時間。',
+      behavior: '{{petName}} 的行為變化是季節性的,接受就好。',
+      newmember: '{{petName}} 需要時間適應新成員,這是正常的週期。',
+      health: '留意 {{petName}} 的季節性健康(換毛、換季過敏)。',
       grief: '生命的輪會一直轉,{{petName}} 會在轉動中與你相遇。',
+      celebration: '記錄 {{petName}} 一年來的變化,這就是慶祝。',
     },
   },
   {
@@ -182,7 +231,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會在某個「奇怪」的位置休息,這是牠的創意。',
       relationship: '試著用 {{petName}} 的視角看 {{otherPet}}。',
+      behavior: '{{petName}} 的「奇怪行為」常常是另一種需求表達,試著換位思考。',
+      newmember: '{{petName}} 需要時間「倒過來看」新成員,給牠空間。',
+      health: '{{petName}} 的「倒吊」睡姿是舒適的表現,不用擔心。',
       grief: '換個視角懷念 {{petName}},會看到不同的美。',
+      celebration: '從 {{petName}} 的角度看家裡,會發現新風景。',
     },
   },
   {
@@ -197,7 +250,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會脫毛或脫皮,這是正常的能量更新。',
       relationship: '結束 {{petName}} 跟 {{otherPet}} 的一個舊模式,讓新關係開始。',
+      behavior: '{{petName}} 的「蛻皮」是成長,接受牠的變化。',
+      newmember: '{{petName}} 需要時間「蛻變」接受新成員,給時間。',
+      health: '蛻皮期留意 {{petName}} 的營養補充。',
       grief: '{{petName}} 的離開是靈魂的重生,牠在你心裡永遠活著。',
+      celebration: '紀念 {{petName}} 的每一次蛻變,這就是慶祝生命。',
     },
   },
   {
@@ -212,7 +269,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 的進食時間是固定的,跟著牠的節奏走。',
       relationship: '在 {{petName}} 跟 {{otherPet}} 之間取得平衡的陪伴時間。',
+      behavior: '{{petName}} 的穩定作息是「節制」的示範,學著跟著走。',
+      newmember: '平衡 {{petName}} 跟新 {{otherPet}} 的相處時間。',
+      health: '{{petName}} 的食量穩定是健康指標,留意突然變化。',
       grief: '{{petName}} 教會你的「平衡」,會繼續指引你的生活。',
+      celebration: '穩定地過每一天,就是最好的慶祝。',
     },
   },
   {
@@ -227,7 +288,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會調皮搗蛋,這是牠在表達「我需要關注」。',
       relationship: '{{petName}} 對 {{otherPet}} 可能有「地盤」意識,需要更多空間。',
+      behavior: '{{petName}} 的「壞行為」背後是需求,理解比責備更有效。',
+      newmember: '{{petName}} 可能會對新成員表現嫉妒,給牠額外的關注。',
+      health: '{{petName}} 的過度舔毛可能是壓力,留意整體狀況。',
       grief: '{{petName}} 那些「小毛病」,現在回想起來都是最可愛的回憶。',
+      celebration: '今天對 {{petName}} 寬容一點,接受牠的小怪癖。',
     },
   },
   {
@@ -242,7 +307,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天可能會大動作,把東西撥到地上,讓牠吧。',
       relationship: '{{petName}} 跟 {{otherPet}} 可能會有「小衝突」,冷靜一下就好。',
+      behavior: '{{petName}} 的突發行為常常是能量釋放,給牠安全的出口。',
+      newmember: '{{petName}} 可能會用「破壞」抗議新成員,給牠關注。',
+      health: '{{petName}} 突然的行為改變可能是健康警訊,留意。',
       grief: '{{petName}} 走後,家裡突然變安靜——這是另一種「塔」,需要時間重建。',
+      celebration: '在生活的「塔」崩塌後,你會找到新的慶祝方式。',
     },
   },
   {
@@ -257,7 +326,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會主動靠近你,讓你感受到溫暖。',
       relationship: '{{petName}} 是 {{otherPet}} 的「希望燈塔」,牠們會互相照耀。',
+      behavior: '{{petName}} 的「樂觀」行為感染整個家,讓環境更和諧。',
+      newmember: '{{petName}} 會用溫暖接納新成員,展現鳳凰的包容。',
+      health: '{{petName}} 的活力是療癒指標,持續保持。',
       grief: '{{petName}} 是你心裡那顆永遠的星星,不會熄滅。',
+      celebration: '在星空下抱著 {{petName}},這就是最美的慶祝。',
     },
   },
   {
@@ -272,7 +345,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 晚上會特別活躍,這是正常的「夜間能量」。',
       relationship: '{{petName}} 跟 {{otherPet}} 晚上會組成「小狼群」,一起巡邏家裡。',
+      behavior: '{{petName}} 晚上的「嚎叫」是正常的溝通,不用太擔心。',
+      newmember: '{{petName}} 晚上會主動接近新成員,這是牠的真實面。',
+      health: '{{petName}} 夜間的躁動可能是健康警訊,留意。',
       grief: '夜晚想念 {{petName}} 時,看月亮就好。',
+      celebration: '在月光下跟 {{petName}} 散步,慶祝夜的美。',
     },
   },
   {
@@ -287,7 +364,11 @@ export const petCards = [
     situation: {
       daily: '今天帶 {{petName}} 去曬曬太陽,20 分鐘就好。',
       relationship: '{{petName}} 跟 {{otherPet}} 會在陽光下一起「日光浴」。',
+      behavior: '{{petName}} 的開朗行為感染全家,讓環境更溫暖。',
+      newmember: '{{petName}} 會用「陽光」般的熱情歡迎新成員。',
+      health: '{{petName}} 的活力與食慾是健康的雙指標。',
       grief: '想起 {{petName}} 時,溫暖就是想念最美的樣子。',
+      celebration: '今天帶 {{petName}} 去野餐,慶祝你們的快樂。',
     },
   },
   {
@@ -302,7 +383,11 @@ export const petCards = [
     situation: {
       daily: '{{petName}} 今天會在你身邊安靜地待著,讓你感受到「被接納」。',
       relationship: '{{petName}} 對 {{otherPet}} 的接納是無條件的,跟著牠學。',
+      behavior: '{{petName}} 用溫柔的眼神「審判」你的情緒,給你平靜的力量。',
+      newmember: '{{petName}} 會用「覺醒」般的智慧判斷新成員是否可信。',
+      health: '{{petName}} 的「覺醒」能量有助於你的身心健康。',
       grief: '原諒自己當時沒有做到的一切 — {{petName}} 已經原諒你了。',
+      celebration: '今天是一個「新生」的日子,謝謝 {{petName}} 喚醒你。',
     },
   },
   {
@@ -317,7 +402,11 @@ export const petCards = [
     situation: {
       daily: '今天想念 {{petName}} 時,閉眼感受胸口的溫熱,那就是牠。',
       relationship: '{{petName}} 跟 {{otherPet}} 的緣分也是永恆的,跨越生死。',
+      behavior: '{{petName}} 的「深沉」行為提醒你慢下來,感受生命。',
+      newmember: '{{petName}} 用永恆的靈魂指引新成員融入家庭。',
+      health: '{{petName}} 的「深沉」能量對你的健康有療癒作用。',
       grief: '{{petName}} 沒有離開,牠只是變成另一種形式,繼續陪伴你。',
+      celebration: '紀念 {{petName}} 的「永恆」,每年這一天都是慶祝。',
     },
   },
   {
@@ -332,7 +421,11 @@ export const petCards = [
     situation: {
       daily: '今天跟 {{petName}} 一起完成一個「小儀式」:一個抱抱、一個散步、一頓飯。',
       relationship: '{{petName}} 跟 {{otherPet}} 的故事,正在寫下圓滿的一頁。',
+      behavior: '{{petName}} 的「慢活」哲學教會你享受每一刻。',
+      newmember: '歡迎 {{otherPet}} 加入這個「世界」,跟 {{petName}} 一起圓滿。',
+      health: '{{petName}} 的長壽是祝福,珍惜每一天。',
       grief: '{{petName}} 的一生是完整的,你的悲傷也是完整的一部分。',
+      celebration: '今天慶祝你跟 {{petName}} 的「圓滿」旅程,謝謝彼此。',
     },
   },
 ];
@@ -340,18 +433,30 @@ export const petCards = [
 export const petSituationLabels = {
   daily: '日常陪伴',
   relationship: '關係探索',
+  behavior: '行為理解',
+  newmember: '新成員迎接',
+  health: '健康能量',
   grief: '離世悼念',
+  celebration: '生命禮讚',
 };
 
 export const petSystemMeta = {
   name: '毛孩心語',
   nameEn: 'Pet Divination',
   totalCards: 22,
-  situationCount: 3,
+  situationCount: 7,
+  situations: ['daily', 'relationship', 'behavior', 'newmember', 'health', 'grief', 'celebration'],
   requiredTier: 'member', // 尊榮會員限定
   freeForFirstTime: 1,
   freeExpiryDays: 7,
   promptsFile: 'lib/prompts/pet-divination.md',
   promptStyle: '深度解析排版工具',
-  note: '本系統使用 7 個情境的深度解析排版工具(日常陪伴 / 關係探索 / 行為理解 / 離世悼念 / 新成員迎接 / 健康能量 / 生命禮讚)',
+  version: '2.0.0',
+  versionDate: '2026-07-04',
+  notes: [
+    'v2.0 補齊 4 個情境:behavior / newmember / health / celebration',
+    '完整 7 個情境對齊 pet-divination.md',
+    '健康能量必加警語(深度解析排版工具層強制)',
+    '離世悼念必引導「代替{{petName}}回信」段落',
+  ],
 };

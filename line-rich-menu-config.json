@@ -4,14 +4,15 @@
     "height": 1686
   },
   "selected": true,
-  "name": "小夢神殿選單 v3",
+  "name": "小夢神殿選單 v3.1",
   "chatBarText": "小夢神殿",
+  "comment": "v3.1 對齊 LINE_SYSTEM §3.2 命名公約(2026-07-04):label 全面對齊聖經;4/5/6 改 message action 對應 server.js 關鍵字",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "命運塔羅",
+        "label": "命運之門 · 塔羅",
         "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=tarot&entry=liff"
       }
     },
@@ -19,7 +20,7 @@
       "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "毛孩心語",
+        "label": "寵物占卜 · 靈魂解碼",
         "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=pet&entry=liff"
       }
     },
@@ -27,32 +28,32 @@
       "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "今日神諭",
+        "label": "神諭訊息 · 今日祝福",
         "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=oracle&entry=liff"
       }
     },
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "命運市集",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=market&entry=liff"
+        "type": "message",
+        "label": "靈性收件匣 · 命運紀錄",
+        "text": "我的紀錄"
       }
     },
     {
       "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "我的收藏",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=favorites&entry=liff"
+        "type": "message",
+        "label": "靈性收益 · 50 積分",
+        "text": "靈性積分"
       }
     },
     {
       "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "大師調頻",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?page=master&entry=liff"
+        "type": "message",
+        "label": "加入小夢 · 歡迎詞",
+        "text": "歡迎詞"
       }
     }
   ]
