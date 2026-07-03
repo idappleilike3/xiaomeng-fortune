@@ -4137,6 +4137,7 @@ if (document.readyState === 'loading') {
 // - 特殊按鈕: 不同音色
 // =====================================================================
 (function uiSoundBootstrap() {
+  return; // 2026-07-04 06:46 老闆指示:全站音效拿掉
   const C = window.AudioContext || window.webkitAudioContext;
   if (!C) return;
 
