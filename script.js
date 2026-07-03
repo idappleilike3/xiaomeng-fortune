@@ -4920,8 +4920,9 @@ if (heroCta) {
 })();
 
 /* === Hero BGM v1.0 (2026-07-02 11:25) === */
-// Hero BGM 自動播放(對齊 8:10 老闆指示)
+// 2026-07-04 06:49 老闆指示:首頁音樂播放拿掉,整個 IIFE 停用
 (function() {
+  return;
   const AUDIO_SRC = "assets/hero-bgm-mystical.mp3";
   const VOLUME = 0.25;
   let audio = null;
@@ -5064,7 +5065,9 @@ if (heroCta) {
 
 
 // === BGM Player v1.0(對齊老闆 20:58 指示:右上,3 首切換,play/pause)===
+// 2026-07-04 06:49 老闆指示:首頁音樂播放拿掉,整個 IIFE 停用
 (function() {
+  return;
   const TRACKS = {
     mystical: { src: 'assets/hero-bgm-mystical.mp3', label: '神聖神殿' },
     cosmic:   { src: 'assets/hero-bgm-cosmic.mp3',   label: '宇宙蒼穹' },
