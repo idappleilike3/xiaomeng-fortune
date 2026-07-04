@@ -1509,10 +1509,6 @@ const server = createServer(async (request, response) => {
       const theme = payload.theme || "love";
       const question = payload.question || "";
 
-      // 載入 F22 解讀模組(動態 import)
-      const f22 = require("./lib/f22-reading.js");
-      const reading = f22.generateF22Reading(card, theme, question);
-
       // SSE headers
       response.writeHead(200, {
         "Content-Type": "text/event-stream",
@@ -1521,38 +1517,108 @@ const server = createServer(async (request, response) => {
         "X-Accel-Buffering": "no",
       });
 
-      const sections = [
-        { type: "coreMessage", label: "核心訊息", text: reading.coreMessage },
-        { type: "currentSituation", label: "現況解析", text: reading.currentSituation },
-        { type: "suggestion", label: "建議方向", text: reading.suggestion },
-        { type: "blessing", label: "今日祝福", text: reading.blessing },
-      ];
-
-      // 流式推送(模擬 AI 打字:每 25ms 一個字元)
       const send = (event, data) => {
-        response.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+        try { response.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`); } catch (_) {}
       };
 
-      send("start", { card: card.name || "未命名", theme });
+      send("start", { card: card.name || "未命名", theme, source: process.env.OPENAI_API_KEY ? "openai" : "local" });
 
-      for (const section of sections) {
-        send("section-start", { type: section.type, label: section.label });
-        for (const ch of section.text) {
-          send("char", { type: section.type, char: ch });
-          // 稍微 delay 模擬打字(每字元 8ms,讓前端能接到)
-          await new Promise((r) => setTimeout(r, 8));
+      // 優先用 OpenAI API(.env 有 OPENAI_API_KEY 才使用)
+      const openai = require("./lib/openai-stream.js");
+      const f22 = require("./lib/f22-reading.js");
+
+      let reading = null;
+      let usedOpenAI = false;
+
+      if (openai.hasKey()) {
+        // ===== 1. 優先用 OpenAI API 串接 =====
+        try {
+          let buffer = "";
+          const sectionLabels = {
+            "1": "核心訊息",
+            "2": "現況解析",
+            "3": "建議方向",
+            "4": "今日祝福",
+          };
+          let currentSection = null;
+          let sectionIndex = 0;
+
+          // OpenAI 可能不會嚴格分 4 段,所以用啟示詞引導
+          // 但因為需要分 4 段打字機,我們在 prompt 中要求 4 段並用 \n\n 分隔
+          await openai.streamCompletion({
+            card,
+            theme,
+            question,
+            onChunk: (delta) => {
+              buffer += delta;
+              // 識別段落切換(\n\n + 段落開頭關鍵字)
+              const sections = buffer.split(/\n\n+/);
+              // 推送新內容(逐字)
+              // 簡化:每收到一段就 section-start,接下來的字元都是該段
+              for (let i = currentSection; i < sections.length; i++) {
+                const sec = sections[i].trim();
+                if (!sec) continue;
+                // 識別段落
+                const m = sec.match(/^(核心訊息|現況解析|建議方向|今日祝福|流淌|你目前|建議你|願這)/);
+                if (m && i > sectionIndex) {
+                  sectionIndex = i;
+                  currentSection = (sectionIndex + 1).toString();
+                  // 移除開頭的標籤(如果有)
+                  const cleaned = sec.replace(/^(核心訊息|現況解析|建議方向|今日祝福)[:：]?\s*/, "");
+                  send("section-start", { type: `section${currentSection}`, label: sectionLabels[currentSection] || `段落 ${currentSection}` });
+                  // 推送本段已收到的字元
+                  for (const ch of cleaned) {
+                    send("char", { type: `section${currentSection}`, char: ch });
+                  }
+                } else if (currentSection) {
+                  // 同一段內繼續推送字元
+                  for (const ch of sec.slice(-delta.length)) {
+                    send("char", { type: `section${currentSection}`, char: ch });
+                  }
+                }
+              }
+            },
+          });
+          usedOpenAI = true;
+          send("done", { ok: true, source: "openai" });
+          response.end();
+          return;
+        } catch (openaiErr) {
+          console.error("[/api/divination/stream] OpenAI 失敗,fallback 到本地:", openaiErr.message);
+          send("warning", { message: "OpenAI 失敗,改用本地解讀" });
+          // 繼續走 fallback 路徑
         }
-        send("section-end", { type: section.type });
-        // 每段間隔 200ms
-        await new Promise((r) => setTimeout(r, 200));
       }
 
-      send("done", { ok: true });
-      response.end();
+      // ===== 2. Fallback:本地 lib/f22-reading.js =====
+      if (!usedOpenAI) {
+        reading = f22.generateF22Reading(card, theme, question);
+        const sections = [
+          { type: "coreMessage", label: "核心訊息", text: reading.coreMessage },
+          { type: "currentSituation", label: "現況解析", text: reading.currentSituation },
+          { type: "suggestion", label: "建議方向", text: reading.suggestion },
+          { type: "blessing", label: "今日祝福", text: reading.blessing },
+        ];
+
+        for (const section of sections) {
+          send("section-start", { type: section.type, label: section.label });
+          for (const ch of section.text) {
+            send("char", { type: section.type, char: ch });
+            await new Promise((r) => setTimeout(r, 8));
+          }
+          send("section-end", { type: section.type });
+          await new Promise((r) => setTimeout(r, 200));
+        }
+
+        send("done", { ok: true, source: "local" });
+        response.end();
+      }
     } catch (e) {
       console.error("[/api/divination/stream] error:", e);
       try {
-        response.writeHead(500, { "Content-Type": "text/event-stream" });
+        if (!response.headersSent) {
+          response.writeHead(500, { "Content-Type": "text/event-stream" });
+        }
         response.write(`event: error\ndata: ${JSON.stringify({ error: String(e) })}\n\n`);
         response.end();
       } catch (_) {}
