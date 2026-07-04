@@ -1662,6 +1662,21 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  // ============================================================
+  // 2026-07-04 09:05 F22 健康檢查(驗證 OpenAI 是否接上)
+  // ============================================================
+  if (request.url === "/api/divination/health" && request.method === "GET") {
+    const openai = require("./lib/openai-stream.js");
+    jsonResponse(response, 200, {
+      ok: true,
+      openai: openai.hasKey() ? "ready" : "fallback",
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      source: openai.hasKey() ? "openai" : "local-f22-reading",
+      ts: new Date().toISOString(),
+    });
+    return;
+  }
+
 server.listen(port, () => {
   console.log(`小夢老師網站：http://localhost:${port}`);
   console.log(`LINE Webhook URL：${publicBaseUrl}/api/line/webhook`);
