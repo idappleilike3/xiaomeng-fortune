@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { createReadStream, existsSync, readFileSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
 import { createServer } from "node:http";
 import { oracleFortunes } from "./oracle-data.js";
@@ -136,6 +136,14 @@ function loadEnvFile() {
 
 loadEnvFile();
 
+// 全域兜底 — 任何 async 內 catch 漏接的錯誤都不應拖死整個 server(Sprint 1.5 修)
+process.on("uncaughtException", (e) => {
+  console.error("[uncaughtException]", e && e.message ? e.message : e);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason && reason.message ? reason.message : reason);
+});
+
 const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET || "";
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
@@ -147,6 +155,13 @@ const ecpayConfig = {
   hashIv: process.env.ECPAY_HASH_IV || "",
   mode: process.env.ECPAY_MODE || "test",
 };
+
+// Dev mode 判斷(僅在本機/NODE_ENV=development 啟用,production 自動關閉)
+const isDev = (
+  process.env.NODE_ENV === "development" ||
+  (process.env.PUBLIC_BASE_URL || "").includes("localhost") ||
+  (process.env.PUBLIC_BASE_URL || "").includes("127.0.0.1")
+);
 
 const appData = {
   members: [
@@ -250,14 +265,33 @@ function verifyLineSignature(rawBody, signature) {
   return timingSafeEqual(expected, received);
 }
 
+// 注意:response.writeHead 只能呼叫一次,二次呼叫會丟 ERR_HTTP_HEADERS_SENT 拖死整個 server
+// 故 jsonResponse 改為冪等設計 — headersSent 之後改走 response.write + end,確保單一 request 錯誤不會 crash process
 function jsonResponse(response, statusCode, payload) {
-  response.writeHead(statusCode, {
-    "content-type": "application/json; charset=utf-8",
-    "access-control-allow-origin": "*",
-    "access-control-allow-methods": "GET,POST,OPTIONS",
-    "access-control-allow-headers": "content-type,x-line-signature",
-  });
-  response.end(JSON.stringify(payload));
+  const body = JSON.stringify(payload);
+  if (response.headersSent || response.writableEnded) {
+    try { response.write(body); } catch (_e) { /* swallow */ }
+    try { response.end(); } catch (_e) { /* swallow */ }
+    return;
+  }
+  try {
+    response.writeHead(statusCode, {
+      "content-type": "application/json; charset=utf-8",
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "access-control-allow-headers": "content-type,x-line-signature",
+    });
+  } catch (_e) {
+    // 已送出過 header 或是 socket 已關閉 → 改用直接寫入
+    try { response.write(body); } catch (__e) { /* swallow */ }
+    try { response.end(); } catch (__e) { /* swallow */ }
+    return;
+  }
+  try {
+    response.end(body);
+  } catch (_e) {
+    try { response.end(); } catch (__e) { /* swallow */ }
+  }
 }
 
 function textMessage(text) {
@@ -451,21 +485,27 @@ function welcomeFlexMessage() {
           contents: [
             {
               type: "text",
-              text: "🎁 新朋友專屬禮遇",
+              text: "🐾 首次神殿開門 · 價值 NT$3,600",
               size: "sm",
               weight: "bold",
               color: "#F5D38B",
             },
             {
               type: "text",
-              text: "✨ 50 靈性積分",
+              text: "✨ 50 靈性積分(首次加入獎勵)",
               size: "sm",
               color: "#FFF5D8",
               margin: "sm",
             },
             {
               type: "text",
-              text: "✨ 三大系統首次免費體驗",
+              text: "🐾 1 次萌寵神殿免費開門(限一次)",
+              size: "sm",
+              color: "#FFF5D8",
+            },
+            {
+              type: "text",
+              text: "🌟 萌寵靈魂神殿 10 張大師牌陣",
               size: "sm",
               color: "#FFF5D8",
             },
@@ -473,15 +513,16 @@ function welcomeFlexMessage() {
         },
         {
           type: "text",
-          text: "請點擊下方【小夢選單】",
+          text: "請點選下方【小夢神殿】→ 寵物占卜 · 靈魂解碼",
           size: "xs",
           color: "#C9B88A",
           margin: "xl",
           align: "center",
+          wrap: true,
         },
         {
           type: "text",
-          text: "開始今晚的探索",
+          text: "開啟你的第一次神殿儀式",
           size: "sm",
           weight: "bold",
           color: "#F5D38B",
@@ -1227,6 +1268,26 @@ function serveStatic(request, response) {
     return;
   }
 
+  // Sprint 1.5 QA fix: 拒絕敏感檔案(避免 .env 等 token 洩漏)
+  const sensitivePatterns = [/(?:^|[\\/])\.env(?:$|[\\/])/i, /(?:^|[\\/])_encoding_backup(?:[\\/]|$)/i, /(?:^|[\\/])\.git(?:[\\/]|$)/i];
+  if (sensitivePatterns.some(p => p.test(resolvedPath))) {
+    response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    response.end("Not found");
+    return;
+  }
+
+  // Sprint 1.5 QA fix: 拒絕目錄(避免 EISDIR crash)
+  try {
+    const stat = statSync(resolvedPath);
+    if (stat.isDirectory()) {
+      response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+      response.end("Not found");
+      return;
+    }
+  } catch (e) {
+    // statSync failed, fall through to readFile attempt which will fail safely
+  }
+
   const extension = extname(resolvedPath);
   response.writeHead(200, { "content-type": mimeTypes[extension] || "application/octet-stream" });
   createReadStream(resolvedPath).pipe(response);
@@ -1484,12 +1545,13 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === "GET") {
+    if (request.method === "GET" && !request.url.startsWith("/api/")) {
       serveStatic(request, response);
       return;
     }
 
-    jsonResponse(response, 405, { ok: false, error: "Method not allowed" });
+    // Sprint 1.5 修:不再於此 default 405 + return — 會讓後續 routes(在另一段 try-catch)永遠跑不到
+    // 改為不主動回應,讓 handler 落到下方 wrapping try,接著由 default-404 兜底。
   } catch (error) {
     console.error(error);
     if (error.statusCode === 400 && error.message === "INVALID_JSON") {
@@ -1497,8 +1559,14 @@ const server = createServer(async (request, response) => {
       return;
     }
     jsonResponse(response, 500, { ok: false, error: "Internal server error" });
+    return;
   }
-
+  // ============================================================
+  // Sprint 1.5 修:因為前半段 try block 有 default 405 return,
+  // 後續所有 routes 必須自行保護,並在最後提供兜底 default-404。
+  // 把所有後續 routes 全包進一個 try-catch,任何 match 失敗的 URL 才進 default-404。
+  // ============================================================
+  try {
   // ============================================================
   // 2026-07-04 07:42 F22 神殿舞台 AI 打字機解讀(SSE Streaming)
   // ============================================================
@@ -1677,7 +1745,335 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  // ============================================================
+  // 2026-07-05 Sprint 1.5 萌寵小夢神殿 API
+  // ============================================================
+  // 確保 appData.users 存在(LIFF 綁定會用到)
+  if (!appData.users) appData.users = [];
+  if (!appData.petMasterSessions) appData.petMasterSessions = [];
+
+  // 取得或建立使用者(以 lineUserId 為唯一鍵)
+  function getOrCreateUser(lineUserId) {
+    if (!lineUserId) return null;
+    let user = appData.users.find(u => u.lineUserId === lineUserId);
+    if (!user) {
+      user = {
+        lineUserId,
+        displayName: "毛孩家長",
+        pictureUrl: null,
+        bindAt: new Date().toISOString(),
+        points: 50, // 首次綁定獎勵
+        tier: "一般會員",
+        firstFree: { pet: null } // { used, usedAt, firstTempleResultId }
+      };
+      appData.users.push(user);
+    }
+    return user;
+  }
+
+  // POST /api/pet/temple/start — 建立萌寵神殿 session,抽 10 張牌
+  if (request.method === "POST" && request.url === "/api/pet/temple/start") {
+    try {
+      const payload = await readJsonBody(request);
+      const { lineUserId, petName, identity, questionType } = payload;
+      if (!lineUserId || !petName || !identity || !questionType) {
+        jsonResponse(response, 400, { ok: false, error: "MISSING_FIELDS", message: "請提供 lineUserId, petName, identity, questionType" });
+        return;
+      }
+      const user = getOrCreateUser(lineUserId);
+      if (!user) {
+        jsonResponse(response, 400, { ok: false, error: "INVALID_USER" });
+        return;
+      }
+      // 防重複領取免費
+      if (user.firstFree && user.firstFree.pet && user.firstFree.pet.used) {
+        jsonResponse(response, 200, {
+          ok: false,
+          error: "PET_FIRST_TEMPLE_ALREADY_USED",
+          message: "你已使用過萌寵神殿首次免費開門資格。如需再次占卜,請聯繫客服。",
+          usedAt: user.firstFree.pet.usedAt,
+          firstTempleResultId: user.firstFree.pet.firstTempleResultId
+        });
+        return;
+      }
+      // 載入抽牌邏輯
+      const { drawPetMasterTen, buildSessionSignature } = await import("./lib/pet-master-draw.js");
+      const tenCards = drawPetMasterTen();
+      const sessionId = buildSessionSignature(lineUserId, petName, identity, questionType);
+      const session = {
+        sessionId,
+        lineUserId,
+        petName,
+        identity,
+        questionType,
+        spreadType: "pet_master_10",
+        cards: tenCards,
+        firstTempleUnlocked: true,
+        secondTempleUnlocked: false,
+        createdAt: new Date().toISOString(),
+        completedAt: null,
+        resultId: null
+      };
+      appData.petMasterSessions.unshift(session);
+      jsonResponse(response, 200, {
+        ok: true,
+        sessionId,
+        cards: tenCards,
+        firstTempleCards: tenCards.slice(0, 5),
+        secondTempleCards: tenCards.slice(5, 10)
+      });
+    } catch (e) {
+      console.error("[/api/pet/temple/start]", e);
+      jsonResponse(response, 500, { ok: false, error: String(e.message || e) });
+    }
+    return;
+  }
+
+  // POST /api/pet/temple/get-card-reading — 取得單張牌短版解讀
+  if (request.method === "POST" && request.url === "/api/pet/temple/get-card-reading") {
+    try {
+      const payload = await readJsonBody(request);
+      const { sessionId, position } = payload;
+      if (!sessionId || !position) {
+        jsonResponse(response, 400, { ok: false, error: "MISSING_FIELDS" });
+        return;
+      }
+      const session = appData.petMasterSessions.find(s => s.sessionId === sessionId);
+      if (!session) {
+        jsonResponse(response, 404, { ok: false, error: "SESSION_NOT_FOUND" });
+        return;
+      }
+      // 只允許第一神殿(1-5)
+      if (position < 1 || position > 5) {
+        jsonResponse(response, 403, { ok: false, error: "POSITION_LOCKED", message: "第二神殿(6-10)為付費解鎖,本次 Sprint 1.5 不實作金流。" });
+        return;
+      }
+      const card = session.cards[position - 1];
+      const { getShortReading } = await import("./lib/pet-reading-data.js");
+      const reading = getShortReading(card.cardId, position);
+      jsonResponse(response, 200, {
+        ok: true,
+        position,
+        card,
+        reading,
+        isUnlocked: true
+      });
+    } catch (e) {
+      console.error("[/api/pet/temple/get-card-reading]", e);
+      jsonResponse(response, 500, { ok: false, error: String(e.message || e) });
+    }
+    return;
+  }
+
+  // POST /api/pet/temple/complete-first-temple — 標記第一神殿完成 + 標記 firstFree.pet
+  if (request.method === "POST" && request.url === "/api/pet/temple/complete-first-temple") {
+    try {
+      const payload = await readJsonBody(request);
+      const { sessionId } = payload;
+      if (!sessionId) {
+        jsonResponse(response, 400, { ok: false, error: "MISSING_SESSION_ID" });
+        return;
+      }
+      const session = appData.petMasterSessions.find(s => s.sessionId === sessionId);
+      if (!session) {
+        jsonResponse(response, 404, { ok: false, error: "SESSION_NOT_FOUND" });
+        return;
+      }
+      const user = getOrCreateUser(session.lineUserId);
+      if (!user) {
+        jsonResponse(response, 400, { ok: false, error: "INVALID_USER" });
+        return;
+      }
+      const resultId = `pet_${Date.now().toString(36)}_${Math.floor(Math.random() * 1000)}`;
+      session.completedAt = new Date().toISOString();
+      session.resultId = resultId;
+      // 標記 firstFree.pet
+      user.firstFree = user.firstFree || {};
+      user.firstFree.pet = {
+        used: true,
+        usedAt: new Date().toISOString(),
+        firstTempleResultId: resultId
+      };
+      jsonResponse(response, 200, {
+        ok: true,
+        resultId,
+        session,
+        message: "第一神殿已完成,首次免費資格已使用。"
+      });
+    } catch (e) {
+      console.error("[/api/pet/temple/complete-first-temple]", e);
+      jsonResponse(response, 500, { ok: false, error: String(e.message || e) });
+    }
+    return;
+  }
+
+  // GET /api/pet/temple/result/:resultId — 取得占卜結果
+  if (request.method === "GET" && request.url.startsWith("/api/pet/temple/result/")) {
+    try {
+      const resultId = request.url.replace("/api/pet/temple/result/", "");
+      const session = appData.petMasterSessions.find(s => s.resultId === resultId);
+      if (!session) {
+        jsonResponse(response, 404, { ok: false, error: "RESULT_NOT_FOUND" });
+        return;
+      }
+      const { getFirstTempleReadings, getSecondTempleStatus } = await import("./lib/pet-reading-data.js");
+      const cardIds = session.cards.map(c => c.cardId);
+      const firstTempleReadings = getFirstTempleReadings(cardIds);
+      const secondTempleStatus = getSecondTempleStatus(cardIds);
+      jsonResponse(response, 200, {
+        ok: true,
+        session: { ...session, firstTempleReadings, secondTempleStatus }
+      });
+      return;
+    } catch (e) {
+      console.error("[/api/pet/temple/result]", e && e.message);
+      if (!response.headersSent && !response.writableEnded) {
+        try { jsonResponse(response, 500, { ok: false, error: "Internal server error" }); } catch (_) {}
+      }
+      return;
+    }
+  }
+
+  // POST /api/pet/temple/check-first-free — 查詢使用者是否已用過首次免費
+  if (request.method === "POST" && request.url === "/api/pet/temple/check-first-free") {
+    try {
+      const payload = await readJsonBody(request);
+      const { lineUserId } = payload;
+      const user = getOrCreateUser(lineUserId);
+      if (!user) {
+        jsonResponse(response, 400, { ok: false, error: "INVALID_USER" });
+        return;
+      }
+      const used = !!(user.firstFree && user.firstFree.pet && user.firstFree.pet.used);
+      jsonResponse(response, 200, {
+        ok: true,
+        lineUserId,
+        firstFreePetUsed: used,
+        usedAt: used ? user.firstFree.pet.usedAt : null,
+        firstTempleResultId: used ? user.firstFree.pet.firstTempleResultId : null
+      });
+    } catch (e) {
+      console.error("[/api/pet/temple/check-first-free]", e);
+      jsonResponse(response, 500, { ok: false, error: String(e.message || e) });
+    }
+    return;
+  }
+
+  // ===== Dev-only endpoints(Sprint 1.5 D4-1,僅 isDev 啟用) =====
+
+  // POST /api/dev/reset-pet — 重置 firstFree.pet + 清除相關 sessions(本機測試用)
+  if (isDev && request.method === "POST" && request.url === "/api/dev/reset-pet") {
+    try {
+      const body = await readJsonBody(request);
+      const { lineUserId } = body || {};
+      if (!lineUserId) {
+        jsonResponse(response, 400, { ok: false, error: "MISSING_LINE_USER_ID", message: "請提供 lineUserId" });
+        return;
+      }
+      const user = appData.users.find(u => u.lineUserId === lineUserId);
+      let clearedFirstFree = false;
+      if (user && user.firstFree) {
+        const hadPet = !!(user.firstFree.pet && user.firstFree.pet.used);
+        user.firstFree.pet = null;
+        clearedFirstFree = hadPet;
+      }
+      const beforeCount = appData.petMasterSessions.length;
+      appData.petMasterSessions = appData.petMasterSessions.filter(s => s.lineUserId !== lineUserId);
+      const clearedSessions = beforeCount - appData.petMasterSessions.length;
+      jsonResponse(response, 200, {
+        ok: true,
+        lineUserId,
+        isDev: true,
+        clearedFirstFree,
+        clearedSessions,
+        message: clearedFirstFree || clearedSessions > 0
+          ? `已重置 ${lineUserId} 的萌寵神殿狀態`
+          : `${lineUserId} 本來就沒有萌寵神殿紀錄`
+      });
+    } catch (e) {
+      console.error("[/api/dev/reset-pet]", e);
+      jsonResponse(response, 500, { ok: false, error: String(e.message || e) });
+    }
+    return;
+  }
+
+  // GET /api/dev/status — 確認目前是否 dev 模式
+  if (isDev && request.method === "GET" && request.url === "/api/dev/status") {
+    jsonResponse(response, 200, {
+      ok: true,
+      isDev: true,
+      publicBaseUrl,
+      port,
+      envKeys: {
+        NODE_ENV: process.env.NODE_ENV || "",
+        PUBLIC_BASE_URL: process.env.PUBLIC_BASE_URL || "",
+        PORT: process.env.PORT || ""
+      },
+      availableDevEndpoints: [
+        "POST /api/dev/reset-pet",
+        "GET /api/dev/list-users",
+        "GET /api/dev/status",
+        "GET /__dev__.html"
+      ]
+    });
+    return;
+  }
+
+  // GET /api/dev/list-users — 列出所有使用者 + firstFree.pet 狀態(僅 dev)
+  if (isDev && request.method === "GET" && request.url === "/api/dev/list-users") {
+    const users = (appData.users || []).map((u) => {
+      const sessionCount = (appData.petMasterSessions || []).filter((s) => s.lineUserId === u.lineUserId).length;
+      return {
+        lineUserId: u.lineUserId,
+        firstFreePetUsed: !!(u.firstFree && u.firstFree.pet && u.firstFree.pet.used),
+        usedAt: u.firstFree && u.firstFree.pet ? u.firstFree.pet.usedAt : null,
+        firstTempleResultId: u.firstFree && u.firstFree.pet ? u.firstFree.pet.firstTempleResultId : null,
+        sessionCount
+      };
+    });
+    jsonResponse(response, 200, {
+      ok: true,
+      isDev: true,
+      count: users.length,
+      users
+    });
+    return;
+  }
+
+  } catch (e) {
+    console.error("[main-routes]", e && e.message);
+    if (!response.headersSent && !response.writableEnded) {
+      try { jsonResponse(response, 500, { ok: false, error: "Internal server error" }); } catch (_) {}
+    }
+  }
+
+  // 兜底:所有 routes 都沒 match 的情況(只對未送出 response 的 request 回 404)
+  if (!response.headersSent && !response.writableEnded) {
+    try {
+      if (request.method === "GET") {
+        // 不認識的 GET 路徑,走靜態檔案 fallback(若不存在會自己 404)
+        serveStatic(request, response);
+      } else {
+        jsonResponse(response, 404, { ok: false, error: "Not found" });
+      }
+    } catch (_e) { /* swallow */ }
+  }
+
+});
+
+// 額外保護:process-level error 監聽,避免任何未捕獲的 socket / parser 錯誤拖死 server
+server.on("clientError", (err, socket) => {
+  console.error("[server clientError]", err && err.message);
+  if (socket && socket.writable) {
+    try { socket.end("HTTP/1.1 400 Bad Request\r\n\r\n"); } catch (_e) { /* swallow */ }
+  }
+});
+server.on("error", (err) => {
+  console.error("[server error]", err && err.message);
+});
+
 server.listen(port, () => {
   console.log(`小夢老師網站：http://localhost:${port}`);
   console.log(`LINE Webhook URL：${publicBaseUrl}/api/line/webhook`);
 });
+

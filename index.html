@@ -18,6 +18,14 @@
   <meta name="twitter:image" content="https://xiaomeng-fortune.onrender.com/assets/tarot-01-the-magician.png" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
+    <script>
+      (function () {
+        var p = new URLSearchParams(location.search);
+        if (p.get("system") === "pet" && !location.pathname.endsWith("pet-temple.html")) {
+          location.replace("/pet-temple.html" + location.search + location.hash);
+        }
+      })();
+    </script>
   </head>
   <body>
   <a class="skip-link" href="#app">跳到主要內容</a>

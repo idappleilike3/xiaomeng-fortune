@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a0f2e">
+  <title>萌寵小夢神殿 | 小夢神殿</title>
+  <meta name="description" content="為你的毛孩,開啟靈魂之門。萌寵神殿 MVP 入口(Sprint 1.5)。">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./pet-temple.css">
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body class="pet-temple-page">
+  <div class="pet-temple-shell">
+
+    <!-- 進度條(由 pet-temple-entry.js 即時更新) -->
+    <nav class="pet-progress" id="petProgressBar" aria-label="神殿流程進度">
+      <span class="pet-progress__dot" data-step="1" aria-label="階段 1"></span>
+      <span class="pet-progress__dot" data-step="2" aria-label="階段 2"></span>
+      <span class="pet-progress__dot" data-step="3" aria-label="階段 3"></span>
+      <span class="pet-progress__dot" data-step="4" aria-label="階段 4"></span>
+      <span class="pet-progress__dot" data-step="5" aria-label="階段 5"></span>
+      <span class="pet-progress__dot" data-step="7" aria-label="階段 7"></span>
+      <span class="pet-progress__dot" data-step="8" aria-label="階段 8"></span>
+      <span class="pet-progress__dot" data-step="9" aria-label="階段 9"></span>
+      <span class="pet-progress__dot" data-step="10" aria-label="階段 10"></span>
+      <span class="pet-progress__dot" data-step="13" aria-label="階段 13"></span>
+    </nav>
+
+    <!-- =========================================================== -->
+    <!-- D5 v8(2026-07-07)三幕神殿開場 + 16 步流程                       -->
+    <!-- 第一幕:圖 1 神殿外觀(Press & Hold 1.5s)                        -->
+    <!-- 第二幕:圖 3 石門特寫(鏡頭 1.5s 慢推 + 紫水晶發光 + 石門震動)        -->
+    <!-- 第三幕:圖 2 神殿走廊(門開 1.8s + Camera Fly-through 1s)        -->
+    <!-- 終點:命運星環(Fate Ring)— 22 張牌圓環 + 紫色能量核心 + 慢速旋轉 -->
+    <!-- =========================================================== -->
+    <section id="petTempleSection" class="pet-temple" aria-label="萌寵小夢神殿">
+
+      <!-- ====== 第一幕:神殿外觀(Press & Hold 集氣) ====== -->
+      <div class="pet-act pet-act--1" data-act="1">
+        <div class="pet-act__bg" style="background-image: url('./assets/temple/temple-front.jpg')"></div>
+        <div class="pet-act__vignette" aria-hidden="true"></div>
+        <canvas class="pet-act__canvas pet-three-canvas" id="threeCanvasAct1" aria-hidden="true"></canvas>
+        <div class="pet-act__ui pet-act__ui--bottom">
+          <div class="pet-prompt" id="act1Prompt" hidden>
+            <p class="pet-prompt__title">長按掌心 · 開始感應</p>
+            <p class="pet-prompt__sub">按住 1.5 秒,將你的靈魂能量傳遞給神殿</p>
+            <button id="gateStartBtn"
+                    type="button"
+                    class="pet-prompt__cta"
+                    aria-label="長按 1.5 秒開始感應"
+                    data-state="idle">
+              <span class="pet-prompt__cta-ring" aria-hidden="true">
+                <svg viewBox="0 0 40 40" class="pet-prompt__cta-ring-svg" focusable="false">
+                  <circle class="pet-prompt__cta-ring__bg" cx="20" cy="20" r="18" />
+                  <circle id="gateChargeFill"
+                          class="pet-prompt__cta-ring__fg"
+                          cx="20" cy="20" r="18"
+                          stroke-dasharray="113.1"
+                          stroke-dashoffset="113.1" />
+                </svg>
+              </span>
+              <span class="pet-prompt__cta-label" id="gateStartLabel">按住開始感應</span>
+            </button>
+          </div>
+        </div>
+        <button id="gateSkipBtn" type="button" class="pet-skip" aria-label="跳過開場動畫">跳過開場動畫</button>
+      </div>
+
+      <!-- ====== 第二幕:石門特寫(鏡頭推近後) ====== -->
+      <div class="pet-act pet-act--2" data-act="2" hidden>
+        <div class="pet-act__bg" style="background-image: url('./assets/temple/temple-door.jpg')"></div>
+        <div class="pet-act__vignette pet-act__vignette--strong" aria-hidden="true"></div>
+        <canvas class="pet-act__canvas pet-three-canvas" id="threeCanvasAct2" aria-hidden="true"></canvas>
+        <div class="pet-act__ui pet-act__ui--bottom">
+          <p class="pet-act__caption" id="act2Caption">石門震動 · 紫水晶發亮</p>
+        </div>
+      </div>
+
+      <!-- ====== 第三幕:神殿走廊(門開 + Camera Fly-through) ====== -->
+      <div class="pet-act pet-act--3" data-act="3" hidden>
+        <div class="pet-act__bg" style="background-image: url('./assets/temple/temple-interior.jpg')"></div>
+        <div class="pet-act__vignette" aria-hidden="true"></div>
+        <canvas class="pet-act__canvas pet-three-canvas" id="threeCanvasAct3" aria-hidden="true"></canvas>
+        <div class="pet-act__ui pet-act__ui--bottom">
+          <p class="pet-act__caption" id="act3Caption">你推開了神殿之門</p>
+        </div>
+      </div>
+
+      <!-- ====== 命運星環(Fate Ring)終點 ====== -->
+      <div class="pet-act pet-act--ring" data-act="ring" hidden>
+        <div class="pet-act__bg pet-act__bg--solid" aria-hidden="true"></div>
+        <div class="pet-fate-ring">
+          <canvas class="pet-fate-ring__canvas" id="fateRingCanvas" aria-hidden="true"></canvas>
+          <div class="pet-fate-ring__ui">
+            <p class="pet-fate-ring__eyebrow">✦ 命運星環 ✦</p>
+            <h2 class="pet-fate-ring__title">22 張命運牌正在為你揭示</h2>
+            <p class="pet-fate-ring__sub">凝視星環 · 感受牌陣旋轉的能量</p>
+            <button type="button"
+                    class="pet-cta pet-cta--primary pet-cta--hero"
+                    data-action="goto-step-2"
+                    id="fateRingContinue">
+              <span class="pet-cta__label">繼續 · 身份選擇</span>
+              <span class="pet-cta__arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =========================================================== -->
+      <!-- Step 2-13 完整保留(身份 / 名字 / 主題 / 抽牌 / 登入 / 註冊 / 讀牌 / 第二神殿) -->
+      <!-- =========================================================== -->
+
+      <!-- Step 2:身份選擇 -->
+      <div class="pet-step" data-step="2" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">你是哪一種毛孩家長？</h2>
+          <p class="pet-step__subtitle">小夢老師會用這個身份與你對話</p>
+          <div class="pet-identity-grid">
+            <button type="button" class="pet-identity-card" data-identity="cat_mom">🐱<br /><strong>貓媽媽</strong><small>為家中喵皇尋找答案</small></button>
+            <button type="button" class="pet-identity-card" data-identity="dog_dad">🐶<br /><strong>狗爸爸</strong><small>為忠心毛孩解讀心意</small></button>
+            <button type="button" class="pet-identity-card" data-identity="pet_parent">🐾<br /><strong>毛孩家長</strong><small>不限物種，所有毛孩家庭</small></button>
+            <button type="button" class="pet-identity-card" data-identity="other">✨<br /><strong>其他</strong><small>兔兔 / 鳥 / 鼠 / 爬蟲等</small></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3:輸入寵物名字 -->
+      <div class="pet-step" data-step="3" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">你家毛孩叫什麼名字？</h2>
+          <p class="pet-step__subtitle">小夢老師會用這個名字呼喚他/她</p>
+          <input type="text" id="petNameInput" class="pet-input" placeholder="例：橘子、小白、阿肥" maxlength="12" />
+          <div class="pet-step__actions">
+            <button type="button" class="pet-cta pet-cta--primary" data-action="submit-pet-name">下一步</button>
+            <button type="button" class="pet-cta pet-cta--ghost" data-action="skip-pet-name">我家毛孩沒有名字</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4:4 大寵物問題選擇 -->
+      <div class="pet-step" data-step="4" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">你想問毛孩哪方面的心事？</h2>
+          <p class="pet-step__subtitle">選擇一個最貼近你現況的主題</p>
+          <div class="pet-question-grid">
+            <button type="button" class="pet-question-card" data-question="soul_origin">🌟<br /><strong>毛孩靈魂全書</strong><small>毛孩靈魂來源、本命特質</small></button>
+            <button type="button" class="pet-question-card" data-question="soul_contract">📜<br /><strong>前世今生緣分</strong><small>與主人的靈魂羈絆、前世因緣</small></button>
+            <button type="button" class="pet-question-card" data-question="subconscious">🧠<br /><strong>毛孩行為真心話</strong><small>毛孩當下情緒、潛在需求</small></button>
+            <button type="button" class="pet-question-card" data-question="lifeflow">🍀<br /><strong>未來健康運勢</strong><small>健康守護、未來祝福</small></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5-6:2D 抽牌畫面 -->
+      <div class="pet-step" data-step="5" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">請抽取一張牌</h2>
+          <p class="pet-step__subtitle">毛孩會引導你的手,憑直覺選一張</p>
+          <p class="pet-draw-counter">已抽取 <span id="petDrawCount">0</span> / <span id="petDrawTotal">5</span> 張 · 第一神殿只需 5 張</p>
+          <div class="pet-deck" id="petDeck" aria-label="萌寵神諭卡牌組">
+            <!-- 10 張卡背面(JS 動態生成) -->
+          </div>
+          <p class="pet-hint" id="petDrawHint" hidden>已抽出 5 張免費牌，繼續抽看完整牌陣</p>
+        </div>
+      </div>
+
+      <!-- Step 7-8:登入 / 註冊 -->
+      <div class="pet-step" data-step="7" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">完成登入以解鎖神殿回憶</h2>
+          <p class="pet-step__subtitle">登入後可永久保存毛孩占卜紀錄</p>
+          <button type="button" class="pet-cta pet-cta--primary" data-action="liff-login">使用 LINE 帳號登入</button>
+          <p class="pet-step__notice" id="petLiffStatus">LIFF 等待登入中…</p>
+        </div>
+      </div>
+
+      <!-- Step 8:註冊成功訊息 -->
+      <div class="pet-step" data-step="8" hidden>
+        <div class="pet-step__inner">
+          <div class="pet-reward-badge">✨</div>
+          <h2 class="pet-step__title">恭喜獲得首次神殿開啟資格</h2>
+          <p class="pet-step__reward">價值 NT$3,600 的萌寵靈魂神殿 10 張大師牌陣</p>
+          <p class="pet-step__subtitle" id="petGreetingMessage">小夢老師為你們開啟了萌寵神殿的大門。</p>
+          <button type="button" class="pet-cta pet-cta--primary" data-action="goto-step-9">打開第一神殿</button>
+        </div>
+      </div>
+
+      <!-- Step 9:第一神殿 5 張牌解鎖 -->
+      <div class="pet-step" data-step="9" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">第一神殿 · 今生顯化篇</h2>
+          <p class="pet-step__subtitle">點選任一張牌查看解讀</p>
+          <div class="pet-unlocked-grid" id="petUnlockedGrid">
+            <!-- JS 動態生成 5 張解鎖牌 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 10:單牌解讀面板 -->
+      <div class="pet-step" data-step="10" hidden>
+        <div class="pet-step__inner">
+          <button type="button" class="pet-back-btn" data-action="back-to-step-9">← 返回 5 張牌</button>
+          <div class="pet-card-reading" id="petCardReading">
+            <!-- JS 動態填入牌圖 + 解讀 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 13:第二神殿上鎖區塊 + CTA -->
+      <div class="pet-step" data-step="13" hidden>
+        <div class="pet-step__inner">
+          <h2 class="pet-step__title">第二神殿 · 靈魂神殿篇</h2>
+          <p class="pet-step__subtitle">（付費解鎖）</p>
+          <p class="pet-step__subtitle">解鎖後將為你揭曉：前世契約、靈魂使命、未完成因果、未來祝福、動物神諭最終祝福。</p>
+          <div class="pet-locked-grid" id="petLockedGrid">
+            <!-- JS 動態生成 5 張上鎖牌 -->
+          </div>
+
+          <section class="next-step-section">
+            <h3 class="next-step-section__title">神殿下一步</h3>
+            <p class="next-step-section__subtitle">你的毛孩已經開啟第一層訊息，第二神殿的深層答案仍被封印。</p>
+
+            <!-- 主要 CTA -->
+            <div class="next-step-group">
+              <button type="button" class="pet-cta pet-cta--primary next-step-main" data-cta="unlock_second">
+                <span class="next-step-main__icon" aria-hidden="true">🔓</span>
+                <span class="next-step-main__text">
+                  <strong>開啟第二神殿</strong>
+                  <small>今日限定優惠 NT$1,600</small>
+                </span>
+              </button>
+            </div>
+
+            <!-- 收藏 CTA -->
+            <div class="next-step-group">
+              <button type="button" class="pet-cta pet-cta--secondary" data-cta="collect_favorite">
+                <span aria-hidden="true">📜</span> 收藏命運紀錄
+              </button>
+              <p class="next-step-fission__intro">將這次解讀收藏進命運紀錄館，未來可以回來重新閱讀。</p>
+            </div>
+
+            <!-- 返回首頁 -->
+            <div class="next-step-group">
+              <button type="button" class="pet-cta pet-cta--ghost" data-cta="home">
+                <span aria-hidden="true">🏠</span> 返回神殿首頁
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 通用 Coming Soon / 訊息 Modal -->
+    <div class="pet-modal-overlay" id="petModalOverlay" hidden>
+      <div class="pet-modal" role="dialog" aria-labelledby="petModalTitle" aria-modal="true">
+        <button type="button" class="pet-modal__close" id="petModalClose" aria-label="關閉">×</button>
+        <div class="pet-modal__icon" id="petModalIcon">✨</div>
+        <h3 class="pet-modal__title" id="petModalTitle">敬請期待</h3>
+        <p class="pet-modal__subtitle" id="petModalSubtitle">此功能即將推出</p>
+        <p class="pet-modal__body" id="petModalBody">感謝你的耐心,小夢神殿正在為你準備這份體驗。</p>
+        <div class="pet-modal__badge" id="petModalBadge" hidden></div>
+        <button type="button" class="pet-modal__cta" id="petModalCta">我了解了</button>
+      </div>
+    </div>
+
+
+  </div><!-- /.pet-temple-shell -->
+
+  <!-- Scripts -->
+  <script src="./script-pettemple.js"></script>
+  <script src="./script-pettemple-v8.js"></script>
+  <script src="./pet-temple-entry.js"></script>
+</body>
+</html>
