@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 打造獨立產品「還在嗎」：LINE Bot／LIFF 簽到、Email 逾期通知、訂閱制 LINE 提醒與多聯絡人，部署於 Vercel。
+**Goal:** 打造獨立產品「還在嗎」：LINE Bot／LIFF 簽到、**簡訊（SMS）逾期通知**（Email 選填）、訂閱制 LINE 提醒與多聯絡人、**藍新 NewebPay** 訂閱，部署於 Vercel。
 
-**Architecture:** Next.js App Router 全端；Postgres（Neon）存使用者／簽到／警報；LINE Webhook 處理 Bot 簽到與 Reply；LIFF 提供簽到與設定 UI；Vercel Cron 每 10 分鐘掃逾期與訂閱提醒；Resend 寄信；Stripe 訂閱。核心時間／權限邏輯放純函式並用 Vitest 鎖住。
+**Architecture:** Next.js App Router 全端；Postgres（Neon）存使用者／簽到／警報；LINE Webhook 處理 Bot 簽到與 Reply；LIFF 提供簽到與設定 UI；Vercel Cron 每 10 分鐘掃逾期與訂閱提醒；三竹 Mitake 發簡訊；Resend 寄選填 Email；**藍新定期定額**訂閱。核心時間／權限邏輯放純函式並用 Vitest 鎖住。**不做語音撥打。**
 
-**Tech Stack:** Next.js 15、TypeScript、Prisma、Postgres、LINE Messaging API + LIFF + LINE Login、Resend、Stripe、Vitest、Vercel Cron
+**Tech Stack:** Next.js 15、TypeScript、Prisma、Postgres、LINE Messaging API + LIFF + LINE Login、Mitake（SMS）、Resend、**藍新 NewebPay**、Vitest、Vercel Cron
 
 **Spec:** `docs/superpowers/specs/2026-07-12-haizaima-design.md`（目前在 xiaomeng-fortune；實作 repo 為獨立 `haizaima`，實作時把 spec／本 plan 複製進去）
 
@@ -15,9 +15,10 @@
 - 產品名對外一律「還在嗎」；禁止「我死了嗎／死了么」與「可能已死亡／請報警」文案
 - 第一期唯一登入：LINE Login；不做 Google／Apple、不做原生 App／PWA
 - 提醒門檻：剩餘時間 `< graceHours * 0.2`；Cron：每 10 分鐘
-- 金流：Stripe；月費顯示 NT$79（Stripe 可用 TWD price）
-- Email 未驗證的聯絡人：不納入逾期告警
-- 同一逾期週期、每位聯絡人只成功告警一次；簽到後 `cycleKey` 自然更換
+- 金流：**藍新 NewebPay 定期定額**；月費 NT$79；不做 Stripe／綠界
+- 逾期通知：**簡訊為主**（聯絡人手機必填＋OTP 驗證後才發）；Email 選填次要；**禁止語音電話**
+- 未驗證手機：不納入逾期簡訊；未驗證 Email：不寄逾期信
+- 同一逾期週期、每位聯絡人每個 channel 只成功告警一次；簽到後 `cycleKey` 自然更換
 - 簽到確認優先 LINE Reply；主動提醒／告警才用 Push
 - 視覺：深青／暖灰、台灣繁中；禁止紫漸層玩梗與 emoji 牆
 
@@ -48,10 +49,15 @@ haizaima/
       email/
         resend.ts
         templates.ts
+      sms/
+        mitake.ts           # 三竹簡訊：OTP + 逾期通知
+        templates.ts
+      newebpay/
+        client.ts           # AES 加解密、定期定額表單、Notify 驗簽
+        period.ts
       auth/
         session.ts
         line-login.ts
-      stripe.ts
     app/
       layout.tsx
       globals.css
@@ -67,16 +73,19 @@ haizaima/
         me/route.ts
         settings/route.ts
         contacts/route.ts
-        contacts/verify/route.ts
+        contacts/verify-email/route.ts
+        contacts/verify-phone/route.ts
         cron/tick/route.ts
-        stripe/checkout/route.ts
-        stripe/webhook/route.ts
+        newebpay/checkout/route.ts
+        newebpay/notify/route.ts
+        newebpay/return/route.ts
   tests/
     domain/time.test.ts
     domain/plans.test.ts
     domain/copy.test.ts
     domain/alert-service.test.ts
     line/signature.test.ts
+    sms/phone.test.ts
 ```
 
 ---
@@ -106,11 +115,12 @@ Expected: 專案建立成功，無 prompt 卡住。
 - [ ] **Step 2: 安裝相依**
 
 ```bash
-npm install prisma @prisma/client jose zod resend stripe @line/bot-sdk
+npm install prisma @prisma/client jose zod resend @line/bot-sdk
 npm install -D vitest @vitejs/plugin-react tsx
 npx prisma init
 ```
 
+（藍新加解密用 Node `crypto` 自實作於 `src/lib/newebpay/`，不依賴 Stripe。簡訊用三竹 HTTP API，無額外 npm 必裝。）
 - [ ] **Step 3: 設定 scripts 與 Vitest**
 
 在 `package.json` scripts 加入：
@@ -147,11 +157,16 @@ LINE_LOGIN_CHANNEL_SECRET=
 LINE_LIFF_ID=
 RESEND_API_KEY=
 EMAIL_FROM="還在嗎 <noreply@yourdomain.com>"
+MITAKE_USERNAME=
+MITAKE_PASSWORD=
+MITAKE_API_URL=https://smsapi.mitake.com.tw/api/mtk/SmSend
+NEWEBPAY_MERCHANT_ID=
+NEWEBPAY_HASH_KEY=
+NEWEBPAY_HASH_IV=
+NEWEBPAY_ENV=sandbox
+NEWEBPAY_PERIOD_AMT=79
 APP_BASE_URL=http://localhost:3000
 CRON_SECRET=dev-cron-secret
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_PRICE_ID_MONTHLY=
 SESSION_SECRET=replace-with-32+-char-secret
 ```
 
@@ -209,6 +224,7 @@ enum CheckinSource {
 }
 
 enum AlertChannel {
+  sms
   email
   line
 }
@@ -253,7 +269,9 @@ model EmergencyContact {
   userId          String
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name            String
-  email           String
+  phone           String
+  phoneVerifiedAt DateTime?
+  email           String?
   emailVerifiedAt DateTime?
   lineUserId      String?
   lineLinkedAt    DateTime?
@@ -294,7 +312,7 @@ model Subscription {
   id               String    @id @default(cuid())
   userId           String
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider         String    @default("stripe")
+  provider         String    @default("newebpay")
   providerRef      String    @unique
   status           SubStatus
   currentPeriodEnd DateTime
@@ -360,6 +378,7 @@ git commit -m "feat: add Prisma schema and db client"
   - `allowedGraceHours: number[]` → `[12,24,36,48,72]`
   - `copyReminderSelf(hoursLeft: number): string`
   - `copyOverdueContact(displayName: string, lastCheckInLabel: string): string`
+  - `copyOverdueContactSms(displayName: string, lastCheckInLabel: string): string`
 
 - [ ] **Step 1: 寫失敗測試 `tests/domain/time.test.ts`**
 
@@ -539,6 +558,13 @@ describe("copy", () => {
     expect(s).toContain("這不是緊急救援通知");
     expect(s).not.toMatch(/死亡|報警/);
   });
+
+  it("sms overdue is short and calm", () => {
+    const s = copyOverdueContactSms("小明", "07-01 12:00");
+    expect(s.length).toBeLessThan(70);
+    expect(s).toContain("還在嗎");
+    expect(s).not.toMatch(/死亡|報警/);
+  });
 });
 ```
 
@@ -555,6 +581,13 @@ export function copyOverdueContact(
   lastCheckInLabel: string,
 ): string {
   return `${displayName}超過設定時間未在「還在嗎」簽到。這不是緊急救援通知，請用你平常的方式關心確認。上次簽到：${lastCheckInLabel}。`;
+}
+
+export function copyOverdueContactSms(
+  displayName: string,
+  lastCheckInLabel: string,
+): string {
+  return `${displayName}超過「還在嗎」簽到時間。非緊急救援，請關心確認。上次：${lastCheckInLabel}`;
 }
 ```
 
@@ -956,77 +989,125 @@ git commit -m "feat: LIFF check-in home screen"
 
 ---
 
-### Task 9: 設定 API — 寬限、聯絡人、Email 驗證、假期
+### Task 9: 設定 API — 寬限、聯絡人、手機 OTP、Email 驗證、假期
 
 **Files:**
 - Create: `src/app/api/settings/route.ts`
 - Create: `src/app/api/contacts/route.ts`
-- Create: `src/app/api/contacts/verify/route.ts`
+- Create: `src/app/api/contacts/verify-phone/route.ts`
+- Create: `src/app/api/contacts/verify-email/route.ts`
+- Create: `src/lib/sms/mitake.ts`
+- Create: `src/lib/sms/templates.ts`
+- Create: `src/lib/domain/phone.ts`（正規化台灣手機）
 - Create: `src/lib/email/resend.ts`
 - Create: `src/lib/email/templates.ts`
 - Create: `src/app/settings/page.tsx`
 - Create: `src/app/api/invite/claim/route.ts`
 - Create: `src/app/invite/[token]/page.tsx`
+- Test: `tests/sms/phone.test.ts`
 
 **Interfaces:**
 - `PATCH /api/settings` body `{ graceHours?: number, vacationUntil?: string | null }`
   - grace 必須 ∈ allowedGraceHours
   - vacationUntil 僅 isPro；否則 403
-- `POST /api/contacts` `{ name, email }` — 超過 maxContacts → 403 `{ code: "UPGRADE_REQUIRED" }`
+- `POST /api/contacts` `{ name, phone, email? }` — `phone` 必填；超過 maxContacts → 403 `{ code: "UPGRADE_REQUIRED" }`
 - `DELETE /api/contacts?id=`
-- 新增聯絡人後寄驗證信：`${APP_BASE_URL}/api/contacts/verify?token=...`（token 可用 signed jose 含 contactId，24h）
-- 未驗證不告警（Cron 過濾 `emailVerifiedAt != null`）
-- 邀請綁 LINE：聯絡人頁顯示 `${APP_BASE_URL}/invite/${inviteToken}`；對方用 LIFF Login 後 `POST /api/invite/claim` 把 `lineUserId` 寫入該 contact（僅 pro 的逾期才走 LINE）
+- 新增聯絡人後：
+  1. 寄 **簡訊 OTP**（`POST /api/contacts/verify-phone` 提交 `{ contactId, code }` 成功後設 `phoneVerifiedAt`）
+  2. 若有 email → 寄驗證連結 `GET /api/contacts/verify-email?token=...`
+- Cron：**僅 `phoneVerifiedAt != null`** 發逾期簡訊；僅 `emailVerifiedAt != null` 發逾期 Email
+- 邀請綁 LINE：`${APP_BASE_URL}/invite/${inviteToken}`（僅 pro 逾期優先 LINE）
+- **禁止任何語音撥號 API**
 
-- [ ] **Step 1: Resend 包裝**
+- [ ] **Step 1: 手機正規化測試＋實作**
 
 ```ts
-import { Resend } from "resend";
-export const resend = new Resend(process.env.RESEND_API_KEY);
-export async function sendEmail(to: string, subject: string, html: string) {
-  return resend.emails.send({ from: process.env.EMAIL_FROM!, to, subject, html });
+// tests/sms/phone.test.ts
+import { describe, expect, it } from "vitest";
+import { normalizeTwMobile } from "@/lib/domain/phone";
+
+describe("normalizeTwMobile", () => {
+  it("accepts 09xxxxxxxx", () => {
+    expect(normalizeTwMobile("0912-345-678")).toBe("0912345678");
+  });
+  it("rejects landline", () => {
+    expect(() => normalizeTwMobile("02-12345678")).toThrow();
+  });
+});
+```
+
+```ts
+// src/lib/domain/phone.ts
+export function normalizeTwMobile(input: string): string {
+  const digits = input.replace(/\D/g, "");
+  const local = digits.startsWith("886") ? `0${digits.slice(3)}` : digits;
+  if (!/^09\d{8}$/.test(local)) throw new Error("INVALID_TW_MOBILE");
+  return local;
 }
 ```
 
-驗證信主旨：`請驗證「還在嗎」緊急聯絡信箱`  
-內文含連結；勿用恐嚇字眼。
+- [ ] **Step 2: Mitake 簡訊包裝**
 
-- [ ] **Step 2: settings／contacts API 實作＋LIFF 設定頁**
+```ts
+// src/lib/sms/mitake.ts
+export async function sendSms(to: string, text: string): Promise<{ ok: boolean; raw: string }> {
+  const phone = normalizeTwMobile(to);
+  const params = new URLSearchParams({
+    username: process.env.MITAKE_USERNAME!,
+    password: process.env.MITAKE_PASSWORD!,
+    dstaddr: phone,
+    smbody: text,
+    encoding: "UTF8",
+  });
+  const res = await fetch(`${process.env.MITAKE_API_URL}?${params.toString()}`);
+  const raw = await res.text();
+  return { ok: res.ok && /statuscode=[^0]/i.test(raw) === false ? /statuscode=1/i.test(raw) || raw.includes("1") : true, raw };
+  // 實作時依三竹回傳格式精確判斷成功碼，上列為示意；以官方文件為準
+}
+```
 
-設定頁欄位：寬限 select、聯絡人列表、新增表單、複製邀請連結、假期日期（pro）、升級 CTA。
+OTP 文案：`【還在嗎】驗證碼 ******，10 分鐘內有效。`  
+逾期文案用 `copyOverdueContactSms(...)`（短版，見 domain/copy）。
 
-- [ ] **Step 3: 手動測：免費加第 2 人被擋；驗證後 emailVerifiedAt 有值**
+- [ ] **Step 3: Resend（選填 Email）＋ settings／contacts API ＋ LIFF 設定頁**
 
-- [ ] **Step 4: Commit**
+設定頁：寬限、聯絡人（手機必填、Email 選填）、OTP 輸入、複製 LINE 邀請、假期（pro）、升級 CTA。
+
+- [ ] **Step 4: 手動測：免費加第 2 人被擋；OTP 後 phoneVerifiedAt 有值；未驗證不進告警名單**
+
+- [ ] **Step 5: Commit**
 
 ```bash
-git add src/app/api/settings src/app/api/contacts src/app/api/invite src/app/settings src/app/invite src/lib/email
-git commit -m "feat: settings, contacts, email verify, invite link"
+git add src/app/api/settings src/app/api/contacts src/app/api/invite src/app/settings src/app/invite src/lib/email src/lib/sms src/lib/domain/phone.ts tests/sms
+git commit -m "feat: contacts with SMS OTP and optional email verify"
 ```
 
 ---
 
-### Task 10: 警報服務 ＋ Cron tick
+### Task 10: 警報服務 ＋ Cron tick（簡訊為主）
 
 **Files:**
 - Create: `src/lib/domain/alert-service.ts`
 - Create: `src/app/api/cron/tick/route.ts`
 - Create: `vercel.json`
+- Modify: `src/lib/domain/copy.ts`（加短版 SMS 文案）
 - Test: `tests/domain/alert-service.test.ts`
 
 **Interfaces:**
 - Produces: `runAlertTick(now, deps): Promise<{ reminders: number, overdues: number }>`
-- Deps: list users with lastCheckInAt, list verified contacts, hasSent(cycleKey, kind, contactId?), sendEmail, pushLine, writeLog
+- Deps: list users, list contacts, hasSent(cycleKey, kind, contactId, channel), sendSms, sendEmail, pushLine, writeLog
 
 規則實作（對齊 spec）：
 
 1. Skip if `isOnVacation`
 2. Skip users without `lastCheckInAt`
-3. Reminder: `isProActive` && `shouldRemindSelf` && !hasSent(reminder_self, cycleKey) → push 本人 → log（contactId null）
-4. Overdue: `isOverdue` && for each contact with `emailVerifiedAt`：
-   - if already sent success for cycle → skip
-   - channel: pro && contact.lineUserId && !user.botBlocked → try LINE, else Email；LINE fail → Email fallback
-   - write log sent/failed；失敗可立即重試一次
+3. Reminder: `isProActive` && `shouldRemindSelf` && !hasSent(reminder_self, cycleKey, sms/email N/A) → push 本人 → log channel=line
+4. Overdue: `isOverdue` && for each contact：
+   - Primary: if pro && `lineUserId` → try LINE；失敗 → SMS（需 `phoneVerifiedAt`）
+   - Else：SMS（需 `phoneVerifiedAt`）
+   - Secondary：若 `emailVerifiedAt` → 另寄 Email（獨立 channel log）
+   - 每個 `(contactId, kind, cycleKey, channel)` 成功只一次；失敗可立即重試一次
+5. **永不呼叫語音／撥號 API**
 
 Cron route：
 
@@ -1048,65 +1129,82 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-- [ ] **Step 1: 先寫 alert-service 單元測試（mock deps）覆蓋：假期跳過、去重、免費只 Email、pro LINE 優先、fallback**
+- [ ] **Step 1: 單元測試覆蓋：假期跳過、去重、免費只 SMS、pro LINE 優先、LINE 失敗→SMS、有驗證 Email 另寄**
 
 - [ ] **Step 2: 實作至測試全綠**
 
-- [ ] **Step 3: 本機用把某 user `lastCheckInAt` 調到過去 → `curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/tick` → 確認 Resend／log**
+- [ ] **Step 3: 本機把 `lastCheckInAt` 調過去 → curl Cron → 確認簡訊／log（Email 若有）**
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/lib/domain/alert-service.ts src/app/api/cron vercel.json tests/domain/alert-service.test.ts
-git commit -m "feat: overdue and reminder cron tick"
+git add src/lib/domain/alert-service.ts src/lib/domain/copy.ts src/app/api/cron vercel.json tests/domain/alert-service.test.ts
+git commit -m "feat: overdue SMS alerts and reminder cron"
 ```
 
 ---
 
-### Task 11: Stripe 訂閱
+### Task 11: 藍新 NewebPay 定期定額訂閱
 
 **Files:**
-- Create: `src/lib/stripe.ts`
-- Create: `src/app/api/stripe/checkout/route.ts`
-- Create: `src/app/api/stripe/webhook/route.ts`
+- Create: `src/lib/newebpay/client.ts`（AES-256-CBC + SHA256）
+- Create: `src/lib/newebpay/period.ts`
+- Create: `src/app/api/newebpay/checkout/route.ts`
+- Create: `src/app/api/newebpay/notify/route.ts`
+- Create: `src/app/api/newebpay/return/route.ts`
 - Create: `src/app/upgrade/page.tsx`
 
 **Interfaces:**
-- `POST /api/stripe/checkout` → session url（需登入）
-- Webhook events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
-  - 成功：`user.plan=pro`, `planExpiresAt=current_period_end`, upsert `Subscription`
-  - 刪除／過期：`plan=free`, clear `planExpiresAt`（或等 expires）
-- Upgrade 頁：說明免費 vs pro、NT$79／月、按鈕開 Checkout（`success_url` / `cancel_url` 回 LIFF）
+- `POST /api/newebpay/checkout`（需登入）→ 回傳定期定額表單 HTML 或 TradeInfo 欄位，前端 auto-post 至藍新  
+  - 測試：`https://ccore.newebpay.com/MPG/period`  
+  - 正式：`https://core.newebpay.com/MPG/period`  
+  - `PeriodAmt=79`、`PeriodType=M`、`PeriodTimes` 足夠大（如 99）、`NotifyURL`／`ReturnURL`／`BackURL` 指向本站
+- `POST /api/newebpay/notify`：驗簽解密每期授權結果  
+  - 成功：`user.plan=pro`，`planExpiresAt` 設為本期結束＋約 31 天（或依回傳下次授權日），upsert `Subscription`（`provider=newebpay`，`providerRef=PeriodNo/MerOrderNo`）  
+  - 失敗／停止委託：`plan=free`
+- Upgrade 頁：免費 vs pro、NT$79／月、按鈕觸發 checkout（回 LIFF）
 
-- [ ] **Step 1: stripe helper**
+- [ ] **Step 1: newebpay client（加解密）**
 
 ```ts
-import Stripe from "stripe";
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia", // use version installed package expects
-});
+// src/lib/newebpay/client.ts
+import { createCipheriv, createDecipheriv, createHash } from "crypto";
+
+export function aesEncrypt(plain: string, key = process.env.NEWEBPAY_HASH_KEY!, iv = process.env.NEWEBPAY_HASH_IV!) {
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(key), Buffer.from(iv));
+  return Buffer.concat([cipher.update(plain, "utf8"), cipher.final()]).toString("hex");
+}
+
+export function aesDecrypt(hex: string, key = process.env.NEWEBPAY_HASH_KEY!, iv = process.env.NEWEBPAY_HASH_IV!) {
+  const decipher = createDecipheriv("aes-256-cbc", Buffer.from(key), Buffer.from(iv));
+  return Buffer.concat([decipher.update(Buffer.from(hex, "hex")), decipher.final()]).toString("utf8");
+}
+
+export function sha256TradeSha(tradeInfo: string) {
+  const key = process.env.NEWEBPAY_HASH_KEY!;
+  const iv = process.env.NEWEBPAY_HASH_IV!;
+  return createHash("sha256")
+    .update(`HashKey=${key}&${tradeInfo}&HashIV=${iv}`)
+    .digest("hex")
+    .toUpperCase();
+}
 ```
 
-（實作時改成套件 peer 要求的 apiVersion。）
+（欄位組裝／定期定額參數名稱以藍新《信用卡定期定額串接技術手冊》為準；上列為核心原語。）
 
-- [ ] **Step 2: checkout + webhook 實作**
+- [ ] **Step 2: checkout 產生委託＋ notify／return 路由**
 
-Webhook 必須用 raw body 驗簽（Next.js App Router：`req.text()` + `stripe.webhooks.constructEvent`）。
+Notify 必須回藍新要求的字串（常見 `SUCCESS`）；更新 DB 後再回應。
 
-- [ ] **Step 3: Stripe CLI 本機測**
+- [ ] **Step 3: 藍新測試商店手動測一筆定期定額**
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-stripe trigger checkout.session.completed
-```
-
-手動把 completed 流程與 user 更新對過（必要時用 Checkout 真實測卡 `4242…`）。
+Expected: notify 入庫、`plan=pro`；停止委託後下次邏輯回 free（或依過期日）。
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/lib/stripe.ts src/app/api/stripe src/app/upgrade
-git commit -m "feat: Stripe subscription checkout and webhook"
+git add src/lib/newebpay src/app/api/newebpay src/app/upgrade
+git commit -m "feat: NewebPay period subscription checkout"
 ```
 
 ---
@@ -1119,8 +1217,8 @@ git commit -m "feat: Stripe subscription checkout and webhook"
 - Modify: `README.md`
 
 **Interfaces:**
-- 隱私頁說明：蒐集顯示名、簽到時間、聯絡人 Email；不蒐集定位；無法判斷生死
-- README 列出：建立 LINE OA、Messaging API、LIFF endpoint URL、Login channel、Resend domain、Neon、Vercel env、Cron secret、Stripe price
+- 隱私頁說明：蒐集顯示名、簽到時間、聯絡人**手機**、選填 Email；不蒐集定位；**不撥打語音電話**；無法判斷生死
+- README 列出：LINE OA、Messaging API、LIFF、Login、**三竹 Mitake**、Resend（選用）、Neon、Vercel env、Cron secret、**藍新商店／HashKey／定期定額**
 
 - [ ] **Step 1: 隱私頁繁中內容（短、清楚）**
 
@@ -1153,27 +1251,30 @@ git commit -m "docs: privacy page and launch checklist"
 | Bot／關鍵字／按鈕簽到 | 6 |
 | LIFF 簽到＋設定 | 8, 9 |
 | LINE Login | 7 |
-| Email 逾期 | 10 + 9 verify |
+| **簡訊逾期（手機必填＋OTP）** | 9, 10 |
+| Email 逾期（選填） | 9, 10 |
 | 訂閱 LINE 提醒本人 | 10, 11 |
-| 聯絡人 LINE 優先＋Email fallback | 9 invite, 10 |
-| Stripe 訂閱 | 11 |
+| 聯絡人 LINE 優先＋**SMS fallback** | 9 invite, 10 |
+| **藍新 NewebPay 訂閱** | 11 |
 | 假期暫停 | 9, 10 |
 | Cron 10 分鐘 | 10 |
-| 警報去重 cycleKey | 3, 10 |
-| 文案原則 | 3 copy |
-| 隱私頁 | 12 |
-| Email 驗證才告警 | 9, 10 |
-| 不做 App／Google 登入 | Global Constraints（不實作） |
+| 警報去重 cycleKey＋channel | 3, 10 |
+| 文案原則（含短 SMS） | 3, 10 |
+| 隱私頁（含不語音撥打） | 12 |
+| 手機／Email 驗證才告警 | 9, 10 |
+| 不做語音撥打／App／Google 登入 | Global Constraints（不實作） |
 
 ## Placeholder scan
 
-無 TBD／「similar to Task N」；金流 apiVersion 註明以安裝套件為準。
+無 TBD；藍新欄位組裝以官方定期定額手冊為準；三竹成功碼以官方回傳為準。
 
 ## Type consistency
 
 - `cycleKey(lastCheckInAt)` ISO 字串貫穿 alert logs  
 - `plan`: `free` | `pro`  
 - Check-in `source`: `bot` | `liff`  
+- Alert `channel`: `sms` | `email` | `line`  
+- Subscription `provider`: `newebpay`  
 - Session cookie: `hzm_session`  
 
 ---
