@@ -136,6 +136,7 @@ LIFF 頁面 ◄─────┘
 - `emailVerifiedAt`（nullable）
 - `lineUserId`（nullable）
 - `lineLinkedAt`（nullable）
+- `inviteToken`（unique；綁 LINE 邀請用）
 - `createdAt`
 
 約束：免費用戶最多 1 筆；訂閱最多 3 筆（應用層＋盡量 DB 檢查）。
