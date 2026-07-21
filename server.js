@@ -12,6 +12,8 @@ import {
   resolveLiffRoute,
   siteUrlForRoute,
 } from "./lib/liff-routes.js";
+import { createFunnelContext, handleFunnelEvent } from "./lib/line/funnel-handlers.js";
+import { resetSession as resetFunnelSession } from "./lib/line/funnel-session.js";
 
 function getLanIPv4() {
   const nets = networkInterfaces();
@@ -338,6 +340,25 @@ function messageAction(label, text) {
   return { type: "message", label, text };
 }
 
+function postbackAction(label, data, displayText) {
+  return {
+    type: "postback",
+    label,
+    data,
+    displayText: displayText || label,
+  };
+}
+
+/** Phase A+B conversation funnel — stays inside LINE chat (not LIFF decode page). */
+function getFunnelCtx() {
+  return createFunnelContext({
+    publicBaseUrl,
+    eroseeLink,
+    lineOaUrl: process.env.LINE_OA_URL || "",
+    tarotDeck,
+  });
+}
+
 function liffPageUrl(page) {
   return `${liffBaseUrl}?page=${encodeURIComponent(page)}`;
 }
@@ -501,7 +522,7 @@ function templeEntryFlexMessage() {
           type: "button",
           style: "primary",
           color: "#7C4DC4",
-          action: uriAction("開始解碼", eroseeLink("/")),
+          action: postbackAction("開始解碼", "funnel=start", "開始解碼"),
         },
         {
           type: "button",
@@ -534,7 +555,7 @@ function divinationKeywordFlexMessage() {
         },
         {
           type: "text",
-          text: "可以先進入 Erosée 首頁開始解碼 或直接查看完整方案",
+          text: "可在對話裡開始免費三張解碼 或直接查看完整方案貨架",
           size: "sm",
           color: "#F8EEDB",
           wrap: true,
@@ -543,7 +564,7 @@ function divinationKeywordFlexMessage() {
           type: "button",
           style: "primary",
           color: "#B780FF",
-          action: uriAction("開始解碼", eroseeLink("/")),
+          action: postbackAction("開始解碼", "funnel=start", "開始解碼"),
         },
         {
           type: "button",
@@ -1229,8 +1250,19 @@ function buildReplyMessages(event) {
   const text = event.message?.type === "text" ? event.message.text.trim() : "";
   const lowerText = text.toLowerCase();
 
+  // Phase A+B conversation funnel (postback + start keywords + describe text)
+  const funnelMessages = handleFunnelEvent(event, getFunnelCtx());
+  if (funnelMessages && funnelMessages.length) {
+    return funnelMessages;
+  }
+
   if (event.type === "follow") {
+    resetFunnelSession(getLineUserId(event) || "anonymous");
     return [welcomeFlexMessage(), templeEntryFlexMessage()];
+  }
+
+  if (event.type === "postback") {
+    return [templeEntryFlexMessage()];
   }
 
   if (!text) {
@@ -1426,7 +1458,9 @@ async function handleLineWebhook(request, response) {
 function serveStatic(request, response) {
   const url = new URL(request.url, `http://${request.headers.host}`);
   const pathname = decodeURIComponent(url.pathname);
-  const requestedPath = pathname === "/" ? "/index.html" : pathname;
+  // Production root must not depend on untracked temple-flow assets on index.html.
+  // Serve the deployed Erosée entry (same as LIFF_ENTRY_PATH /health.erosee.home).
+  const requestedPath = pathname === "/" ? LIFF_ENTRY_PATH : pathname;
   const filePath = normalize(join(rootDir, requestedPath));
   const resolvedPath = resolve(filePath);
 
@@ -1514,6 +1548,8 @@ const server = createServer(async (request, response) => {
     if (request.method === "GET") {
       const pretty = new URL(request.url, `http://${request.headers.host}`);
       const prettyPath = pretty.pathname.replace(/\/$/, "") || "/";
+      // LIFF Endpoint may be `/` or any page; honor ?route= before bare-/ landing
+      if (maybeRedirectLiffRoute(request, response)) return;
       if (prettyPath === "/liff" || prettyPath === "/home" || prettyPath === "/decode") {
         pretty.pathname = LIFF_ENTRY_PATH;
         redirectTo(response, pretty.pathname + pretty.search + pretty.hash);
@@ -1524,8 +1560,6 @@ const server = createServer(async (request, response) => {
         redirectTo(response, pretty.pathname + pretty.search + pretty.hash);
         return;
       }
-      // LIFF Endpoint may be `/` or any page; honor ?route=
-      if (maybeRedirectLiffRoute(request, response)) return;
     }
 
     if (request.method === "POST" && request.url === "/api/liff/init") {
