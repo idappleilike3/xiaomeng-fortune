@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erosée · 服務估價（第二層）</title>
+  <meta name="description" content="情感、萌寵、職場、財運、神殿、高階、療癒與月費方案完整估價。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #030008;
+      --void-mid: #0c0618;
+      --void-glow: #1a0a2e;
+      --gold: #f5d38b;
+      --gold-soft: rgba(245, 211, 139, 0.55);
+      --gold-faint: rgba(245, 211, 139, 0.2);
+      --ivory: rgba(245, 236, 220, 0.9);
+      --muted: rgba(245, 236, 220, 0.5);
+      --card: rgba(10, 5, 20, 0.86);
+      --line: rgba(245, 211, 139, 0.18);
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --display: "Cinzel", "Cormorant Garamond", Georgia, serif;
+      --sans: "Noto Sans TC", system-ui, sans-serif;
+      --line-url: "https://line.me/R/ti/p/@YOUR_LINE_OA_ID";
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100dvh;
+      background: var(--void);
+      color: var(--ivory);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 50% 36% at 50% 0%, rgba(90, 48, 120, 0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 70% at 50% 0%, var(--void-glow) 0%, var(--void-mid) 42%, var(--void) 80%);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 1.1rem 1rem 4.5rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: var(--gold);
+    }
+
+    .logo__zh {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      letter-spacing: 0.16em;
+    }
+
+    .logo__en {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.26em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .topbar__back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--gold-faint);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+    }
+
+    .topbar__back:hover { color: var(--gold); border-color: var(--gold-soft); }
+
+    .hero {
+      text-align: center;
+      padding: 0.5rem 0 1.5rem;
+    }
+
+    .hero__title {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 4vw, 2.3rem);
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    .hero__desc {
+      margin: 0.85rem auto 0;
+      max-width: 36rem;
+      font-size: clamp(0.95rem, 2.2vw, 1.08rem);
+      line-height: 1.85;
+      letter-spacing: 0.04em;
+      color: #fff6e8;
+      font-weight: 400;
+      text-shadow: 0 0 18px rgba(245, 211, 139, 0.25);
+    }
+
+    .hero__desc span {
+      display: block;
+    }
+
+    /* Category rail */
+    .cat-rail {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      gap: 0.45rem;
+      overflow-x: auto;
+      padding: 0.65rem 0;
+      margin: 0 -0.25rem 1.5rem;
+      background: linear-gradient(180deg, rgba(3, 0, 8, 0.96) 40%, rgba(3, 0, 8, 0.72) 100%);
+      backdrop-filter: blur(10px);
+      scrollbar-width: none;
+    }
+
+    .cat-rail::-webkit-scrollbar { display: none; }
+
+    .cat-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--gold-faint);
+      background: rgba(3, 0, 8, 0.45);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      transition: 0.25s ease;
+    }
+
+    .cat-pill:hover,
+    .cat-pill.is-active {
+      color: var(--void);
+      background: var(--gold);
+      border-color: var(--gold);
+      font-weight: 500;
+    }
+
+    .series {
+      margin-bottom: 2.75rem;
+      scroll-margin-top: 4.5rem;
+    }
+
+    .series__head {
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .series__eyebrow {
+      font-family: var(--display);
+      font-size: 0.62rem;
+      letter-spacing: 0.24em;
+      color: var(--gold-soft);
+      margin-bottom: 0.35rem;
+    }
+
+    .series__title {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 720px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1020px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 1.05rem;
+      background: var(--card);
+      overflow: hidden;
+      min-height: 100%;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 28px rgba(245, 211, 139, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .card__photo {
+      position: relative;
+      height: 168px;
+      overflow: hidden;
+      background: #0a0614;
+    }
+
+    .card__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+      transition: transform 0.55s ease;
+    }
+
+    .card:hover .card__photo img {
+      transform: scale(1.05);
+    }
+
+    .card__photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(3, 0, 8, 0.55) 100%);
+      pointer-events: none;
+    }
+
+    .card__top {
+      padding: 1rem 1.05rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse at 80% 0%, rgba(245, 211, 139, 0.1) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(20, 10, 36, 0.35) 0%, transparent 100%);
+    }
+
+    .card__badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      border: 1px solid var(--gold-faint);
+      border-radius: 999px;
+      padding: 0.18rem 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .card__title {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .card__blurb {
+      margin-top: 0.4rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .card__body {
+      padding: 0.9rem 1.05rem 1.05rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      flex: 1;
+    }
+
+    .block__label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      margin-bottom: 0.35rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .chip {
+      font-size: 0.66rem;
+      padding: 0.2rem 0.48rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 236, 220, 0.12);
+      color: var(--ivory);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 0.22rem;
+    }
+
+    .list li {
+      position: relative;
+      padding-left: 0.85rem;
+      font-size: 0.74rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+    }
+
+    .card__foot {
+      margin-top: auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    .price {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+
+    .points {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .note-mini {
+      font-size: 0.66rem;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 12rem;
+    }
+
+    .btn-line {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: var(--void);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 0.55rem 0.95rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      transition: box-shadow 0.25s;
+    }
+
+    .btn-line:hover {
+      box-shadow: 0 0 22px rgba(245, 211, 139, 0.35);
+    }
+
+    .btn-line--ghost {
+      background: transparent;
+      color: var(--gold);
+    }
+
+    .sub-grid {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 800px) {
+      .sub-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sub-card {
+      border: 1px solid var(--line);
+      border-radius: 1.05rem;
+      padding: 0;
+      background: var(--card);
+      text-align: center;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sub-card__photo {
+      height: 140px;
+      overflow: hidden;
+      position: relative;
+      background: #0a0614;
+    }
+
+    .sub-card__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .sub-card__photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 30%, rgba(3, 0, 8, 0.7) 100%);
+    }
+
+    .sub-card__body {
+      padding: 1.1rem 1.1rem 1.25rem;
+    }
+
+    .sub-card--hot {
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 30px rgba(245, 211, 139, 0.1);
+    }
+
+    .sub-card__name {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      color: var(--gold);
+    }
+
+    .sub-card__price {
+      margin-top: 0.45rem;
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      color: var(--ivory);
+    }
+
+    .sub-card__points {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .sub-card__perk {
+      margin: 0.7rem 0 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .disclaimer {
+      margin-top: 1.5rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      font-size: 0.7rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .foot {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: rgba(245, 236, 220, 0.28);
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="topbar">
+      <a class="logo" href="erosee-cosmic-home.html">
+        <span class="logo__zh">Erosée</span>
+        <span class="logo__en">Service Pricing · Layer 2</span>
+      </a>
+      <a class="topbar__back" href="erosee-cosmic-home.html">← 回首頁</a>
+    </header>
+
+    <section class="hero">
+      <h1 class="hero__title">依你需要，挑一個開始</h1>
+      <p class="hero__desc">
+        <span>八大系列服務方案　單次購買或使用點數　高階方案需人工審核</span>
+        <span>點「立即開始」將開啟 LINE 視窗</span>
+      </p>
+    </section>
+
+    <nav class="cat-rail" aria-label="系列導覽">
+      <a class="cat-pill is-active" href="#emotion">情感系列</a>
+      <a class="cat-pill" href="#pet">萌寵系列</a>
+      <a class="cat-pill" href="#career">職場系列</a>
+      <a class="cat-pill" href="#wealth">財運系列</a>
+      <a class="cat-pill" href="#temple">更多神殿</a>
+      <a class="cat-pill" href="#vip">高階現金限定</a>
+      <a class="cat-pill" href="#heal">療癒心靈</a>
+      <a class="cat-pill" href="#subscribe">月費訂閱</a>
+    </nav>
+
+    <!-- 1 情感 -->
+    <section class="series" id="emotion">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 01</p>
+        <h2 class="series__title">情感系列</h2>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-quick-16x9.png" alt="快速分析" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">新手推薦</span>
+            <h3 class="card__title">快速分析</h3>
+            <p class="card__blurb">議題輪廓不清楚時，先有概念</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">議題還不清楚</span><span class="chip">首次對話</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>建立情感檔案</li>
+                <li>找出真正問題</li>
+                <li>提供改善方向</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 99</p>
+                <span class="points">40 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-text-16x9.png" alt="文字分析" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">新手推薦</span>
+            <h3 class="card__title">文字分析</h3>
+            <p class="card__blurb">一段話就能看見情緒脈絡</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">有一段話想被理解</span><span class="chip">想自我覺察</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>字句情緒拆解</li>
+                <li>脈絡分析</li>
+                <li>下一步建議</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 99</p>
+                <span class="points">40 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-tarot1-16x9.png" alt="一張塔羅指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">塔羅</span>
+            <h3 class="card__title">一張塔羅指引</h3>
+            <p class="card__blurb">有單一焦點時，快速指引</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">有單一焦點</span><span class="chip">想快速指引</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>1 張牌義解讀</li>
+                <li>議題釐清</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 199</p>
+                <span class="points">90 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-tarot3-16x9.png" alt="三張塔羅指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">推薦</span>
+            <h3 class="card__title">三張塔羅指引</h3>
+            <p class="card__blurb">看時間線：過去／現在／未來</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">議題有時間軸</span><span class="chip">想看走向</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>3 張位置解讀</li>
+                <li>時間軸分析</li>
+                <li>走向預估</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 399</p>
+                <span class="points">200 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-tarot5-16x9.png" alt="五張塔羅（凱爾特十字）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">深度</span>
+            <h3 class="card__title">五張塔羅（凱爾特十字）</h3>
+            <p class="card__blurb">議題複雜時看全面</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">議題複雜</span><span class="chip">需要深度</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>凱爾特十字 10 面向</li>
+                <li>全方位解讀</li>
+                <li>深層決策建議</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 699</p>
+                <span class="points">360 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-depth-16x9.png" alt="情感深度分析" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">熱門</span>
+            <h3 class="card__title">情感深度分析</h3>
+            <p class="card__blurb">議題嚴重時，看深層原因</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">議題已持續</span><span class="chip">想看深層</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>議題全景</li>
+                <li>模式分析</li>
+                <li>風險評估</li>
+                <li>行動路徑</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 899</p>
+                <span class="points">450 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-line-16x9.png" alt="LINE 對話解析" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">熱門</span>
+            <h3 class="card__title">LINE 對話解析</h3>
+            <p class="card__blurb">他／她到底在想什麼</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">有 LINE 對話</span><span class="chip">想分析對方</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>對方話術分析</li>
+                <li>你的盲點</li>
+                <li>溝通模式分析</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 1,299</p>
+                <span class="points">630 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-relation-16x9.png" alt="關係健檢" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">深度</span>
+            <h3 class="card__title">關係健檢</h3>
+            <p class="card__blurb">了解目前關係</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">戀愛／婚姻</span><span class="chip">想全面評估</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>8 維度評分</li>
+                <li>雷達圖</li>
+                <li>改善方案</li>
+                <li>PDF 報告</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 1,999</p>
+                <span class="points">990 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/emotion-organize-16x9.png" alt="情緒整理" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">熱門</span>
+            <h3 class="card__title">情緒整理</h3>
+            <p class="card__blurb">把混亂的感覺一個一個說出來</p>
+          </div>
+          <div class="card__body">
+            <div>
+              <p class="block__label">適合你如果</p>
+              <div class="chips"><span class="chip">議題太多</span><span class="chip">想整理思緒</span></div>
+            </div>
+            <div>
+              <p class="block__label">你可以拿到</p>
+              <ul class="list">
+                <li>30 分鐘一對一</li>
+                <li>議題拆解</li>
+                <li>優先順序</li>
+                <li>下一步建議</li>
+              </ul>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 299</p>
+                <span class="points">150 點</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 2 萌寵 -->
+    <section class="series" id="pet">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 02</p>
+        <h2 class="series__title">萌寵系列</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-single-16x9.png" alt="萌寵單張牌指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">萌寵單張牌指引</h3>
+            <p class="card__blurb">快速問一個問題，即時掌握毛孩當下的心情狀態</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 199</p><span class="points">40 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-triple-16x9.png" alt="萌寵三張牌指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">萌寵三張牌指引</h3>
+            <p class="card__blurb">原因／現狀／建議一次看懂，了解毛孩行為背後的訊息</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 399</p><span class="points">120 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-mood-16x9.png" alt="毛孩心情快篩" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">大師牌</span>
+            <h3 class="card__title">毛孩心情快篩</h3>
+            <p class="card__blurb">完整解讀 10 張牌陣，深入解析事件全貌、核心原因、未來走向與具體行動建議</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 3,600</p><span class="points">2,880 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-message-16x9.png" alt="毛孩想告訴我的話" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">大師牌</span>
+            <h3 class="card__title">毛孩想告訴我的話</h3>
+            <p class="card__blurb">完整解讀 10 張牌陣，深入解析毛孩無法言語的心事，翻譯成你能理解的訊息</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 3,600</p><span class="points">2,880 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-bond-16x9.png" alt="我們的陪伴關係" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">大師牌</span>
+            <h3 class="card__title">我們的陪伴關係</h3>
+            <p class="card__blurb">完整解讀 10 張牌陣，深入解析毛孩如何看待你，揭開彼此的情感連結</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 3,600</p><span class="points">2,880 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/pet-memorial-16x9.png" alt="離世毛孩的思念" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">大師牌</span>
+            <h3 class="card__title">離世毛孩的思念</h3>
+            <p class="card__blurb">完整解讀 10 張牌陣，深入解析來自彩虹橋另一端的信息</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 3,600</p><span class="points">2,880 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3 職場 -->
+    <section class="series" id="career">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 03</p>
+        <h2 class="series__title">職場系列</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/career-single-16x9.png" alt="職場單張指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">職場單張指引</h3>
+            <p class="card__blurb">快速掌握今日／本週職場狀態，一句行動提醒讓你找到方向</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 199</p><span class="points">90 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/career-triple-16x9.png" alt="職場三張指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">職場三張指引</h3>
+            <p class="card__blurb">現狀／阻礙／建議一次看完，釐清你在職場卡住的真正原因</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 399</p><span class="points">220 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/career-fork2-16x9.png" alt="職涯十字路（二擇一）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">職涯十字路（二擇一）</h3>
+            <p class="card__blurb">兩個選擇的優劣分析，看清每一條路的未來景象</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 699</p><span class="points">400 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/career-year-16x9.png" alt="年度職涯運勢" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">年度職涯運勢</h3>
+            <p class="card__blurb">未來一年工作走向，含機會、風險預警與年度策略建議</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 899</p><span class="points">550 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/career-fork3-16x9.png" alt="職涯十字路（三擇一）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">職涯十字路（三擇一）</h3>
+            <p class="card__blurb">三個工作一次比對，7 張牌完整分析每一條路的發展軌跡</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 999</p><span class="points">600 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4 財運 -->
+    <section class="series" id="wealth">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 04</p>
+        <h2 class="series__title">財運系列</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/wealth-single-16x9.png" alt="財運單張指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">財運單張指引</h3>
+            <p class="card__blurb">快速掌握當前財運狀態，一句提醒幫你抓住近期金錢能量</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 199</p><span class="points">90 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/wealth-triple-16x9.png" alt="財運三張指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">財運三張指引</h3>
+            <p class="card__blurb">來源／阻礙／機會一次看懂，找出漏財原因與提升關鍵</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 399</p><span class="points">220 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/wealth-celtic-16x9.png" alt="五張塔羅（凱爾特十字）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">五張塔羅（凱爾特十字）</h3>
+            <p class="card__blurb">議題複雜時看全局，十個面向全方位深度解讀</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 699</p><span class="points">360 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/wealth-fengshui-16x9.png" alt="財運風水全方位" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">財運風水全方位</h3>
+            <p class="card__blurb">7 張牌深度解析，含財位方向、開運元素與 3 個月運勢走向</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 999</p><span class="points">600 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5 更多神殿 -->
+    <section class="series" id="temple">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 05</p>
+        <h2 class="series__title">更多神殿</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-number-16x9.png" alt="生命靈數" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">生命靈數</h3>
+            <p class="card__blurb">輸入出生日期，揭開你的天賦使命與人生課題數字密碼</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 299</p><span class="points">160 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-dream-16x9.png" alt="夢境解讀" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">夢境解讀</h3>
+            <p class="card__blurb">潛意識訊息提取，把夢境語言翻譯成你醒著時能理解的指引</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 399</p><span class="points">200 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-persona-16x9.png" alt="人格解碼" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">人格解碼</h3>
+            <p class="card__blurb">深層行為模式分析，看懂你為什麼總是重複同一種人生劇本</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 599</p><span class="points">340 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-workwealth-16x9.png" alt="工作與財富" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">工作與財富</h3>
+            <p class="card__blurb">職場＋財運雙領域同步指引，看見事業與金錢的交互影響</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 699</p><span class="points">380 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-akasha-16x9.png" alt="阿卡西探索" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">阿卡西探索</h3>
+            <p class="card__blurb">靈魂層級的高階解讀，穿越今生，看見你靈魂的來時路</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 999</p><span class="points">550 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/temple-synastry-16x9.png" alt="感情合盤占星" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">感情合盤占星</h3>
+            <p class="card__blurb">雙人星盤深度比對，從行星相位看見緣分本質與相處密碼</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 1,499</p><span class="points">800 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6 VIP -->
+    <section class="series" id="vip">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 06</p>
+        <h2 class="series__title">高階現金限定</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/vip-emotion-coach-16x9.png" alt="情感陪跑（7／21／30 天）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">需人工審核</span>
+            <h3 class="card__title">情感陪跑（7／21／30 天）</h3>
+            <p class="card__blurb">真人介入。7 天專屬陪伴，每日對話＋策略調整，陪你走過情感低谷</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 3,990 – 30,000 起</p>
+                <span class="points">現金限定 · 真人審核</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">洽詢開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/vip-growth-30-16x9.png" alt="個人成長計畫（30 天）" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">含每週顧問會議</span>
+            <h3 class="card__title">個人成長計畫（30 天）</h3>
+            <p class="card__blurb">30 天結構化成長，階段目標＋每週檢視，把改變變成習慣</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 8,800 起</p>
+                <span class="points">現金限定</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">洽詢開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/vip-21day-16x9.png" alt="21 天心靈陪伴計畫" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <span class="card__badge">專屬療癒顧問</span>
+            <h3 class="card__title">21 天心靈陪伴計畫</h3>
+            <p class="card__blurb">每日語音引導＋書寫練習＋每週深度對談</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div>
+                <p class="price">NT$ 8,800 起</p>
+                <span class="points">現金限定</span>
+              </div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">洽詢開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 7 療癒 -->
+    <section class="series" id="heal">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 07</p>
+        <h2 class="series__title">療癒心靈</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-guard-16x9.png" alt="心靈單張守護牌" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">心靈單張守護牌</h3>
+            <p class="card__blurb">給此刻的你一句溫柔提醒，像深夜裡的一盞小燈</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 99</p><span class="points">40 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-release-16x9.png" alt="情緒釋放三張牌" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">情緒釋放三張牌</h3>
+            <p class="card__blurb">看見情緒的根源、找到釋放的方法、抵達療癒後的平靜</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 399</p><span class="points">200 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-innerchild-16x9.png" alt="內在小孩療癒" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">內在小孩療癒</h3>
+            <p class="card__blurb">找到那個受傷的小時候的自己，學習重新當自己的父母</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 699</p><span class="points">360 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-trauma-16x9.png" alt="創傷陪伴指引" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">創傷陪伴指引</h3>
+            <p class="card__blurb">陪你走過那段還沒過去的事，看見復原的具體路徑</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 1,299</p><span class="points">700 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-writing-16x9.png" alt="深層療癒書寫" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">深層療癒書寫</h3>
+            <p class="card__blurb">寫下你的心情，收到一封從療癒視角出發的溫柔回信</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 899</p><span class="points">450 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card__photo"><img src="assets/l2-products/heal-depth-16x9.png" alt="情感深度分析" loading="lazy" width="640" height="360" /></div>
+          <div class="card__top">
+            <h3 class="card__title">情感深度分析</h3>
+            <p class="card__blurb">議題嚴重時看深層原因，包含全景分析、模式識別與行動路徑</p>
+          </div>
+          <div class="card__body">
+            <div class="card__foot">
+              <div><p class="price">NT$ 899</p><span class="points">450 點</span></div>
+              <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即開始</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 8 月費 -->
+    <section class="series" id="subscribe">
+      <div class="series__head">
+        <p class="series__eyebrow">Series 08</p>
+        <h2 class="series__title">月費訂閱（共鳴／成長／尊榮）</h2>
+      </div>
+      <div class="sub-grid">
+        <article class="sub-card sub-card--hot">
+          <div class="sub-card__photo"><img src="assets/l2-products/sub-resonance-16x9.png" alt="共鳴" loading="lazy" /></div>
+          <div class="sub-card__body">
+            <p class="card__badge" style="margin-bottom:0.6rem">最受歡迎</p>
+            <h3 class="sub-card__name">共鳴</h3>
+            <p class="sub-card__price">NT$ 990</p>
+            <p class="sub-card__points">1,000 點／月</p>
+            <p class="sub-card__perk">每天可以跟我聊 20 次<br />每月 600 點可用於加購服務</p>
+            <a class="btn-line" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即訂閱</a>
+          </div>
+        </article>
+        <article class="sub-card">
+          <div class="sub-card__photo"><img src="assets/l2-products/sub-growth-16x9.png" alt="成長" loading="lazy" /></div>
+          <div class="sub-card__body">
+            <h3 class="sub-card__name">成長</h3>
+            <p class="sub-card__price">NT$ 1,990</p>
+            <p class="sub-card__points">1,500 點／月</p>
+            <p class="sub-card__perk">每天可以跟我聊 40 次<br />每月 1,800 點可用於加購服務</p>
+            <a class="btn-line btn-line--ghost" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即訂閱</a>
+          </div>
+        </article>
+        <article class="sub-card">
+          <div class="sub-card__photo"><img src="assets/l2-products/sub-honor-16x9.png" alt="尊榮" loading="lazy" /></div>
+          <div class="sub-card__body">
+            <h3 class="sub-card__name">尊榮</h3>
+            <p class="sub-card__price">NT$ 3,990</p>
+            <p class="sub-card__points">5,000 點／月</p>
+            <p class="sub-card__perk">每天可以跟我聊 80 次<br />每月 5,000 點可用於加購服務</p>
+            <a class="btn-line btn-line--ghost" href="https://line.me/R/ti/p/@YOUR_LINE_OA_ID" target="_blank" rel="noopener">立即訂閱</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <aside class="disclaimer">
+      若涉及自傷、傷人或跟蹤議題，請立即撥打 1925（心理諮商專線）或 110（緊急報案）。
+      本平台是 24 小時情感顧問平台，不是心理諮商、不是替你做決定，而是陪你看懂感情與下一步。
+      「立即開始」將另開 LINE 視窗；高階現金方案需人工審核。
+    </aside>
+
+    <p class="foot">Erosée · 第二層服務估價</p>
+  </div>
+
+  <script>
+    (function () {
+      const pills = document.querySelectorAll(".cat-pill");
+      const sections = [...document.querySelectorAll(".series")];
+
+      function setActive() {
+        const y = window.scrollY + 120;
+        let current = sections[0]?.id;
+        for (const s of sections) {
+          if (s.offsetTop <= y) current = s.id;
+        }
+        pills.forEach((p) => {
+          p.classList.toggle("is-active", p.getAttribute("href") === "#" + current);
+        });
+      }
+
+      window.addEventListener("scroll", setActive, { passive: true });
+      setActive();
+    })();
+  </script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script type="module" src="./js/erosee-liff-boot.js"></script>
+</body>
+</html>

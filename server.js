@@ -1,8 +1,30 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
+import { networkInterfaces } from "node:os";
 import { extname, join, normalize, resolve } from "node:path";
 import { createServer } from "node:http";
 import { oracleFortunes } from "./oracle-data.js";
+import { getLiffPublicConfig, handleLiffInit } from "./lib/liff-handlers.js";
+import {
+  DEFAULT_PUBLIC_BASE_URL,
+  LIFF_ENTRY_PATH,
+  LIFF_PRICING_PATH,
+  resolveLiffRoute,
+  siteUrlForRoute,
+} from "./lib/liff-routes.js";
+
+function getLanIPv4() {
+  const nets = networkInterfaces();
+  for (const entries of Object.values(nets)) {
+    for (const net of entries || []) {
+      const family = typeof net.family === "number" ? net.family : String(net.family);
+      if ((family === "IPv4" || family === 4) && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+  return null;
+}
 
 const rootDir = process.cwd();
 
@@ -147,8 +169,18 @@ process.on("unhandledRejection", (reason) => {
 const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET || "";
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
-const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${port}`).replace(/\/$/, "");
-const liffBaseUrl = (process.env.LIFF_URL || "https://liff.line.me/2010549494-KRb0mn7U").replace(/\/$/, "");
+const lineChannelId = process.env.LINE_CHANNEL_ID || "";
+const publicBaseUrl = (
+  process.env.PUBLIC_BASE_URL ||
+  (process.env.NODE_ENV === "production" ? DEFAULT_PUBLIC_BASE_URL : `http://localhost:${port}`)
+).replace(/\/$/, "");
+const liffId = process.env.LIFF_ID || "";
+const liffBaseUrl = (
+  process.env.LIFF_URL ||
+  (liffId ? `https://liff.line.me/${liffId}` : "https://liff.line.me/YOUR_LIFF_ID")
+).replace(/\/$/, "");
+const eroseeHomeUrl = `${publicBaseUrl}${LIFF_ENTRY_PATH}`;
+const eroseePricingUrl = `${publicBaseUrl}${LIFF_PRICING_PATH}`;
 const ecpayConfig = {
   merchantId: process.env.ECPAY_MERCHANT_ID || "",
   hashKey: process.env.ECPAY_HASH_KEY || "",
@@ -310,6 +342,48 @@ function liffPageUrl(page) {
   return `${liffBaseUrl}?page=${encodeURIComponent(page)}`;
 }
 
+function liffRouteUrl(route, extraParams = {}) {
+  const params = new URLSearchParams({ route, entry: "line", ...extraParams });
+  return `${liffBaseUrl}?${params.toString()}`;
+}
+
+/** Prefer LIFF deep link when LIFF_ID is set; otherwise absolute site URL on production domain. */
+function eroseeLink(route = "/", extraParams = {}) {
+  if (liffId) return liffRouteUrl(route, extraParams);
+  return siteUrlForRoute(publicBaseUrl, route, { entry: "line", ...extraParams });
+}
+
+function redirectTo(response, location) {
+  response.writeHead(302, {
+    location,
+    "cache-control": "no-store",
+  });
+  response.end();
+}
+
+/**
+ * If request carries ?route=..., redirect to the mapped Erosée HTML page.
+ * Used when LIFF Endpoint is `/` or a path that still forwards query params.
+ */
+function maybeRedirectLiffRoute(request, response) {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const rawRoute = url.searchParams.get("route");
+  if (!rawRoute) return false;
+
+  const resolved = resolveLiffRoute(rawRoute);
+  if (!resolved) return false;
+
+  url.searchParams.delete("route");
+  const qs = url.searchParams.toString();
+  const location = `${resolved.path}${qs ? `?${qs}` : ""}${resolved.hash ? `#${resolved.hash}` : ""}`;
+  redirectTo(response, location);
+  return true;
+}
+
+function getLineUserId(event) {
+  return event?.source?.userId || null;
+}
+
 function flexMessage(altText, contents) {
   return { type: "flex", altText, contents };
 }
@@ -392,6 +466,96 @@ function menuFlexMessage() {
           size: "xs",
           color: "#CDBCEB",
           wrap: true,
+        },
+      ],
+    },
+  });
+}
+
+function templeEntryFlexMessage() {
+  return flexMessage("開始解碼", {
+    type: "bubble",
+    size: "kilo",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#12081C",
+      contents: [
+        {
+          type: "text",
+          text: "嗨 我是情感解碼",
+          weight: "bold",
+          size: "lg",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "先選一個你現在最想了解的方向 我會陪你慢慢看清楚",
+          size: "sm",
+          color: "#F8EEDB",
+          wrap: true,
+        },
+        {
+          type: "button",
+          style: "primary",
+          color: "#7C4DC4",
+          action: uriAction("開始解碼", eroseeLink("/")),
+        },
+        {
+          type: "button",
+          style: "secondary",
+          color: "#F5D38B",
+          action: uriAction("查看所有方案", eroseeLink("/pricing")),
+        },
+      ],
+    },
+  });
+}
+
+function divinationKeywordFlexMessage() {
+  return flexMessage("情感解碼入口", {
+    type: "bubble",
+    size: "mega",
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      backgroundColor: "#1A0F2D",
+      contents: [
+        {
+          type: "text",
+          text: "你想從哪裡開始",
+          weight: "bold",
+          size: "xl",
+          color: "#F5D38B",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "可以先進入 Erosée 首頁開始解碼 或直接查看完整方案",
+          size: "sm",
+          color: "#F8EEDB",
+          wrap: true,
+        },
+        {
+          type: "button",
+          style: "primary",
+          color: "#B780FF",
+          action: uriAction("開始解碼", eroseeLink("/")),
+        },
+        {
+          type: "button",
+          style: "secondary",
+          color: "#F5D38B",
+          action: uriAction("查看方案", eroseeLink("/pricing")),
+        },
+        {
+          type: "button",
+          style: "secondary",
+          color: "#78E0D5",
+          action: uriAction("情感系列", eroseeLink("/pricing/emotion")),
         },
       ],
     },
@@ -1066,11 +1230,15 @@ function buildReplyMessages(event) {
   const lowerText = text.toLowerCase();
 
   if (event.type === "follow") {
-    return [welcomeFlexMessage()];
+    return [welcomeFlexMessage(), templeEntryFlexMessage()];
   }
 
   if (!text) {
     return [menuFlexMessage()];
+  }
+
+  if (/占卜|神殿|命運/.test(text)) {
+    return [divinationKeywordFlexMessage()];
   }
 
   if (text.includes("命運塔羅") || text === "塔羅" || lowerText.includes("tarot")) {
@@ -1301,10 +1469,134 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "GET" && request.url === "/health") {
+      const liffConfig = getLiffPublicConfig();
+      const envPresent = {
+        PUBLIC_BASE_URL: Boolean(process.env.PUBLIC_BASE_URL),
+        LINE_CHANNEL_ID: Boolean(process.env.LINE_CHANNEL_ID),
+        LINE_CHANNEL_SECRET: Boolean(process.env.LINE_CHANNEL_SECRET),
+        LINE_CHANNEL_ACCESS_TOKEN: Boolean(process.env.LINE_CHANNEL_ACCESS_TOKEN),
+        LIFF_ID: Boolean(liffId),
+        LIFF_URL: Boolean(process.env.LIFF_URL || liffId),
+        LINE_OA_URL: Boolean(process.env.LINE_OA_URL),
+        ALLOW_LIFF_STUB: process.env.ALLOW_LIFF_STUB === "1" || process.env.ALLOW_LIFF_STUB === "true",
+      };
       jsonResponse(response, 200, {
         ok: true,
         service: "fortune-line-web",
+        publicBaseUrl,
         webhook: `${publicBaseUrl}/api/line/webhook`,
+        erosee: {
+          home: eroseeHomeUrl,
+          pricing: eroseePricingUrl,
+        },
+        liff: {
+          config: `${publicBaseUrl}/api/liff/config`,
+          init: `${publicBaseUrl}/api/liff/init`,
+          endpoint: liffConfig.liffEndpointUrl,
+          open: liffId ? liffBaseUrl : null,
+          configured: Boolean(liffId),
+        },
+        /** boolean presence only — never returns secret values */
+        envPresent,
+      });
+      return;
+    }
+
+    if (request.method === "GET" && request.url === "/api/liff/config") {
+      jsonResponse(response, 200, {
+        ok: true,
+        config: getLiffPublicConfig(),
+      });
+      return;
+    }
+
+    // Pretty paths → Erosée pages (also usable outside LIFF)
+    if (request.method === "GET") {
+      const pretty = new URL(request.url, `http://${request.headers.host}`);
+      const prettyPath = pretty.pathname.replace(/\/$/, "") || "/";
+      if (prettyPath === "/liff" || prettyPath === "/home" || prettyPath === "/decode") {
+        pretty.pathname = LIFF_ENTRY_PATH;
+        redirectTo(response, pretty.pathname + pretty.search + pretty.hash);
+        return;
+      }
+      if (prettyPath === "/pricing" || prettyPath === "/plans" || prettyPath === "/shop") {
+        pretty.pathname = LIFF_PRICING_PATH;
+        redirectTo(response, pretty.pathname + pretty.search + pretty.hash);
+        return;
+      }
+      // LIFF Endpoint may be `/` or any page; honor ?route=
+      if (maybeRedirectLiffRoute(request, response)) return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/liff/init") {
+      const payload = await readJsonBody(request);
+      try {
+        const result = await handleLiffInit(payload, appData, process.env);
+        jsonResponse(response, result.stub ? 202 : 200, result);
+      } catch (error) {
+        const statusCode = error.statusCode || 500;
+        jsonResponse(response, statusCode, {
+          ok: false,
+          error: error.message || "LIFF_INIT_FAILED",
+          todo: statusCode === 503
+            ? "請在 .env 設定 LINE_CHANNEL_ID 以驗證 idToken，或暫設 ALLOW_LIFF_STUB=1 進行本機開發"
+            : undefined,
+        });
+      }
+      return;
+    }
+
+    if (request.method === "GET" && request.url.startsWith("/share/")) {
+      const shareUrl = new URL(request.url, `http://${request.headers.host}`);
+      const referrerId = decodeURIComponent(shareUrl.pathname.replace(/^\/share\//, "") || "guest");
+      const target = new URL(liffId ? liffBaseUrl : eroseeHomeUrl);
+      target.searchParams.set("route", "/");
+      target.searchParams.set("ref", referrerId);
+      target.searchParams.set("campaign", "invite");
+      shareUrl.searchParams.forEach((value, key) => {
+        if (key !== "route" && key !== "ref") target.searchParams.set(key, value);
+      });
+      redirectTo(response, target.toString());
+      return;
+    }
+
+    if (request.method === "GET" && request.url.startsWith("/api/share/")) {
+      const referrerId = decodeURIComponent(request.url.slice("/api/share/".length).split("?")[0] || "");
+      jsonResponse(response, 200, {
+        ok: true,
+        stub: true,
+        referrerId,
+        targetUrl: eroseeLink("/", { ref: referrerId || "guest", campaign: "invite" }),
+        message: "分享導流占位：正式版將依 CONVERSATION_GROWTH 規格計算有效邀請。",
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/share/track") {
+      const payload = await readJsonBody(request);
+      const referrerId = payload.referrerId || payload.userId || "";
+      const inviteeId = payload.inviteeId || payload.lineId || "";
+      if (!appData.shareInvites) appData.shareInvites = [];
+      const record = {
+        id: `share-${Date.now()}`,
+        referrerId,
+        inviteeId,
+        channel: payload.channel || "line",
+        createdAt: new Date().toISOString(),
+        unlockSecondTemple: false,
+      };
+      appData.shareInvites.unshift(record);
+      const inviteCount = appData.shareInvites.filter((item) => item.referrerId === referrerId).length;
+      if (inviteCount >= 5) {
+        record.unlockSecondTemple = true;
+        record.note = "已達 5 位好友門檻（占位，尚未寫入正式資料庫）";
+      }
+      jsonResponse(response, 200, {
+        ok: true,
+        stub: true,
+        record,
+        inviteCount,
+        requiredInvites: 5,
       });
       return;
     }
@@ -2072,8 +2364,28 @@ server.on("error", (err) => {
   console.error("[server error]", err && err.message);
 });
 
-server.listen(port, () => {
-  console.log(`小夢老師網站：http://localhost:${port}`);
+// 明確綁 0.0.0.0，讓同網段手機可用 LAN IP 連線（勿只用 localhost）
+const listenHost = process.env.HOST || "0.0.0.0";
+server.listen(port, listenHost, () => {
+  const lan = getLanIPv4();
+  console.log(`小夢神殿（固定建議埠 3000；其他專案請用 3001+）：http://localhost:${port}`);
+  console.log(`主站：http://localhost:${port}/`);
+  console.log(`Erosée LIFF 首頁：http://localhost:${port}${LIFF_ENTRY_PATH}`);
+  console.log(`Erosée L2 方案：http://localhost:${port}${LIFF_PRICING_PATH}`);
+  console.log(`手勢粒子：http://localhost:${port}/gesture-particle-demo.html`);
+  console.log(`手勢水晶：http://localhost:${port}/gesture-crystal-demo.html`);
+  console.log(`手機導覽：http://localhost:${port}/mobile.html`);
+  if (lan) {
+    console.log(`同 Wi‑Fi：http://${lan}:${port}/  （相機請改用 HTTPS tunnel）`);
+  }
+  console.log(`監聽：${listenHost}:${port}`);
+  console.log(`PUBLIC_BASE_URL：${publicBaseUrl}`);
   console.log(`LINE Webhook URL：${publicBaseUrl}/api/line/webhook`);
+  console.log(`LIFF Endpoint（貼到 LINE Developers）：${eroseeHomeUrl}`);
+  if (!liffId) {
+    console.warn(`[LIFF] 未設定 LIFF_ID／LIFF_URL — 手機 LINE 登入無法初始化。請在 .env 設定後重啟。`);
+  } else {
+    console.log(`LINE LIFF 開啟連結：${liffBaseUrl}`);
+  }
 });
 

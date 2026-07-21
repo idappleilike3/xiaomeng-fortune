@@ -69,6 +69,15 @@ xiaomeng-fortune/
 
 ## 🚀 快速開始
 
+### 本機埠號（與「還在嗎」共存）
+
+| 專案 | 目錄 | 埠 |
+|------|------|-----|
+| **小夢塔羅（本專案）** | `xiaomeng-fortune` | **3000** |
+| 還在嗎（HaiZaiMa） | `../haizaima` | **3001** |
+
+兩邊可同時跑。請勿為啟動還在嗎而結束本專案的 `node server.js`；還在嗎應使用 3001。
+
 ### 本地開發
 
 ```bash
@@ -88,14 +97,20 @@ npm run check
 
 自動部署到 Render:
 - push 到 main → Render 自動 build + deploy
-- 設定 7 個環境變數(Render Dashboard):
+  - 設定環境變數(Render Dashboard):
   - `LINE_CHANNEL_ACCESS_TOKEN`
   - `LINE_CHANNEL_SECRET`
-  - `PUBLIC_BASE_URL`
-  - `LIFF_URL`
+  - `PUBLIC_BASE_URL=https://xiaomeng-fortune.onrender.com`
+  - `LIFF_URL` / `LIFF_ID`
+  - `LINE_OA_URL`
   - `PORT`
   - `LINE_CHANNEL_ID`(optional)
-  - `LIFF_ID`(optional)
+
+LIFF / Webhook 設定步驟見 [`docs/LINE_LIFF_RENDER_SETUP.md`](docs/LINE_LIFF_RENDER_SETUP.md)。
+
+Erosée 入口：
+- 首頁（LIFF Endpoint）：`/erosee-cosmic-home.html`
+- L2 方案：`/erosee-l2-pricing.html`
 
 ---
 

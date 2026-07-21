@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erosée · 服務方案</title>
+  <meta name="description" content="依你需要，挑一個開始。陪你整理情緒、理解關係，找到屬於自己的答案。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #030008;
+      --void-mid: #0c0618;
+      --void-glow: #1a0a2e;
+      --gold: #f5d38b;
+      --gold-soft: rgba(245, 211, 139, 0.55);
+      --gold-faint: rgba(245, 211, 139, 0.22);
+      --ivory: rgba(245, 236, 220, 0.86);
+      --muted: rgba(245, 236, 220, 0.48);
+      --card: rgba(10, 5, 20, 0.82);
+      --line: rgba(245, 211, 139, 0.18);
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --display: "Cinzel", "Cormorant Garamond", Georgia, serif;
+      --sans: "Noto Sans TC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100dvh;
+      background: var(--void);
+      color: var(--ivory);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 40% at 50% 18%, rgba(90, 48, 120, 0.26) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 70% at 50% 0%, var(--void-glow) 0%, var(--void-mid) 45%, var(--void) 80%);
+    }
+
+    .flare {
+      position: fixed;
+      left: 50%;
+      top: 12%;
+      width: min(70vw, 560px);
+      height: min(70vw, 560px);
+      transform: translate(-50%, -40%);
+      background: radial-gradient(circle, rgba(255, 248, 230, 0.35) 0%, rgba(245, 211, 139, 0.12) 22%, transparent 68%);
+      filter: blur(2px);
+      pointer-events: none;
+      z-index: 0;
+      animation: breathe 9s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    #starfield {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 1.25rem 1.1rem 4rem;
+    }
+
+    /* Top */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fade 0.9s ease 0.1s forwards;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: var(--gold);
+    }
+
+    .logo__zh {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      letter-spacing: 0.18em;
+      font-weight: 500;
+    }
+
+    .logo__en {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .topbar__cta {
+      border: 1px solid var(--gold-soft);
+      background: rgba(3, 0, 8, 0.4);
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .topbar__cta:hover {
+      background: rgba(245, 211, 139, 0.08);
+      box-shadow: 0 0 20px rgba(245, 211, 139, 0.15);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 1rem 0 2.25rem;
+      opacity: 0;
+      animation: fade 1s ease 0.25s forwards;
+    }
+
+    .hero__eyebrow {
+      font-family: var(--display);
+      font-size: 0.7rem;
+      letter-spacing: 0.32em;
+      color: var(--gold-soft);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    .hero__title {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+      line-height: 1.35;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      text-shadow: 0 0 28px rgba(245, 211, 139, 0.2);
+    }
+
+    .hero__lead {
+      margin: 1rem auto 0;
+      max-width: 36rem;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .hero__actions {
+      margin-top: 1.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.35rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .btn--primary {
+      border: 1px solid var(--gold);
+      color: var(--void);
+      background: var(--gold);
+      font-weight: 500;
+    }
+
+    .btn--primary:hover {
+      box-shadow: 0 0 28px rgba(245, 211, 139, 0.35);
+    }
+
+    .btn--ghost {
+      border: 1px solid var(--gold-faint);
+      color: var(--gold);
+      background: transparent;
+    }
+
+    .btn--ghost:hover {
+      border-color: var(--gold-soft);
+      background: rgba(245, 211, 139, 0.06);
+    }
+
+    /* Section */
+    .section {
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fade 1s ease 0.4s forwards;
+    }
+
+    .section__head {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section__eyebrow {
+      font-family: var(--display);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--gold-soft);
+      margin-bottom: 0.55rem;
+    }
+
+    .section__title {
+      font-family: var(--serif);
+      font-size: clamp(1.45rem, 3.2vw, 2rem);
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    .section__desc {
+      margin: 0.75rem auto 0;
+      max-width: 40rem;
+      font-size: 0.82rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding: 0.25rem 0 1.25rem;
+      margin-bottom: 0.5rem;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex: 0 0 auto;
+      border: 1px solid var(--gold-faint);
+      background: rgba(3, 0, 8, 0.35);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: color 0.25s, border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    }
+
+    .filter-btn:hover {
+      color: var(--gold);
+      border-color: var(--gold-soft);
+    }
+
+    .filter-btn.is-active {
+      color: var(--void);
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 18px rgba(245, 211, 139, 0.25);
+      font-weight: 500;
+    }
+
+    /* Product grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 700px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1000px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 1.1rem;
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+      min-height: 100%;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 32px rgba(245, 211, 139, 0.14);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .card[hidden] { display: none !important; }
+
+    .card__preview {
+      position: relative;
+      height: 118px;
+      background:
+        radial-gradient(ellipse at 50% 80%, rgba(245, 211, 139, 0.14) 0%, transparent 55%),
+        linear-gradient(180deg, #140a22 0%, #07040f 100%);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+    }
+
+    .card__preview svg {
+      width: 56px;
+      height: 56px;
+      stroke: var(--gold-soft);
+      fill: none;
+      stroke-width: 1.15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card__badges {
+      position: absolute;
+      top: 0.65rem;
+      left: 0.65rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .badge {
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      padding: 0.22rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--gold-faint);
+      color: var(--gold);
+      background: rgba(3, 0, 8, 0.55);
+    }
+
+    .badge--hot {
+      border-color: rgba(245, 180, 120, 0.45);
+      color: #f0c9a0;
+    }
+
+    .badge--deep {
+      border-color: rgba(180, 150, 220, 0.4);
+      color: #d4c4ef;
+    }
+
+    .card__body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      padding: 1rem 1.05rem 1.15rem;
+      flex: 1;
+    }
+
+    .card__en {
+      font-family: var(--display);
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .card__title {
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      line-height: 1.25;
+    }
+
+    .card__blurb {
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .card__meta {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 0.15rem;
+    }
+
+    .meta-block__label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      margin-bottom: 0.3rem;
+    }
+
+    .meta-block__tags,
+    .meta-block__list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .chip {
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      padding: 0.22rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 236, 220, 0.12);
+      color: var(--ivory);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .meta-block__list {
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+
+    .meta-block__list li {
+      font-size: 0.74rem;
+      color: var(--muted);
+      line-height: 1.45;
+      padding-left: 0.85rem;
+      position: relative;
+    }
+
+    .meta-block__list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+    }
+
+    .card__foot {
+      margin-top: auto;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.65rem;
+    }
+
+    .card__stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .card__price {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+
+    .card__points {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .card__go {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+    }
+
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      grid-column: 1 / -1;
+    }
+
+    .empty.is-show { display: block; }
+
+    /* Disclaimer */
+    .note {
+      margin-top: 2.5rem;
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      background: rgba(8, 4, 16, 0.55);
+      font-size: 0.72rem;
+      line-height: 1.7;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    .site-foot {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      color: rgba(245, 236, 220, 0.28);
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <div class="flare" aria-hidden="true"></div>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <div class="wrap">
+    <header class="topbar">
+      <a class="logo" href="#top">
+        <span class="logo__zh">Erosée</span>
+        <span class="logo__en">Emotion Bridge</span>
+      </a>
+      <a class="topbar__cta" href="https://line.me/" target="_blank" rel="noopener">用 LINE 登入</a>
+    </header>
+
+    <section class="hero" id="top">
+      <p class="hero__eyebrow">24 小時情感顧問</p>
+      <h1 class="hero__title">歡迎來到 Erosée<br />陪你整理情緒、理解關係<br />找到屬於自己的答案</h1>
+      <p class="hero__lead">高端私人情感顧問 — 不是替你做決定，而是陪你看懂感情與下一步。主要互動在 LINE，網站聚焦會員中心與服務方案。</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="https://line.me/" target="_blank" rel="noopener">加 LINE 開始體驗</a>
+        <a class="btn btn--ghost" href="#products">看看有哪些服務</a>
+      </div>
+    </section>
+
+    <section class="section" id="products" aria-labelledby="products-title">
+      <div class="section__head">
+        <p class="section__eyebrow">服務方案</p>
+        <h2 class="section__title" id="products-title">依你需要，挑一個開始</h2>
+        <p class="section__desc">所有方案都是單次購買，或加入會員享有每月配額。高端私人情感顧問 — 不是替你做決定，而是陪你看懂感情與下一步。</p>
+      </div>
+
+      <div class="filters" role="tablist" aria-label="服務分類">
+        <button type="button" class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">全部</button>
+        <button type="button" class="filter-btn" data-filter="emotion" role="tab" aria-selected="false">情感分析</button>
+        <button type="button" class="filter-btn" data-filter="chat" role="tab" aria-selected="false">對話解析</button>
+        <button type="button" class="filter-btn" data-filter="tarot" role="tab" aria-selected="false">塔羅指引</button>
+        <button type="button" class="filter-btn" data-filter="relation" role="tab" aria-selected="false">關係健檢</button>
+        <button type="button" class="filter-btn" data-filter="growth" role="tab" aria-selected="false">個人成長</button>
+        <button type="button" class="filter-btn" data-filter="reset" role="tab" aria-selected="false">情緒整理</button>
+      </div>
+
+      <div class="grid" id="productGrid">
+        <!-- 1 -->
+        <a class="card" href="#" data-cat="emotion" data-name="快速分析">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge">新手推薦</span></div>
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M16 16l4 4" /><path d="M9 11h4M11 9v4" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Quick Analysis</p>
+            <h3 class="card__title">快速分析</h3>
+            <p class="card__blurb">議題輪廓不清楚時，先有概念</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">議題還不清楚</span>
+                  <span class="chip">首次對話</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>5 分鐘完成</li>
+                  <li>建立情感檔案</li>
+                  <li>找出真正問題</li>
+                  <li>提供改善方向</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（1,248） · 約 5 分鐘</p>
+                <p class="card__price">NT$ 99</p>
+                <p class="card__points">50 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 2 -->
+        <a class="card" href="#" data-cat="tarot" data-name="一張塔羅指引">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge">新手推薦</span></div>
+            <svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="1.2" /><path d="M12 8.5l1.2 2.4 2.6.3-2 1.8.6 2.5L12 14.3l-2.4 1.2.6-2.5-2-1.8 2.6-.3z" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Tarot One-Card</p>
+            <h3 class="card__title">一張塔羅指引</h3>
+            <p class="card__blurb">有單一焦點時，快速指引</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">有單一焦點</span>
+                  <span class="chip">想快速指引</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>1 張牌義解讀</li>
+                  <li>議題釐清</li>
+                  <li>行動建議</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（1,834） · 即時</p>
+                <p class="card__price">NT$ 199</p>
+                <p class="card__points">100 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 3 -->
+        <a class="card" href="#" data-cat="tarot" data-name="三張塔羅指引">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge">推薦</span></div>
+            <svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="6" height="14" rx="1" /><rect x="9" y="3.5" width="6" height="14" rx="1" /><rect x="15.5" y="5" width="6" height="14" rx="1" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Tarot Timeline</p>
+            <h3 class="card__title">三張塔羅指引</h3>
+            <p class="card__blurb">看時間線：過去／現在／未來</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">議題有時間軸</span>
+                  <span class="chip">想看走向</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>3 張位置解讀</li>
+                  <li>時間軸分析</li>
+                  <li>走向預估</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.8（942） · 即時</p>
+                <p class="card__price">NT$ 399</p>
+                <p class="card__points">220 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 4 -->
+        <a class="card" href="#" data-cat="tarot" data-name="五張塔羅指引">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge badge--deep">深度分析</span></div>
+            <svg viewBox="0 0 24 24"><path d="M12 3v18M5 12h14" /><circle cx="12" cy="12" r="3.2" /><circle cx="12" cy="5.2" r="1.2" /><circle cx="12" cy="18.8" r="1.2" /><circle cx="5.2" cy="12" r="1.2" /><circle cx="18.8" cy="12" r="1.2" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Tarot Deep</p>
+            <h3 class="card__title">五張塔羅指引（凱爾特十字）</h3>
+            <p class="card__blurb">議題複雜時看全面</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">議題複雜</span>
+                  <span class="chip">需要深度</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>凱爾特十字 10 面向</li>
+                  <li>全方位解讀</li>
+                  <li>深層決策建議</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（612） · 約 10 分鐘</p>
+                <p class="card__price">NT$ 699</p>
+                <p class="card__points">400 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 5 -->
+        <a class="card" href="#" data-cat="emotion" data-name="情感深度分析">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges">
+              <span class="badge badge--deep">深度分析</span>
+              <span class="badge badge--hot">熱門</span>
+            </div>
+            <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16" /><path d="M7 15l3-4 3 2 4-6" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Deep Analysis</p>
+            <h3 class="card__title">情感深度分析</h3>
+            <p class="card__blurb">議題嚴重時，看深層原因</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">議題已持續</span>
+                  <span class="chip">想看深層</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>議題全景</li>
+                  <li>模式分析</li>
+                  <li>風險評估</li>
+                  <li>行動路徑</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（1,872） · 3–5 個工作天</p>
+                <p class="card__price">NT$ 899</p>
+                <p class="card__points">500 點</p>
+              </div>
+              <span class="card__go">立即分析 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 6 -->
+        <a class="card" href="#" data-cat="chat" data-name="LINE 對話解析">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges">
+              <span class="badge badge--hot">熱門</span>
+              <span class="badge badge--deep">深度分析</span>
+            </div>
+            <svg viewBox="0 0 24 24"><path d="M5 6h14v9H9l-4 3V6z" /><path d="M9 10h6M9 13h4" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Conversation Insight</p>
+            <h3 class="card__title">LINE 對話解析</h3>
+            <p class="card__blurb">他／她到底在想什麼</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">有 LINE 對話</span>
+                  <span class="chip">想分析對方</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>對方話術分析</li>
+                  <li>你的盲點</li>
+                  <li>溝通模式分析</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.8（728） · 3–5 個工作天</p>
+                <p class="card__price">NT$ 1,299</p>
+                <p class="card__points">700 點</p>
+              </div>
+              <span class="card__go">立即分析 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 7 -->
+        <a class="card" href="#" data-cat="relation" data-name="關係健檢">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges">
+              <span class="badge badge--deep">深度分析</span>
+              <span class="badge badge--hot">熱門</span>
+            </div>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" /><path d="M12 7.5v4.5l3 1.8" /><path d="M7 16.5l2-1.2M17 16.5l-2-1.2" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Relationship Check</p>
+            <h3 class="card__title">關係健檢</h3>
+            <p class="card__blurb">了解目前關係</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">戀愛／婚姻</span>
+                  <span class="chip">想全面評估</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>8 維度評分</li>
+                  <li>雷達圖</li>
+                  <li>改善方案</li>
+                  <li>PDF 報告</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（386） · 5–7 個工作天</p>
+                <p class="card__price">NT$ 1,999</p>
+                <p class="card__points">1,100 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 8 -->
+        <a class="card" href="#" data-cat="emotion" data-name="文字分析">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge">新手推薦</span></div>
+            <svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z" /><path d="M9 9h6M9 12h6M9 15h4" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Text Analysis</p>
+            <h3 class="card__title">文字分析</h3>
+            <p class="card__blurb">一段話就能看見情緒脈絡</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">有一段話想被理解</span>
+                  <span class="chip">想自我覺察</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>字句情緒拆解</li>
+                  <li>脈絡分析</li>
+                  <li>下一步建議</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（412） · 即時</p>
+                <p class="card__price">NT$ 99</p>
+                <p class="card__points">50 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 9 -->
+        <a class="card" href="#" data-cat="reset" data-name="情緒整理">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge badge--hot">熱門</span></div>
+            <svg viewBox="0 0 24 24"><path d="M12 20s-6-4-6-9a4 4 0 0 1 8 0c0 5-6 9-6 9z" transform="translate(0 -1)" /><path d="M8 8c1.5-2 6.5-2 8 0" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Emotion Reset</p>
+            <h3 class="card__title">情緒整理</h3>
+            <p class="card__blurb">把混亂的感覺一個一個說出來</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">議題太多</span>
+                  <span class="chip">想整理思緒</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>30 分鐘一對一</li>
+                  <li>議題拆解</li>
+                  <li>優先順序</li>
+                  <li>下一步建議</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（856） · 30 分鐘</p>
+                <p class="card__price">NT$ 299</p>
+                <p class="card__points">160 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 10 -->
+        <a class="card" href="#" data-cat="growth" data-name="個人成長計畫">
+          <div class="card__preview" aria-hidden="true">
+            <div class="card__badges"><span class="badge badge--deep">深度分析</span></div>
+            <svg viewBox="0 0 24 24"><path d="M5 19V8l7-4 7 4v11" /><path d="M9 19v-6h6v6" /><path d="M9 10h6" /></svg>
+          </div>
+          <div class="card__body">
+            <p class="card__en">Growth Plan</p>
+            <h3 class="card__title">個人成長計畫</h3>
+            <p class="card__blurb">21／30 天陪伴，把改變變成習慣</p>
+            <div class="card__meta">
+              <div>
+                <p class="meta-block__label">適合你如果</p>
+                <div class="meta-block__tags">
+                  <span class="chip">想長期成長</span>
+                  <span class="chip">需要結構化陪伴</span>
+                </div>
+              </div>
+              <div>
+                <p class="meta-block__label">你可以拿到</p>
+                <ul class="meta-block__list">
+                  <li>階段目標</li>
+                  <li>每週檢視</li>
+                  <li>1 對 1 顧問</li>
+                  <li>結業證書</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card__foot">
+              <div>
+                <p class="card__stats">評分 4.9（254） · 30 天</p>
+                <p class="card__price">NT$ 3,990</p>
+                <p class="card__points">2,200 點</p>
+              </div>
+              <span class="card__go">立即開始 →</span>
+            </div>
+          </div>
+        </a>
+
+        <p class="empty" id="emptyState">此分類目前沒有對應方案</p>
+      </div>
+
+      <aside class="note" role="note">
+        若涉及自傷、傷人或跟蹤議題，請立即撥打 1925（心理諮商專線）或 110（緊急報案）。
+        本平台是 24 小時情感顧問平台，不是心理諮商、不是替你做決定，而是陪你看懂感情與下一步。
+      </aside>
+    </section>
+
+    <p class="site-foot">Erosée · 陪你整理情緒，理解關係</p>
+  </div>
+
+  <script>
+    (function () {
+      /* Stars */
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+      let stars = [];
+      let raf = 0;
+      let w = 0;
+      let h = 0;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        const count = Math.min(120, Math.floor((w * h) / 16000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.15 + 0.2,
+          a: Math.random() * 0.5 + 0.15,
+          s: Math.random() * 0.012 + 0.004,
+          p: Math.random() * Math.PI * 2,
+        }));
+      }
+
+      function draw(t) {
+        ctx.clearRect(0, 0, w, h);
+        for (const star of stars) {
+          const tw = 0.55 + 0.45 * Math.sin(t * star.s + star.p);
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(245, 211, 139, ${star.a * tw})`;
+          ctx.fill();
+        }
+        raf = requestAnimationFrame(draw);
+      }
+
+      function start() {
+        cancelAnimationFrame(raf);
+        resize();
+        if (reduce.matches) {
+          ctx.clearRect(0, 0, w, h);
+          stars.forEach((star) => {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(245, 211, 139, ${star.a})`;
+            ctx.fill();
+          });
+          return;
+        }
+        raf = requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", start);
+      start();
+
+      /* Filters */
+      const buttons = document.querySelectorAll(".filter-btn");
+      const cards = document.querySelectorAll(".card[data-cat]");
+      const empty = document.getElementById("emptyState");
+
+      function applyFilter(key) {
+        let visible = 0;
+        cards.forEach((card) => {
+          const show = key === "all" || card.dataset.cat === key;
+          card.hidden = !show;
+          if (show) visible += 1;
+        });
+        empty.classList.toggle("is-show", visible === 0);
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          buttons.forEach((b) => {
+            b.classList.toggle("is-active", b === btn);
+            b.setAttribute("aria-selected", b === btn ? "true" : "false");
+          });
+          applyFilter(btn.dataset.filter);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

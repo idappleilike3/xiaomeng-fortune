@@ -1,0 +1,60 @@
+{
+  "size": {
+    "width": 2500,
+    "height": 1686
+  },
+  "selected": true,
+  "name": "Erosée 情感解碼選單 v5.0",
+  "chatBarText": "開始解碼",
+  "comment": "部署前請將 ${LIFF_ID} 替換為 LINE Developers 的 LIFF ID。LIFF Endpoint 請設為 https://xiaomeng-fortune.onrender.com/erosee-cosmic-home.html ；路徑以 route 查詢參數帶入。",
+  "areas": [
+    {
+      "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "開始解碼",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2F&entry=richmenu"
+      }
+    },
+    {
+      "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "查看方案",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing&entry=richmenu"
+      }
+    },
+    {
+      "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "情感系列",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Femotion&entry=richmenu"
+      }
+    },
+    {
+      "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "萌寵系列",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fpet&entry=richmenu"
+      }
+    },
+    {
+      "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "月費訂閱",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fsubscribe&entry=richmenu"
+      }
+    },
+    {
+      "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
+      "action": {
+        "type": "uri",
+        "label": "邀請好友",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Finvite&entry=richmenu&campaign=invite"
+      }
+    }
+  ]
+}

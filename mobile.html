@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>小夢神殿 · 頁面導覽</title>
+  <style>
+    :root {
+      --bg: #0c0a08;
+      --ink: #f3e8d4;
+      --muted: #b8a48a;
+      --accent: #c9a46a;
+      --line: rgba(201, 164, 106, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Noto Serif TC", "Songti TC", "PingFang TC", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201, 164, 106, 0.18), transparent 55%),
+        linear-gradient(180deg, #16120e 0%, var(--bg) 45%, #080706 100%);
+      display: grid;
+      place-items: center;
+      padding: 2rem 1.25rem;
+    }
+    main {
+      width: min(26rem, 100%);
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+    }
+    p {
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    nav {
+      display: grid;
+      gap: 0.85rem;
+    }
+    a {
+      display: block;
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 0.85rem;
+      color: var(--ink);
+      text-decoration: none;
+      background: rgba(255, 248, 235, 0.04);
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+    a:active { transform: scale(0.98); }
+    a strong {
+      display: block;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+    }
+    a span {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .hint {
+      margin-top: 1.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.55;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>小夢神殿</h1>
+    <p>各頁分開連結，互不覆蓋。相機手勢請用 HTTPS 隧道網址。</p>
+    <nav>
+      <a href="/">
+        <strong>主站首頁</strong>
+        <span>廟宇流程 · 塔羅命盤</span>
+      </a>
+      <a href="/gesture-particle-demo.html">
+        <strong>手勢粒子 Demo</strong>
+        <span>相機 + 粒子場手勢</span>
+      </a>
+      <a href="/gesture-crystal-demo.html">
+        <strong>手勢水晶 Demo</strong>
+        <span>相機 + 手勢控制水晶</span>
+      </a>
+    </nav>
+    <p class="hint" id="urlHint"></p>
+  </main>
+  <script>
+    document.getElementById("urlHint").textContent =
+      "目前網址：" + location.origin + "/mobile.html";
+  </script>
+</body>
+</html>

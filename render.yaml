@@ -9,9 +9,22 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 24
+      # --- LINE / LIFF（值已在 Render Dashboard 設定；勿把 secret 寫進 Git）---
+      - key: PUBLIC_BASE_URL
+        value: https://xiaomeng-fortune.onrender.com
+      - key: LINE_CHANNEL_ID
+        sync: false
       - key: LINE_CHANNEL_SECRET
         sync: false
       - key: LINE_CHANNEL_ACCESS_TOKEN
         sync: false
-      - key: PUBLIC_BASE_URL
+      - key: LIFF_ID
         sync: false
+      - key: LIFF_URL
+        sync: false
+      - key: LINE_OA_URL
+        sync: false
+      - key: ALLOW_LIFF_STUB
+        value: "0"
+      - key: PORT
+        value: "3000"

@@ -9,7 +9,11 @@
     "dev": "node server.js",
     "check": "node --check server.js",
     "rich-menu:image": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/generate-rich-menu.ps1",
-    "rich-menu:setup": "node scripts/setup-line-rich-menu.mjs"
+    "rich-menu:setup": "node scripts/setup-line-rich-menu.mjs",
+    "clipy:daily": "node scripts/clipy-pipeline/generate-daily.mjs",
+    "clipy:tts": "node scripts/clipy-pipeline/generate-tts.mjs",
+    "clipy:pipeline": "node scripts/clipy-pipeline/run-pipeline.mjs",
+    "clipy:open": "node scripts/clipy-pipeline/open-today.mjs"
   },
   "engines": {
     "node": ">=18"

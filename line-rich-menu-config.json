@@ -4,56 +4,56 @@
     "height": 1686
   },
   "selected": true,
-  "name": "小夢神殿選單 v3.1",
-  "chatBarText": "小夢神殿",
-  "comment": "v3.1 對齊 LINE_SYSTEM §3.2 命名公約(2026-07-04):label 全面對齊聖經;4/5/6 改 message action 對應 server.js 關鍵字",
+  "name": "Erosée 情感解碼選單 v5.0",
+  "chatBarText": "開始解碼",
+  "comment": "與 line/rich-menu.json 同步。部署腳本會把 ${LIFF_ID} 換成環境變數 LIFF_ID。勿把真實 Channel Secret / Access Token 寫進本檔。",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "命運之門 · 塔羅",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=tarot&entry=liff"
+        "label": "開始解碼",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2F&entry=richmenu"
       }
     },
     {
       "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "寵物占卜 · 靈魂解碼",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=pet&entry=liff"
+        "label": "查看方案",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing&entry=richmenu"
       }
     },
     {
       "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "神諭訊息 · 今日祝福",
-        "uri": "https://liff.line.me/2010549494-KRb0mn7U?system=oracle&entry=liff"
+        "label": "情感系列",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Femotion&entry=richmenu"
       }
     },
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "message",
-        "label": "靈性收件匣 · 命運紀錄",
-        "text": "我的紀錄"
+        "type": "uri",
+        "label": "萌寵系列",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fpet&entry=richmenu"
       }
     },
     {
       "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
       "action": {
-        "type": "message",
-        "label": "靈性收益 · 50 積分",
-        "text": "靈性積分"
+        "type": "uri",
+        "label": "月費訂閱",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fsubscribe&entry=richmenu"
       }
     },
     {
       "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "message",
-        "label": "加入小夢 · 歡迎詞",
-        "text": "歡迎詞"
+        "type": "uri",
+        "label": "邀請好友",
+        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Finvite&entry=richmenu&campaign=invite"
       }
     }
   ]

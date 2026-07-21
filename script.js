@@ -1,9 +1,37 @@
 
-const LIFF_ID = "2010549494-KRb0mn7U";
-const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
-const LINE_ADD_FRIEND_URL = "https://line.me/R/ti/p/@471cptxk";
+let LIFF_ID = "";
+let LIFF_URL = "";
+let LINE_ADD_FRIEND_URL = "https://line.me/R/ti/p/@YOUR_LINE_OA_ID";
 const API_BASE = window.location.protocol === "file:" ? "https://xiaomeng-fortune.onrender.com" : "";
 const DEFAULT_MEMBER_ID = "demo-member-001";
+
+function applyLinePublicConfig(config) {
+  if (!config) return;
+  if (config.liffId) LIFF_ID = config.liffId;
+  if (config.liffUrl) LIFF_URL = config.liffUrl;
+  else if (LIFF_ID) LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
+  if (config.lineOaUrl) LINE_ADD_FRIEND_URL = config.lineOaUrl;
+}
+
+async function resolveLinePublicConfig() {
+  if (window.__liffBridgeConfig) {
+    applyLinePublicConfig(window.__liffBridgeConfig);
+    return window.__liffBridgeConfig;
+  }
+  try {
+    const response = await fetch(`${API_BASE}/api/liff/config`, { credentials: "same-origin" });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    if (payload?.ok && payload.config) {
+      window.__liffBridgeConfig = payload.config;
+      applyLinePublicConfig(payload.config);
+      return payload.config;
+    }
+  } catch (error) {
+    console.warn("LIFF config unavailable", error);
+  }
+  return null;
+}
 
 // === operator mode (?ops=1) ===
 // Default customer view hides 後台/串接 sections. Visiting the page with
@@ -414,8 +442,33 @@ function setLiffStatus(message) {
 }
 
 async function initializeLiffProfile() {
+  // Prefer liff-bridge (already loaded on index.html); only fall back if needed.
+  if (window.__liffBridge?.ready || document.documentElement.dataset.liffBridge) {
+    setLiffStatus(
+      window.__liffBridge?.profile?.displayName
+        ? `已連結：${window.__liffBridge.profile.displayName}`
+        : window.liff?.isInClient?.()
+          ? "LINE 內頁已連線"
+          : "LIFF 網頁模式"
+    );
+    const profile = window.__liffBridge?.profile;
+    if (profile?.userId) {
+      activeMemberId = profile.userId;
+      localStorage.setItem("memberId", activeMemberId);
+      loadWallet();
+    }
+    return;
+  }
+
+  await resolveLinePublicConfig();
+
   if (!window.liff) {
     setLiffStatus("一般瀏覽器預覽");
+    return;
+  }
+
+  if (!LIFF_ID) {
+    setLiffStatus("等待 Render LIFF_ID");
     return;
   }
 
@@ -1443,6 +1496,7 @@ document.querySelectorAll("[data-track-product]").forEach((link) => {
 
 renderTarotDeck();
 initializeLiffProfile();
+resolveLinePublicConfig();
 openRequestedPage();
 updateShareStatus("分享給朋友後，可獲得一次額外抽牌機會。");
 loadWallet();
@@ -2924,7 +2978,7 @@ if (document.readyState === 'loading') {
       cta: "前往 LINE 預約",
       ctaAction: "line-booking",
       onCta: () => {
-        window.open("https://line.me/R/ti/p/@471cptxk", "_blank");
+        window.open(LINE_ADD_FRIEND_URL || "https://line.me/R/ti/p/@YOUR_LINE_OA_ID", "_blank");
       },
     });
   });
@@ -3522,14 +3576,13 @@ if (document.readyState === 'loading') {
     }
   });
 
-  // === LINE FAB — 跳轉到 LINE 官方帳號 ===
-  const LINE_OA_URL = "https://line.me/R/ti/p/@471cptxk";
+  // === LINE FAB — 跳轉到 LINE 官方帳號（URL 來自 /api/liff/config → LINE_OA_URL）===
   document.addEventListener("click", (e) => {
     const t = e.target instanceof Element ? e.target : null;
     if (!t) return;
     if (t.closest && t.closest("#lineFab")) {
       e.preventDefault();
-      window.open(LINE_OA_URL, "_blank", "noopener,noreferrer");
+      window.open(LINE_ADD_FRIEND_URL, "_blank", "noopener,noreferrer");
     }
   });
   document.addEventListener("keydown", (e) => {
@@ -4459,6 +4512,9 @@ ${new Date().toLocaleString("zh-TW")}`;
   function openOnb() {
     const m = document.getElementById("onboardingModal");
     if (!m) return;
+    if (window.__xiaomengOpening && typeof window.__xiaomengOpening.skip === "function") {
+      window.__xiaomengOpening.skip();
+    }
     m.classList.add("is-open");
     m.setAttribute("aria-hidden", "false");
   }
@@ -4480,7 +4536,7 @@ ${new Date().toLocaleString("zh-TW")}`;
   document.addEventListener("click", (e) => {
     const t = e.target instanceof Element ? e.target : null;
     if (!t) return;
-    if (t.id === "onbSubmit") {
+    if (t.closest("#onbSubmit")) {
       const name = document.getElementById("onbName").value.trim();
       const date = document.getElementById("onbBirthDate").value;
       const time = document.getElementById("onbBirthTime").value;
@@ -4491,16 +4547,23 @@ ${new Date().toLocaleString("zh-TW")}`;
       saveProfile(name || "孩子", date, time);
       try { localStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
       closeOnb();
-      // Show success feedback
       if (window.__uiSounds) window.__uiSounds.playSuccess();
-    } else if (t.id === "onbSkip") {
+    } else if (t.closest("#onbSkip")) {
       try { localStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
       closeOnb();
     }
   });
 
-  // Auto-open on first visit (after 800ms delay)
+  // Auto-open on first visit (after 800ms delay).
+  // Skip while cinematic homepage / temple flow is active — temple MVP must work
+  // without birth-profile "login" or LINE auth on desktop browsers.
   setTimeout(() => {
+    if (
+      document.body.classList.contains("homepage-landing-active") ||
+      document.body.classList.contains("temple-flow-active")
+    ) {
+      return;
+    }
     let seen = false;
     try { seen = localStorage.getItem(SEEN_KEY) === "1"; } catch (e) {}
     if (!seen) openOnb();
@@ -4699,7 +4762,7 @@ window.__xiaomengOpening = (function () {
 
   function init() {
     const root = document.getElementById(ROOT_ID);
-    if (!root) return;
+    if (!root || document.getElementById('homepageLanding')) return;
     stages = Array.from(root.querySelectorAll('[data-stage-id]'));
     skipBtn = document.getElementById('skipOpening');
 
@@ -5041,28 +5104,6 @@ if (heroCta) {
   // 全域 API
   window.__sacredStageBgm = { playStepChord, ctx };
 })();
-
-// === Cookie 同意橫幅(append to index.html)===
-
-// === Cookie Banner 控制 ===
-(function() {
-  const KEY = 'xm_cookie_consent';
-  const banner = document.getElementById('cookieBanner');
-  if (!banner) return;
-  try {
-    if (localStorage.getItem(KEY)) return;
-  } catch (e) {
-    /* silent */
-  }
-  setTimeout(() => { banner.hidden = false; }, 1500);
-  function dismiss(value) {
-    try { localStorage.setItem(KEY, value); } catch (e) {}
-    banner.hidden = true;
-  }
-  // cookieAccept removed (老闆 20:58)
-  // cookieDecline removed
-})();
-
 
 // === BGM Player v1.0(對齊老闆 20:58 指示:右上,3 首切換,play/pause)===
 // 2026-07-04 06:49 老闆指示:首頁音樂播放拿掉,整個 IIFE 停用

@@ -7183,7 +7183,7 @@ a:active::after {
    Phase 59: 入口 2 首次進站自動引導 modal
    ===================================================================== */
 .onboarding-modal-overlay {
-  position: fixed; inset: 0; z-index: 100;
+  position: fixed; inset: 0; z-index: 10002;
   display: none; align-items: center; justify-content: center;
   padding: 20px;
   background: rgba(8, 4, 18, 0.86);

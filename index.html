@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
@@ -17,25 +17,252 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://xiaomeng-fortune.onrender.com/assets/tarot-01-the-magician.png" />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./temple-flow.css" />
+    <link rel="stylesheet" href="./homepage-cinematic.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.css" />
-    <script>
-      (function () {
-        var p = new URLSearchParams(location.search);
-        if (p.get("system") === "pet" && !location.pathname.endsWith("pet-temple.html")) {
-          location.replace("/pet-temple.html" + location.search + location.hash);
-        }
-      })();
-    </script>
   </head>
-  <body>
-  <a class="skip-link" href="#app">跳到主要內容</a>
-  <div class="cookie-banner cookie-banner--info" id="cookieBanner" role="status" aria-label="提示" hidden>
-  <p>本站使用 Cookie 改善體驗,繼續瀏覽即視為同意。</p>
-</div>
+  <body class="homepage-landing-active">
+  <a class="skip-link" href="#homepageLanding">跳到主要內容</a>
   <div class="app-loading" id="appLoading" aria-hidden="true" style="display:none">
     <div class="app-loading__halo"></div>
     <p class="app-loading__text">小夢老師正在為你點亮星軌…</p>
   </div>
+
+    <!-- Homepage landing — 踏入神殿後才進入 temple flow -->
+    <section id="homepageLanding" class="homepage-landing tf-stage tf-stage--landing" aria-label="小夢神殿">
+      <div class="hp-cine__scene" aria-hidden="true">
+        <div class="hp-cine__webgl" id="homepageWebGL" aria-hidden="true"></div>
+        <div class="hp-cine__sky"></div>
+        <div class="hp-cine__cosmos"></div>
+        <div class="hp-cine__nebula"></div>
+        <canvas class="hp-cine__nebula-canvas" id="homepageNebulaCanvas" aria-hidden="true"></canvas>
+        <div class="hp-cine__celestial-mandala" data-parallax="0.015" aria-hidden="true">
+          <img src="./assets/homepage/celestial-mandala.svg" alt="" width="400" height="280" decoding="async" />
+        </div>
+        <div class="hp-cine__horizon" data-parallax="0.04"></div>
+        <div class="hp-cine__arch-depth" data-parallax="0.14"></div>
+        <div class="hp-cine__light-pillar hp-cine__light-pillar--gold" data-parallax="0.11"></div>
+        <div class="hp-cine__light-pillar hp-cine__light-pillar--purple" data-parallax="0.09"></div>
+        <div class="hp-cine__arch-glow" data-parallax="0.1"></div>
+        <div class="hp-cine__arch-rays" data-parallax="0.06"></div>
+        <div class="hp-cine__volumetric-rays" data-parallax="0.07" aria-hidden="true"></div>
+        <div class="hp-cine__god-rays" data-parallax="0.05"></div>
+        <canvas class="hp-cine__bloom-canvas" id="homepageBloomCanvas" aria-hidden="true"></canvas>
+        <canvas class="hp-cine__arch-interior-canvas" id="homepageArchInteriorCanvas" data-parallax="0.12"></canvas>
+        <div class="hp-cine__temple-silhouette" data-parallax="0.17" aria-hidden="true">
+          <img src="./assets/homepage/temple-interior-silhouette.svg" alt="" decoding="async" />
+        </div>
+        <div class="hp-cine__arch-gate" data-parallax="0.18">
+          <div class="hp-cine__arch-mass" aria-hidden="true"></div>
+          <svg class="hp-cine__arch-gate-svg" viewBox="0 0 400 520" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="hpArchOpening" clipPathUnits="userSpaceOnUse">
+                <path d="M118,168 A82,82 0 0 1 282,168 V500 H118 Z"/>
+              </clipPath>
+              <linearGradient id="hpArchStone" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2a142e"/>
+                <stop offset="18%" stop-color="#3a2044"/>
+                <stop offset="38%" stop-color="#1e1028"/>
+                <stop offset="62%" stop-color="#12081c"/>
+                <stop offset="100%" stop-color="#06030a"/>
+              </linearGradient>
+              <linearGradient id="hpArchStoneEdge" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#08040e"/>
+                <stop offset="12%" stop-color="#281438"/>
+                <stop offset="50%" stop-color="#3e2450"/>
+                <stop offset="88%" stop-color="#281438"/>
+                <stop offset="100%" stop-color="#08040e"/>
+              </linearGradient>
+              <linearGradient id="hpArchGoldTrim" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffd978" stop-opacity="0.85"/>
+                <stop offset="50%" stop-color="#f5d38b" stop-opacity="0.65"/>
+                <stop offset="100%" stop-color="#a07830" stop-opacity="0.4"/>
+              </linearGradient>
+              <radialGradient id="hpArchInnerShadow" cx="50%" cy="28%" r="60%">
+                <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+                <stop offset="55%" stop-color="#000" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#000" stop-opacity="0.88"/>
+              </radialGradient>
+              <filter id="hpArchStoneNoise" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" seed="7" result="noise"/>
+                <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+                <feBlend in="SourceGraphic" in2="gray" mode="multiply" result="blend"/>
+                <feComponentTransfer in="blend">
+                  <feFuncA type="linear" slope="0.18"/>
+                </feComponentTransfer>
+              </filter>
+              <filter id="hpArchRelief" x="-2%" y="-2%" width="104%" height="104%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur"/>
+                <feOffset dx="1.5" dy="2" in="blur" result="offsetBlur"/>
+                <feFlood flood-color="#000" flood-opacity="0.45" result="shadowColor"/>
+                <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow"/>
+                <feMerge>
+                  <feMergeNode in="shadow"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <linearGradient id="hpArchReliefHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#5a3868" stop-opacity="0.35"/>
+                <stop offset="50%" stop-color="#2a1838" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#0a0510" stop-opacity="0.5"/>
+              </linearGradient>
+            </defs>
+            <path class="hp-cine__arch-frame" fill="url(#hpArchStone)" fill-rule="evenodd" filter="url(#hpArchStoneNoise)" d="
+              M0,0 H400 V520 H0 Z
+              M118,168 A82,82 0 0 1 282,168 V500 H118 Z"/>
+            <path class="hp-cine__arch-relief" fill="url(#hpArchReliefHighlight)" fill-rule="evenodd" filter="url(#hpArchRelief)" opacity="0.65" d="
+              M0,0 H400 V520 H0 Z
+              M118,168 A82,82 0 0 1 282,168 V500 H118 Z"/>
+            <path class="hp-cine__arch-lintel" fill="url(#hpArchStoneEdge)" d="M0,0 H400 V168 H0 Z" opacity="0.9"/>
+            <path class="hp-cine__arch-carving" fill="none" stroke="rgba(245,211,139,0.08)" stroke-width="0.6" d="M30,200 Q200,185 370,200 M25,320 Q200,305 375,320 M20,420 Q200,408 380,420"/>
+            <path class="hp-cine__arch-trim hp-cine__arch-trim--outer" fill="none" stroke="url(#hpArchGoldTrim)" stroke-width="3.5" d="M118,168 A82,82 0 0 1 282,168"/>
+            <path class="hp-cine__arch-trim" fill="none" stroke="url(#hpArchGoldTrim)" stroke-width="1.5" opacity="0.55" d="M112,500 H288"/>
+            <path class="hp-cine__arch-trim" fill="none" stroke="url(#hpArchGoldTrim)" stroke-width="1" opacity="0.4" d="M118,168 V500 M282,168 V500"/>
+            <g class="hp-cine__arch-cracks" opacity="0.42">
+              <path d="M42,220 L58,248 L52,290" stroke="#0a0610" stroke-width="1.2" fill="none"/>
+              <path d="M358,195 L342,230 L348,275" stroke="#0a0610" stroke-width="1" fill="none"/>
+              <path d="M195,42 L200,68 L205,42" stroke="#0a0610" stroke-width="0.8" fill="none"/>
+              <path d="M125,380 L132,410 L128,440" stroke="#0a0610" stroke-width="0.9" fill="none"/>
+              <path d="M275,365 L268,395 L272,425" stroke="#0a0610" stroke-width="0.9" fill="none"/>
+              <path d="M68,140 L72,155 L65,168" stroke="rgba(245,211,139,0.12)" stroke-width="0.5" fill="none"/>
+              <path d="M332,155 L328,172 L335,188" stroke="rgba(245,211,139,0.1)" stroke-width="0.5" fill="none"/>
+            </g>
+            <circle class="hp-cine__arch-keystone" cx="200" cy="168" r="11" fill="url(#hpArchGoldTrim)" opacity="0.75"/>
+            <circle class="hp-cine__arch-keystone" cx="200" cy="168" r="6" fill="none" stroke="rgba(255,217,120,0.5)" stroke-width="0.8"/>
+            <rect class="hp-cine__arch-inner-shadow" x="118" y="168" width="164" height="332" fill="url(#hpArchInnerShadow)"/>
+            <g class="hp-cine__arch-runes" fill="none" stroke="url(#hpArchGoldTrim)" stroke-width="1.2" opacity="0.55">
+              <path class="hp-cine__arch-rune" d="M200,148 L200,128 M190,138 L210,138" style="--rune-i:0"/>
+              <path class="hp-cine__arch-rune" d="M95,260 L85,275 L95,290 M105,260 L115,275 L105,290" style="--rune-i:1"/>
+              <path class="hp-cine__arch-rune" d="M305,260 L295,275 L305,290 M315,260 L325,275 L315,290" style="--rune-i:2"/>
+              <path class="hp-cine__arch-rune" d="M200,470 L190,485 L210,485 Z" style="--rune-i:3"/>
+            </g>
+          </svg>
+          <div class="hp-cine__arch-edge hp-cine__arch-edge--left" aria-hidden="true"></div>
+          <div class="hp-cine__arch-edge hp-cine__arch-edge--right" aria-hidden="true"></div>
+        </div>
+        <div class="hp-cine__pillar hp-cine__pillar--far hp-cine__pillar--far-left" data-parallax="0.1">
+          <span class="hp-cine__pillar-cap" aria-hidden="true"></span>
+        </div>
+        <div class="hp-cine__pillar hp-cine__pillar--far hp-cine__pillar--far-right" data-parallax="0.1">
+          <span class="hp-cine__pillar-cap" aria-hidden="true"></span>
+        </div>
+        <div class="hp-cine__pillar hp-cine__pillar--near hp-cine__pillar--near-left" data-parallax="0.28">
+          <span class="hp-cine__pillar-banner" aria-hidden="true"></span>
+          <span class="hp-cine__pillar-cap" aria-hidden="true"></span>
+        </div>
+        <div class="hp-cine__pillar hp-cine__pillar--near hp-cine__pillar--near-right" data-parallax="0.28">
+          <span class="hp-cine__pillar-banner" aria-hidden="true"></span>
+          <span class="hp-cine__pillar-cap" aria-hidden="true"></span>
+        </div>
+        <div class="hp-cine__pillars"></div>
+        <div class="hp-cine__ground"></div>
+        <canvas class="hp-cine__floor-mirror" id="homepageFloorMirrorCanvas" data-parallax="0.03"></canvas>
+        <div class="hp-cine__floor-mandala" data-parallax="0.04">
+          <img class="hp-cine__mandala-svg" src="./assets/homepage/floor-mandala.svg" alt="" decoding="async" />
+          <div class="hp-cine__mandala-glow" aria-hidden="true"></div>
+        </div>
+        <div class="hp-cine__hero-veil"></div>
+        <canvas class="hp-cine__particles" id="homepageParticlesCanvas"></canvas>
+        <div class="hp-cine__fog"></div>
+        <div class="hp-cine__fog hp-cine__fog--arch" data-parallax="0.08"></div>
+        <div class="hp-cine__fog hp-cine__fog--front"></div>
+        <div class="hp-cine__film-grain" aria-hidden="true"></div>
+      </div>
+
+      <div class="hp-cine__content">
+        <div class="hp-cine__content-veil" aria-hidden="true"></div>
+
+        <header class="hp-cine__logo-zone">
+          <div class="hp-cine__north-star" aria-hidden="true">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <path d="M16 2 L18.8 13.2 L30 16 L18.8 18.8 L16 30 L13.2 18.8 L2 16 L13.2 13.2 Z" fill="url(#hpNorthStar)" />
+              <defs>
+                <radialGradient id="hpNorthStar" cx="50%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#fff8ee" />
+                  <stop offset="45%" stop-color="#f5d38b" />
+                  <stop offset="100%" stop-color="#c9a24e" />
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="hp-cine__rune-ring" aria-hidden="true">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <circle cx="100" cy="100" r="92" stroke="rgba(245,211,139,0.22)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="78" stroke="rgba(245,211,139,0.16)" stroke-width="0.45" stroke-dasharray="3 7"/>
+              <circle cx="100" cy="100" r="64" stroke="rgba(245,211,139,0.14)" stroke-width="0.4"/>
+              <polygon points="100,24 176,100 100,176 24,100" stroke="rgba(245,211,139,0.2)" stroke-width="0.45"/>
+              <polygon points="100,40 160,100 100,160 40,100" stroke="rgba(192,132,252,0.15)" stroke-width="0.35"/>
+              <line x1="100" y1="8" x2="100" y2="192" stroke="rgba(245,211,139,0.1)" stroke-width="0.35"/>
+              <line x1="8" y1="100" x2="192" y2="100" stroke="rgba(245,211,139,0.1)" stroke-width="0.35"/>
+              <line x1="32" y1="32" x2="168" y2="168" stroke="rgba(245,211,139,0.08)" stroke-width="0.3"/>
+              <line x1="168" y1="32" x2="32" y2="168" stroke="rgba(245,211,139,0.08)" stroke-width="0.3"/>
+              <circle cx="100" cy="24" r="2" fill="rgba(245,211,139,0.35)"/>
+              <circle cx="100" cy="176" r="2" fill="rgba(245,211,139,0.35)"/>
+              <circle cx="24" cy="100" r="2" fill="rgba(245,211,139,0.35)"/>
+              <circle cx="176" cy="100" r="2" fill="rgba(245,211,139,0.35)"/>
+            </svg>
+          </div>
+          <h1 class="hp-cine__title" aria-label="小夢神殿">
+            <span class="hp-cine__title-char" style="--i:0">小</span><span class="hp-cine__title-char" style="--i:1">夢</span><span class="hp-cine__title-char" style="--i:2">神</span><span class="hp-cine__title-char" style="--i:3">殿</span>
+            <span class="hp-cine__title-shimmer" aria-hidden="true"></span>
+          </h1>
+          <div class="hp-cine__title-line" aria-hidden="true">
+            <span class="hp-cine__title-line-bar"></span>
+            <span class="hp-cine__title-diamond"></span>
+            <span class="hp-cine__title-line-bar"></span>
+          </div>
+        </header>
+
+        <p class="hp-cine__tagline">
+          <span class="hp-cine__flank" aria-hidden="true">◆</span>
+          <span class="hp-cine__tagline-text">命運正在等待你的到來</span>
+          <span class="hp-cine__flank" aria-hidden="true">◆</span>
+        </p>
+        <p class="hp-cine__subtitle"><span class="hp-cine__subtitle-text">當你準備好，神殿之門將為你開啟。</span></p>
+
+        <div class="hp-cine__cta-wrap">
+          <canvas class="hp-cine__cta-particles" id="homepageCtaParticles" aria-hidden="true"></canvas>
+          <button type="button" class="hp-cine__cta" id="homepageEnterTemple">
+            <span class="hp-cine__cta-emblem" aria-hidden="true">
+              <svg class="hp-cine__cta-emblem-star" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <polygon points="24,2 28,16 42,18 30,28 34,42 24,34 14,42 18,28 6,18 20,16" stroke="#f5d38b" stroke-width="1.2" fill="rgba(10,5,20,0.85)"/>
+                <g fill="#f5d38b">
+                  <circle cx="24" cy="17" r="2.2"/>
+                  <circle cx="18.5" cy="21" r="1.8"/>
+                  <circle cx="29.5" cy="21" r="1.8"/>
+                  <circle cx="20" cy="25.5" r="1.5"/>
+                  <circle cx="28" cy="25.5" r="1.5"/>
+                  <ellipse cx="24" cy="24" rx="3.8" ry="3.2"/>
+                </g>
+              </svg>
+            </span>
+            <span class="hp-cine__cta-frame">
+              <span class="hp-cine__cta-surface">
+                <span class="hp-cine__cta-runes" aria-hidden="true">◆</span>
+                <span class="hp-cine__cta-text">踏入神殿</span>
+                <span class="hp-cine__cta-runes" aria-hidden="true">◆</span>
+              </span>
+            </span>
+            <span class="hp-cine__cta-halo" aria-hidden="true"></span>
+            <span class="hp-cine__cta-shimmer" aria-hidden="true"></span>
+          </button>
+          <span class="hp-cine__burst" id="homepageCtaBurst" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <footer class="hp-cine__footer">
+        <span class="hp-cine__footer-star" aria-hidden="true">✦</span>
+        <span class="hp-cine__footer-text">每一次相遇，都是命運留下的印記</span>
+        <span class="hp-cine__footer-star" aria-hidden="true">✦</span>
+      </footer>
+    </section>
+
+    <div class="temple-flow-shell" id="templeFlowShell" hidden>
+      <div class="temple-progress" id="templeProgressBar" data-stage="temple_awakening" aria-hidden="true"></div>
+      <div id="templeFlowRoot" aria-label="小夢神殿命運旅程"></div>
+    </div>
+
     <!-- 🌟 Opening Experience Sequence(§21.1 八步) -->
     <section id="opening-sequence" class="opening-sequence" data-stage="0" aria-label="Opening Experience">
       <!-- Stage 1: Black Screen -->
@@ -1291,11 +1518,14 @@
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script type="module" src="./js/liff-entry.js"></script>
+    <script type="module" src="./js/liff-bridge.js"></script>
     <script src="./lib/spread-library.js"></script>
     <script type="module" src="./lib/sse-bridge.js"></script>
     <script src="./lib/user-bar-data.js" defer></script>
     <script src="./lib/l2-topics.js" defer></script>
     <script type="module" src="./script.js"></script>
+    <script type="module" src="./js/temple-flow/index-bridge.js"></script>
     <script type="module" src="./pet-data.js"></script>
     <script src="./lib/f22-client.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/atropos@1.0.1/atropos.min.js"></script>
