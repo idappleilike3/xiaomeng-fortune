@@ -1,3 +1,21 @@
+═══════════════════════════════════════════════════════════
+LINE 歡迎訊息說明（請讀完再貼 Console）
+═══════════════════════════════════════════════════════════
+
+【重要】Official Account Manager「歡迎訊息」通常只能放純文字，
+無法放 Flex / postback 按鈕。無法用 API 把按鈕寫進 Console 問候語。
+
+【真正帶按鈕】= Messaging API follow → server 自動回 Flex：
+  開始解碼（postback funnel=start）
+  查看所有方案（URI → pricing / erosee-l2-pricing.html）
+
+Webhook：https://xiaomeng-fortune.onrender.com/api/line/webhook
+測試：取消追蹤 → 再加好友，聊天室應出現帶按鈕的 Flex。
+
+═══════════════════════════════════════════════════════════
+（可選）Console 純文字 — 僅氣氛；按鈕靠 follow Flex
+═══════════════════════════════════════════════════════════
+
 嗨 我是情感解碼
 
 今晚如果你心裡剛好卡著一件事
