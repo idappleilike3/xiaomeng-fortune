@@ -168,10 +168,18 @@ process.on("unhandledRejection", (reason) => {
   console.error("[unhandledRejection]", reason && reason.message ? reason.message : reason);
 });
 
+function normalizeEnvSecret(value) {
+  // Render/Dashboard 常誤貼前後空白或引號；HMAC 會整段失敗 → LINE Verify 401
+  return String(value || "")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .replace(/^\uFEFF/, "");
+}
+
 const port = Number(process.env.PORT || 3000);
-const channelSecret = process.env.LINE_CHANNEL_SECRET || "";
-const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
-const lineChannelId = process.env.LINE_CHANNEL_ID || "";
+const channelSecret = normalizeEnvSecret(process.env.LINE_CHANNEL_SECRET);
+const channelAccessToken = normalizeEnvSecret(process.env.LINE_CHANNEL_ACCESS_TOKEN);
+const lineChannelId = normalizeEnvSecret(process.env.LINE_CHANNEL_ID);
 const publicBaseUrl = (
   process.env.PUBLIC_BASE_URL ||
   (process.env.NODE_ENV === "production" ? DEFAULT_PUBLIC_BASE_URL : `http://localhost:${port}`)
@@ -288,15 +296,28 @@ async function readJsonBody(request) {
   }
 }
 
+function getHeaderValue(headers, name) {
+  const raw = headers[name];
+  if (Array.isArray(raw)) return raw[0] || "";
+  return typeof raw === "string" ? raw : "";
+}
+
+/**
+ * LINE webhook signature = Base64(HMAC-SHA256(channelSecret, rawRequestBody))
+ * Must use the exact raw bytes (never re-serialized JSON).
+ * @returns {{ ok: boolean, reason: "ok" | "missing_secret" | "missing_signature" | "mismatch" }}
+ */
 function verifyLineSignature(rawBody, signature) {
-  if (!channelSecret || !signature) return false;
+  if (!channelSecret) return { ok: false, reason: "missing_secret" };
+  if (!signature) return { ok: false, reason: "missing_signature" };
 
   const digest = createHmac("sha256", channelSecret).update(rawBody).digest("base64");
   const expected = Buffer.from(digest);
   const received = Buffer.from(signature);
 
-  if (expected.length !== received.length) return false;
-  return timingSafeEqual(expected, received);
+  if (expected.length !== received.length) return { ok: false, reason: "mismatch" };
+  if (!timingSafeEqual(expected, received)) return { ok: false, reason: "mismatch" };
+  return { ok: true, reason: "ok" };
 }
 
 // 注意:response.writeHead 只能呼叫一次,二次呼叫會丟 ERR_HTTP_HEADERS_SENT 拖死整個 server
@@ -1405,18 +1426,44 @@ async function pushToLine(userId, messages) {
 }
 
 async function handleLineWebhook(request, response) {
+  // Critical: HMAC over raw bytes — do not JSON.parse/stringify before verify.
   const rawBody = await readRawBody(request);
-  const signature = request.headers["x-line-signature"];
+  const signature = getHeaderValue(request.headers, "x-line-signature");
+  const verified = verifyLineSignature(rawBody, signature);
 
-  if (!verifyLineSignature(rawBody, signature)) {
-    console.error("[line-webhook] invalid signature — check LINE_CHANNEL_SECRET matches Developers Console");
+  if (!verified.ok) {
+    const diag = `bodyBytes=${rawBody.length} secretLen=${channelSecret.length} hasSig=${Boolean(signature)} reason=${verified.reason}`;
+    if (verified.reason === "missing_secret") {
+      console.error(`[line-webhook] LINE_CHANNEL_SECRET missing — set Channel secret (not access token) on Render. ${diag}`);
+      jsonResponse(response, 503, {
+        ok: false,
+        error: "LINE_CHANNEL_SECRET not configured",
+        hint: "Render Environment → LINE_CHANNEL_SECRET = LINE Developers → Messaging API → Basic settings → Channel secret",
+      });
+      return;
+    }
+    console.error(
+      `[line-webhook] invalid signature — ${diag}. Sync LINE_CHANNEL_SECRET with LINE Developers Console → Channel secret (NOT Channel access token / Channel ID).`
+    );
     jsonResponse(response, 401, { ok: false, error: "Invalid LINE signature" });
     return;
   }
 
-  const payload = JSON.parse(rawBody.toString("utf8"));
+  // LINE Verify ping: signed body like {"destination":"...","events":[]} — must 200 after valid sig.
+  let payload = {};
+  if (rawBody.length) {
+    try {
+      payload = JSON.parse(rawBody.toString("utf8"));
+    } catch {
+      console.error("[line-webhook] signature ok but body is not JSON");
+      jsonResponse(response, 400, { ok: false, error: "Invalid JSON body" });
+      return;
+    }
+  }
+
+  const events = Array.isArray(payload.events) ? payload.events : [];
   await Promise.all(
-    (payload.events || []).map(async (event) => {
+    events.map(async (event) => {
       if (!event.replyToken) return;
       let messages;
       try {
@@ -1512,6 +1559,9 @@ const server = createServer(async (request, response) => {
           tokenStatus: lineToken.status,
           tokenReason: lineToken.reason,
           webhookPath: "/api/line/webhook",
+          // Length only — compare with Console Channel secret (usually 32). Never expose the secret.
+          channelSecretLen: channelSecret.length,
+          channelSecretConfigured: channelSecret.length > 0,
           welcomeTriggers: ["follow", "join", "歡迎詞", "hi", "hello"],
         },
         erosee: {
@@ -1861,9 +1911,12 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === "POST" && request.url === "/api/line/webhook") {
-      await handleLineWebhook(request, response);
-      return;
+    {
+      const pathname = (request.url || "").split("?")[0];
+      if (request.method === "POST" && pathname === "/api/line/webhook") {
+        await handleLineWebhook(request, response);
+        return;
+      }
     }
 
     if (request.method === "GET" && !request.url.startsWith("/api/")) {
