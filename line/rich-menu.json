@@ -4,16 +4,17 @@
     "height": 1686
   },
   "selected": true,
-  "name": "Erosée 情感解碼選單 v5.0",
+  "name": "Erosée 情感解碼選單 v5.1",
   "chatBarText": "開始解碼",
-  "comment": "部署前請將 ${LIFF_ID} 替換為 LINE Developers 的 LIFF ID。LIFF Endpoint 請設為 https://xiaomeng-fortune.onrender.com/erosee-cosmic-home.html ；路徑以 route 查詢參數帶入。",
+  "comment": "v5.1：左上「開始解碼」改為 postback（對話內漏斗），其餘格位仍開 LIFF 貨架。部署前將 ${LIFF_ID} 替換為真實 LIFF ID。LIFF Endpoint = https://xiaomeng-fortune.onrender.com/erosee-cosmic-home.html",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
       "action": {
-        "type": "uri",
+        "type": "postback",
         "label": "開始解碼",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2F&entry=richmenu"
+        "data": "funnel=start",
+        "displayText": "開始解碼"
       }
     },
     {

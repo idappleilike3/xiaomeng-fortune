@@ -57,15 +57,15 @@ curl -X POST "https://api.line.me/v2/bot/user/all/richmenu/{richMenuId}" \
   -H "Authorization: Bearer $LINE_CHANNEL_ACCESS_TOKEN"
 ```
 
-## Rich Menu 對照（v5）
+## Rich Menu 對照（v5.1）
 
-| 格位 | 標籤 | `route` | 落地頁 |
+| 格位 | 標籤 | 行為 | 落地 |
 |---|---|---|---|
-| 1 | 開始解碼 | `/` | `erosee-cosmic-home.html` |
-| 2 | 查看方案 | `/pricing` | `erosee-l2-pricing.html` |
-| 3 | 情感系列 | `/pricing/emotion` | L2 `#emotion` |
-| 4 | 萌寵系列 | `/pricing/pet` | L2 `#pet` |
-| 5 | 月費訂閱 | `/pricing/subscribe` | L2 `#subscribe` |
-| 6 | 邀請好友 | `/invite` | cosmic home（`campaign=invite`） |
+| 1 | 開始解碼 | **postback** `funnel=start` | 對話內漏斗（見 [`docs/FUNNEL.md`](../docs/FUNNEL.md)） |
+| 2 | 查看方案 | LIFF `route=/pricing` | `erosee-l2-pricing.html` |
+| 3 | 情感系列 | LIFF `route=/pricing/emotion` | L2 `#emotion` |
+| 4 | 萌寵系列 | LIFF `route=/pricing/pet` | L2 `#pet` |
+| 5 | 月費訂閱 | LIFF `route=/pricing/subscribe` | L2 `#subscribe` |
+| 6 | 邀請好友 | LIFF `route=/invite` | cosmic home（`campaign=invite`） |
 
-關鍵字「占卜」「神殿」「命運」仍可由 webhook 回覆 Flex（按鈕導向 Erosée 首頁 / 方案頁）。
+關鍵字「開始解碼」「占卜」「神殿」「命運」可由 webhook 回覆 Flex；「開始解碼」進入對話漏斗，「查看所有方案」開 L2 貨架。
