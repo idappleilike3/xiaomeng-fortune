@@ -1292,7 +1292,14 @@ function buildReplyMessages(event) {
   }
 
   // 重新觸發歡迎詞(對齊 LINE_SYSTEM §3.2 v3.1 Rich Menu 第 6 格 + §1.1)
-  if (text === "歡迎詞" || text === "重新觸發歡迎詞" || text === "加入小夢") {
+  // 也接受 hi/hello，方便不解除封鎖也能測 welcome Flex
+  if (
+    text === "歡迎詞" ||
+    text === "重新觸發歡迎詞" ||
+    text === "加入小夢" ||
+    lowerText === "hi" ||
+    lowerText === "hello"
+  ) {
     return followWelcomeMessages();
   }
 
@@ -1333,6 +1340,23 @@ async function generateMasterLetterContent(letter) {
   return opener + "\\n\\n看著你在信中傾訴的掙扎, 我能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌, 當前的卡關只是星象短暫的逆行。\\n\\n" + reading + "\\n\\n" + closer + "\\n\\n——小夢老師 深夜親筆\\n" + new Date().toLocaleString("zh-TW");
 }
 
+/** Probe Messaging API token without exposing it (for /health). */
+async function probeLineAccessToken() {
+  if (!channelAccessToken) {
+    return { ok: false, status: null, reason: "missing" };
+  }
+  try {
+    const result = await fetch("https://api.line.me/v2/bot/info", {
+      headers: { authorization: `Bearer ${channelAccessToken}` },
+    });
+    if (result.ok) return { ok: true, status: result.status, reason: null };
+    // 401 = stale/revoked token (common after reissuing in LINE Console)
+    return { ok: false, status: result.status, reason: result.status === 401 ? "unauthorized" : `http_${result.status}` };
+  } catch {
+    return { ok: false, status: null, reason: "network" };
+  }
+}
+
 async function replyToLine(replyToken, messages) {
   if (!channelAccessToken) {
     console.log("LINE_CHANNEL_ACCESS_TOKEN is not set. Reply skipped:", messages);
@@ -1350,6 +1374,11 @@ async function replyToLine(replyToken, messages) {
 
   if (!result.ok) {
     const body = await result.text();
+    const hint =
+      result.status === 401
+        ? " (Render LINE_CHANNEL_ACCESS_TOKEN 可能過期，請到 Render Dashboard 更新為與本機/rich-menu 相同的新 token)"
+        : "";
+    console.error(`[line-reply] failed ${result.status}${hint}:`, body.slice(0, 500));
     throw new Error(`LINE reply failed: ${result.status} ${body}`);
   }
 }
@@ -1380,6 +1409,7 @@ async function handleLineWebhook(request, response) {
   const signature = request.headers["x-line-signature"];
 
   if (!verifyLineSignature(rawBody, signature)) {
+    console.error("[line-webhook] invalid signature — check LINE_CHANNEL_SECRET matches Developers Console");
     jsonResponse(response, 401, { ok: false, error: "Invalid LINE signature" });
     return;
   }
@@ -1388,8 +1418,15 @@ async function handleLineWebhook(request, response) {
   await Promise.all(
     (payload.events || []).map(async (event) => {
       if (!event.replyToken) return;
-      const messages = buildReplyMessages(event);
+      let messages;
+      try {
+        messages = buildReplyMessages(event);
+      } catch (err) {
+        console.error(`[line-webhook] buildReplyMessages failed type=${event.type}:`, err?.message || err);
+        throw err;
+      }
       if (!messages.length) return;
+      console.log(`[line-webhook] reply type=${event.type} messages=${messages.length} alt=${messages[0]?.altText || messages[0]?.type || "?"}`);
       await replyToLine(event.replyToken, messages);
     })
   );
@@ -1456,11 +1493,27 @@ const server = createServer(async (request, response) => {
         LINE_OA_URL: Boolean(process.env.LINE_OA_URL),
         ALLOW_LIFF_STUB: process.env.ALLOW_LIFF_STUB === "1" || process.env.ALLOW_LIFF_STUB === "true",
       };
+      const lineToken = await probeLineAccessToken();
       jsonResponse(response, 200, {
         ok: true,
         service: "fortune-line-web",
         publicBaseUrl,
         webhook: `${publicBaseUrl}/api/line/webhook`,
+        deploy: {
+          commit:
+            process.env.RENDER_GIT_COMMIT ||
+            process.env.GIT_COMMIT ||
+            null,
+          branch: process.env.RENDER_GIT_BRANCH || null,
+          welcomeFlex: "v2-buttons",
+        },
+        line: {
+          tokenOk: lineToken.ok,
+          tokenStatus: lineToken.status,
+          tokenReason: lineToken.reason,
+          webhookPath: "/api/line/webhook",
+          welcomeTriggers: ["follow", "join", "歡迎詞", "hi", "hello"],
+        },
         erosee: {
           home: eroseeHomeUrl,
           pricing: eroseePricingUrl,
