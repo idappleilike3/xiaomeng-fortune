@@ -1,6 +1,25 @@
 ═══════════════════════════════════════════════════════════
-LINE 官方帳號 歡迎詞（Welcome Message）— 對齊對話漏斗 Phase A
-適用於：LINE Official Account Manager ➜ 自動回應 ➜ 歡迎訊息
+LINE 歡迎訊息說明（請讀完再貼 Console）
+═══════════════════════════════════════════════════════════
+
+【重要】Official Account Manager「歡迎訊息」通常只能放純文字，
+無法放 Flex / postback 按鈕（開始解碼、查看所有方案）。
+這不是 bug，是 Console 能力限制；也無法用 API 把 Flex 寫進 Console 問候語。
+
+【真正帶按鈕的歡迎】= Messaging API 的 follow 事件
+server 收到加好友後，自動 reply Flex（含按鈕）到對方聊天室：
+  [1] 開始解碼     → postback  funnel=start
+  [2] 查看所有方案 → URI      LIFF /pricing 或
+      https://xiaomeng-fortune.onrender.com/erosee-l2-pricing.html
+
+Webhook 必須是：
+  https://xiaomeng-fortune.onrender.com/api/line/webhook
+且在 LINE Developers 已啟用，follow 才會觸發。
+
+測試：取消追蹤 OA → 再加回好友，聊天室應出現帶按鈕的 Flex。
+
+═══════════════════════════════════════════════════════════
+（可選）Console 純文字問候 — 僅氣氛文案，按鈕仍靠 follow Flex
 ═══════════════════════════════════════════════════════════
 
 嗨 我是情感解碼
@@ -10,19 +29,5 @@ LINE 官方帳號 歡迎詞（Welcome Message）— 對齊對話漏斗 Phase A
 我會陪你用免費三張牌 把現況慢慢攤開
 
 想先逛完整方案也可以點「查看所有方案」
-
-═══════════════════════════════════════════════════════════
-建議按鈕（Messaging API follow 事件已由 server 自動回 Flex）
-═══════════════════════════════════════════════════════════
-
-[1] 開始解碼
-    類型:Postback 或 訊息
-    data / text: funnel=start  /  開始解碼
-    行為:留在對話內走主題→問題→免費三張→需求→推薦
-
-[2] 查看所有方案
-    類型:URI
-    URI:https://xiaomeng-fortune.onrender.com/erosee-l2-pricing.html
-    或 LIFF:https://liff.line.me/{LIFF_ID}?route=%2Fpricing
 
 詳見 docs/FUNNEL.md

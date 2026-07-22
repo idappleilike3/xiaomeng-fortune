@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const rootDir = process.cwd();
@@ -64,14 +64,28 @@ const configPath = existsSync(join(rootDir, "line/rich-menu.json"))
 const rawConfig = readFileSync(configPath, "utf8").replaceAll("${LIFF_ID}", liffId);
 const richMenuConfig = JSON.parse(rawConfig);
 
+// Prefer RICH_MENU_IMAGE env (absolute or repo-relative), then v5 → v4 → xiaomeng.
+// Note: assets/line-rich-menu-final.png is a 4-panel art (~4MB); LINE limit is 1MB and
+// line/rich-menu.json is 6-area — only use final after compress + matching 4-area JSON.
+const envImage = (process.env.RICH_MENU_IMAGE || "").trim();
 const imageCandidates = [
+  envImage ? (envImage.match(/^[A-Za-z]:[\\/]/) || envImage.startsWith("/") ? envImage : join(rootDir, envImage)) : null,
   join(rootDir, "assets", "rich-menu-v5.png"),
   join(rootDir, "assets", "rich-menu-v4.png"),
   join(rootDir, "assets", "rich-menu-xiaomeng.png"),
-];
+].filter(Boolean);
 const imagePath = imageCandidates.find((p) => existsSync(p));
 if (!imagePath) {
-  throw new Error("Missing rich menu image. Run: npm run rich-menu:image (or add assets/rich-menu-v5.png)");
+  throw new Error(
+    "Missing rich menu image. Set RICH_MENU_IMAGE=path/to.png or add assets/rich-menu-v5.png (fallback: rich-menu-xiaomeng.png)"
+  );
+}
+const imageBytes = readFileSync(imagePath);
+const imageSize = imageBytes.length || statSync(imagePath).size;
+if (imageSize > 1024 * 1024) {
+  throw new Error(
+    `Rich menu image exceeds LINE 1MB limit: ${imagePath} (${(imageSize / 1024 / 1024).toFixed(2)} MB). Compress first or set RICH_MENU_IMAGE to a smaller PNG.`
+  );
 }
 
 const created = await lineRequest("/v2/bot/richmenu", {
@@ -84,7 +98,7 @@ await lineRequest(`/v2/bot/richmenu/${created.richMenuId}/content`, {
   method: "POST",
   dataApi: true,
   headers: { "content-type": "image/png" },
-  body: readFileSync(imagePath),
+  body: imageBytes,
 });
 
 await lineRequest(`/v2/bot/user/all/richmenu/${created.richMenuId}`, {

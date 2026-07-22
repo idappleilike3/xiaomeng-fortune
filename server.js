@@ -584,23 +584,22 @@ function divinationKeywordFlexMessage() {
 }
 
 function welcomeFlexMessage() {
-  // 對齊 老闆 8:06 重整:加 LOGO 大頭照 + 拿掉標點 + 華麗精緻風
-  // 2026-07-04 改:加 avatarExists fallback(用 emoji 取代破圖)
-  // 圖檔已上(2026-07-04 由小龍蝦 image_generate 生成 + commit):assets/welcome-avatar.png
-  const fs = require("fs");
-  const path = require("path");
-  const avatarPath = path.join(__dirname, "assets", "welcome-avatar.png");
-  const avatarExists = fs.existsSync(avatarPath);
-  const avatarUrl = avatarExists
-    ? "https://xiaomeng-fortune.onrender.com/assets/welcome-avatar.png"
+  // Brand welcome + CTA buttons (Messaging API follow). Console greeting cannot host Flex/postback.
+  // ESM-safe: use top-level existsSync/join (require() crashes under "type":"module").
+  const avatarPath = join(rootDir, "assets", "welcome-avatar.png");
+  const avatarUrl = existsSync(avatarPath)
+    ? `${publicBaseUrl}/assets/welcome-avatar.png`
     : null;
-  return flexMessage("歡迎來到小夢 Fortune Platform", {
+  const pricingUri =
+    eroseeLink("/pricing") ||
+    `${publicBaseUrl}${LIFF_PRICING_PATH.startsWith("/") ? LIFF_PRICING_PATH : `/${LIFF_PRICING_PATH}`}`;
+  return flexMessage("歡迎 · 開始解碼", {
     type: "bubble",
     size: "mega",
     body: {
       type: "box",
       layout: "vertical",
-      spacing: "lg",
+      spacing: "md",
       backgroundColor: "#0D0718",
       contents: [
         ...(avatarUrl
@@ -622,101 +621,43 @@ function welcomeFlexMessage() {
             }]),
         {
           type: "text",
-          text: "歡迎來到",
-          size: "sm",
-          color: "#C9B88A",
-          align: "center",
-        },
-        {
-          type: "text",
-          text: "小夢 Fortune Platform 🌙",
-          size: "xl",
+          text: "嗨 我是情感解碼",
           weight: "bold",
-          color: "#F5D38B",
-          align: "center",
-        },
-        {
-          type: "text",
-          text: "今晚",
           size: "lg",
-          weight: "bold",
-          color: "#FFF5D8",
-          align: "center",
-          margin: "md",
-        },
-        {
-          type: "text",
-          text: "也許宇宙正準備給你一個答案",
-          size: "md",
-          color: "#FFF5D8",
-          align: "center",
-          wrap: true,
-        },
-        {
-          type: "separator",
-          margin: "xl",
-          color: "#5C4570",
-        },
-        {
-          type: "box",
-          layout: "vertical",
-          spacing: "sm",
-          margin: "md",
-          paddingAll: "16px",
-          backgroundColor: "#1F0F32",
-          borderColor: "#F5D38B",
-          borderWidth: "1px",
-          cornerRadius: "12px",
-          contents: [
-            {
-              type: "text",
-              text: "🐾 首次神殿開門 · 價值 NT$3,600",
-              size: "sm",
-              weight: "bold",
-              color: "#F5D38B",
-            },
-            {
-              type: "text",
-              text: "✨ 50 靈性積分(首次加入獎勵)",
-              size: "sm",
-              color: "#FFF5D8",
-              margin: "sm",
-            },
-            {
-              type: "text",
-              text: "🐾 1 次萌寵神殿免費開門(限一次)",
-              size: "sm",
-              color: "#FFF5D8",
-            },
-            {
-              type: "text",
-              text: "🌟 萌寵靈魂神殿 10 張大師牌陣",
-              size: "sm",
-              color: "#FFF5D8",
-            },
-          ],
-        },
-        {
-          type: "text",
-          text: "請點選下方【小夢神殿】→ 寵物占卜 · 靈魂解碼",
-          size: "xs",
-          color: "#C9B88A",
-          margin: "xl",
-          align: "center",
-          wrap: true,
-        },
-        {
-          type: "text",
-          text: "開啟你的第一次神殿儀式",
-          size: "sm",
-          weight: "bold",
           color: "#F5D38B",
           align: "center",
-          margin: "sm",
+          wrap: true,
+        },
+        {
+          type: "text",
+          text: "今晚如果你心裡剛好卡著一件事\n可以先點「開始解碼」\n我會陪你用免費三張牌 把現況慢慢攤開",
+          size: "sm",
+          color: "#F8EEDB",
+          align: "center",
+          wrap: true,
+          margin: "md",
+        },
+        {
+          type: "button",
+          style: "primary",
+          color: "#7C4DC4",
+          margin: "lg",
+          action: postbackAction("開始解碼", "funnel=start", "開始解碼"),
+        },
+        {
+          type: "button",
+          style: "secondary",
+          color: "#F5D38B",
+          action: uriAction("查看所有方案", pricingUri),
         },
       ],
     },
   });
+}
+
+/** follow / join /「歡迎詞」：單一 Flex，內含開始解碼 + 查看所有方案 */
+function followWelcomeMessages() {
+  return [welcomeFlexMessage()];
 }
 
 function tarotGuidanceFlexMessage() {
@@ -1256,9 +1197,10 @@ function buildReplyMessages(event) {
     return funnelMessages;
   }
 
-  if (event.type === "follow") {
+  // Add-friend / join: always reply Flex with 開始解碼 + 查看所有方案
+  if (event.type === "follow" || event.type === "join") {
     resetFunnelSession(getLineUserId(event) || "anonymous");
-    return [welcomeFlexMessage(), templeEntryFlexMessage()];
+    return followWelcomeMessages();
   }
 
   if (event.type === "postback") {
@@ -1351,7 +1293,7 @@ function buildReplyMessages(event) {
 
   // 重新觸發歡迎詞(對齊 LINE_SYSTEM §3.2 v3.1 Rich Menu 第 6 格 + §1.1)
   if (text === "歡迎詞" || text === "重新觸發歡迎詞" || text === "加入小夢") {
-    return [welcomeFlexMessage()];
+    return followWelcomeMessages();
   }
 
   return [menuFlexMessage()];

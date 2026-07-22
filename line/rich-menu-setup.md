@@ -34,6 +34,26 @@ npm run rich-menu:setup
 
 腳本會讀取環境變數、替換 `${LIFF_ID}`，並呼叫 Messaging API。
 
+### 選用哪張圖？
+
+腳本優先順序：
+
+1. 環境變數 `RICH_MENU_IMAGE`（絕對路徑或相對 repo 根目錄）
+2. `assets/rich-menu-v5.png`（若有）
+3. `assets/rich-menu-v4.png`（若有）
+4. `assets/rich-menu-xiaomeng.png`（目前 repo 內唯一符合 2500×1686 且 <1MB 的六宮格）
+
+```bash
+# 明確指定舊圖（六宮格 F 版）
+# PowerShell
+$env:RICH_MENU_IMAGE="assets/rich-menu-xiaomeng.png"; npm run rich-menu:setup
+
+# 若你有壓縮後的 Erosée 六宮格圖，放到 assets/rich-menu-v5.png 後直接：
+npm run rich-menu:setup
+```
+
+**注意：** `assets/line-rich-menu-final.png` 是精緻 **四宮格** 圖且約 4MB（超過 LINE 1MB 上限），與現行 `line/rich-menu.json` 六宮格熱區不一致；要用它需先壓縮到 1MB 內並改成四宮格 JSON。
+
 ## 方法二：curl 手動建立
 
 先把 `line/rich-menu.json` 內 `${LIFF_ID}` 全部換成真實 LIFF ID，再執行：
