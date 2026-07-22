@@ -10,10 +10,21 @@
     <main class="legal-page">
       <section class="legal-card">
         <p class="eyebrow">Payment Success</p>
-        <h1>付款已送出</h1>
-        <p>謝謝您支持小夢老師。正式串接綠界後，這裡會顯示訂單狀態、點數入帳與深度解析入口。</p>
-        <a class="button primary" href="./index.html#market">回到解鎖方案</a>
+        <h1>付款成功</h1>
+        <p>謝謝你支持小夢老師。藍新金流已完成授權，訂單狀態會同步到對話通知。</p>
+        <p id="orderLine" hidden></p>
+        <a class="button primary" href="./erosee-l2-pricing.html">回到方案頁</a>
+        <a class="button" href="./index.html">回到首頁</a>
       </section>
     </main>
+    <script>
+      (function () {
+        const order = new URLSearchParams(location.search).get("order");
+        if (!order) return;
+        const el = document.getElementById("orderLine");
+        el.hidden = false;
+        el.textContent = "訂單編號：" + order;
+      })();
+    </script>
   </body>
 </html>

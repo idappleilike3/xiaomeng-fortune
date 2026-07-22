@@ -14,6 +14,21 @@ import {
 } from "./lib/liff-routes.js";
 import { createFunnelContext, handleFunnelEvent } from "./lib/line/funnel-handlers.js";
 import { resetSession as resetFunnelSession } from "./lib/line/funnel-session.js";
+import { getProduct } from "./lib/line/funnel-catalog.js";
+import { getNewebpayConfig, isNewebpayConfigured } from "./lib/newebpay/config.js";
+import {
+  buildMpgFormFields,
+  decryptAndVerifyCallback,
+  renderAutoPostHtml,
+} from "./lib/newebpay/mpg.js";
+import {
+  createCheckoutOrder,
+  getOrderByMerchantOrderNo,
+  getOrderByToken,
+  listOrdersSnapshot,
+  markOrderPaid,
+  markOrderReturnSeen,
+} from "./lib/newebpay/orders.js";
 
 function getLanIPv4() {
   const nets = networkInterfaces();
@@ -296,6 +311,59 @@ async function readJsonBody(request) {
   }
 }
 
+async function readFormBody(request) {
+  const rawBody = await readRawBody(request);
+  const text = rawBody.toString("utf8");
+  const out = {};
+  if (!text) return out;
+  const contentType = getHeaderValue(request.headers, "content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed === "object") return parsed;
+    } catch {
+      /* fall through */
+    }
+  }
+  for (const [k, v] of new URLSearchParams(text).entries()) out[k] = v;
+  return out;
+}
+
+function htmlResponse(response, statusCode, html) {
+  const body = String(html || "");
+  if (response.headersSent || response.writableEnded) {
+    try { response.write(body); } catch (_e) { /* swallow */ }
+    try { response.end(); } catch (_e) { /* swallow */ }
+    return;
+  }
+  try {
+    response.writeHead(statusCode, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    response.end(body);
+  } catch (_e) {
+    try { response.end(); } catch (__e) { /* swallow */ }
+  }
+}
+
+function plainTextResponse(response, statusCode, text) {
+  const body = String(text ?? "");
+  if (response.headersSent || response.writableEnded) {
+    try { response.end(); } catch (_e) { /* swallow */ }
+    return;
+  }
+  try {
+    response.writeHead(statusCode, {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    response.end(body);
+  } catch (_e) {
+    try { response.end(); } catch (__e) { /* swallow */ }
+  }
+}
+
 function getHeaderValue(headers, name) {
   const raw = headers[name];
   if (Array.isArray(raw)) return raw[0] || "";
@@ -370,6 +438,29 @@ function postbackAction(label, data, displayText) {
   };
 }
 
+function createFunnelCheckout({ userId, productId }) {
+  try {
+    const product = getProduct(productId);
+    if (!product) return { ok: false, reason: "UNKNOWN_PRODUCT" };
+    const checkout = createCheckoutOrder({
+      userId,
+      productId,
+      publicBaseUrl,
+    });
+    return {
+      ok: true,
+      payUrl: checkout.payUrl,
+      amount: checkout.order.amt,
+      productTitle: product.title,
+      merchantOrderNo: checkout.order.merchantOrderNo,
+    };
+  } catch (e) {
+    const reason = e?.code || e?.message || "CHECKOUT_FAILED";
+    console.error("[newebpay] createFunnelCheckout failed:", reason);
+    return { ok: false, reason: String(reason) };
+  }
+}
+
 /** Phase A+B conversation funnel — stays inside LINE chat (not LIFF decode page). */
 function getFunnelCtx() {
   return createFunnelContext({
@@ -377,6 +468,7 @@ function getFunnelCtx() {
     eroseeLink,
     lineOaUrl: process.env.LINE_OA_URL || "",
     tarotDeck,
+    createCheckout: createFunnelCheckout,
   });
 }
 
@@ -1539,6 +1631,9 @@ const server = createServer(async (request, response) => {
         LIFF_URL: Boolean(process.env.LIFF_URL || liffId),
         LINE_OA_URL: Boolean(process.env.LINE_OA_URL),
         ALLOW_LIFF_STUB: process.env.ALLOW_LIFF_STUB === "1" || process.env.ALLOW_LIFF_STUB === "true",
+        NEWEBPAY_MERCHANT_ID: Boolean(process.env.NEWEBPAY_MERCHANT_ID),
+        NEWEBPAY_HASH_KEY: Boolean(process.env.NEWEBPAY_HASH_KEY),
+        NEWEBPAY_HASH_IV: Boolean(process.env.NEWEBPAY_HASH_IV),
       };
       const lineToken = await probeLineAccessToken();
       jsonResponse(response, 200, {
@@ -1553,6 +1648,7 @@ const server = createServer(async (request, response) => {
             null,
           branch: process.env.RENDER_GIT_BRANCH || null,
           welcomeFlex: "v2-buttons",
+          newebpay: isNewebpayConfigured() ? "configured" : "missing",
         },
         line: {
           tokenOk: lineToken.ok,
@@ -1786,9 +1882,200 @@ const server = createServer(async (request, response) => {
     if (request.method === "GET" && request.url.startsWith("/api/payment/plans")) {
       jsonResponse(response, 200, {
         ok: true,
-        provider: "ecpay",
-        configured: isEcpayConfigured(),
+        provider: isNewebpayConfigured() ? "newebpay" : "ecpay",
+        configured: isNewebpayConfigured() || isEcpayConfigured(),
+        newebpayConfigured: isNewebpayConfigured(),
+        ecpayConfigured: isEcpayConfigured(),
         plans: getPaymentPlans(),
+      });
+      return;
+    }
+
+    // ---------- NewebPay (藍新) MPG ----------
+    if (request.method === "POST" && request.url === "/api/newebpay/create") {
+      const payload = await readJsonBody(request);
+      const productId = payload.productId || payload.pid || payload.planId;
+      if (!productId) {
+        jsonResponse(response, 400, { ok: false, error: "Missing productId" });
+        return;
+      }
+      if (!isNewebpayConfigured()) {
+        jsonResponse(response, 503, {
+          ok: false,
+          error: "NEWEBPAY_NOT_CONFIGURED",
+          message: "金流尚未設定：請在環境變數設定 NEWEBPAY_MERCHANT_ID / NEWEBPAY_HASH_KEY / NEWEBPAY_HASH_IV",
+        });
+        return;
+      }
+      try {
+        const checkout = createCheckoutOrder({
+          userId: payload.userId || null,
+          productId,
+          amt: payload.amt,
+          itemDesc: payload.itemDesc,
+          publicBaseUrl,
+          email: payload.email,
+        });
+        jsonResponse(response, 200, {
+          ok: true,
+          provider: "newebpay",
+          merchantOrderNo: checkout.order.merchantOrderNo,
+          amt: checkout.order.amt,
+          itemDesc: checkout.order.itemDesc,
+          payUrl: checkout.payUrl,
+          notifyUrl: checkout.notifyUrl,
+          returnUrl: checkout.returnUrl,
+          gatewayUrl: checkout.form.gatewayUrl,
+        });
+      } catch (e) {
+        jsonResponse(response, 400, {
+          ok: false,
+          error: e?.code || e?.message || "CREATE_FAILED",
+        });
+      }
+      return;
+    }
+
+    if (
+      (request.method === "GET" || request.method === "POST") &&
+      (request.url.startsWith("/pay.html") || request.url.startsWith("/api/newebpay/pay"))
+    ) {
+      const url = new URL(request.url, `http://${request.headers.host}`);
+      const token = url.searchParams.get("token") || "";
+      const order = getOrderByToken(token);
+      if (!order) {
+        htmlResponse(
+          response,
+          404,
+          `<!doctype html><html lang="zh-Hant"><meta charset="UTF-8"/><title>付款連結無效</title>
+<body style="font-family:sans-serif;padding:2rem;background:#0b1c24;color:#f5efe4">
+<h1>付款連結無效或已過期</h1>
+<p>請回到 LINE 對話重新點「立即開始」。</p>
+<p><a href="/erosee-l2-pricing.html" style="color:#c9a45c">查看方案</a></p>
+</body></html>`
+        );
+        return;
+      }
+      if (!isNewebpayConfigured()) {
+        htmlResponse(
+          response,
+          503,
+          `<!doctype html><html lang="zh-Hant"><meta charset="UTF-8"/><title>金流尚未設定</title>
+<body style="font-family:sans-serif;padding:2rem;background:#0b1c24;color:#f5efe4">
+<h1>金流尚未設定</h1>
+<p>請稍後再試，或聯絡站長設定藍新參數。</p>
+</body></html>`
+        );
+        return;
+      }
+      try {
+        const form = buildMpgFormFields({
+          merchantOrderNo: order.merchantOrderNo,
+          amt: order.amt,
+          itemDesc: order.itemDesc,
+          notifyUrl: `${publicBaseUrl}/api/newebpay/notify`,
+          returnUrl: `${publicBaseUrl}/api/newebpay/return`,
+          clientBackUrl: `${publicBaseUrl}/erosee-l2-pricing.html`,
+        });
+        htmlResponse(response, 200, renderAutoPostHtml(form, { title: `付款｜${order.itemDesc}` }));
+      } catch (e) {
+        htmlResponse(
+          response,
+          500,
+          `<!doctype html><html lang="zh-Hant"><meta charset="UTF-8"/><title>付款建立失敗</title>
+<body style="font-family:sans-serif;padding:2rem"><h1>付款建立失敗</h1><p>${String(e?.message || e)}</p></body></html>`
+        );
+      }
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/newebpay/notify") {
+      const body = await readFormBody(request);
+      if (!isNewebpayConfigured()) {
+        plainTextResponse(response, 503, "NEWEBPAY_NOT_CONFIGURED");
+        return;
+      }
+      const verified = decryptAndVerifyCallback(body);
+      if (!verified.ok) {
+        console.error("[newebpay/notify] verify failed:", verified.reason);
+        plainTextResponse(response, 400, "VERIFY_FAILED");
+        return;
+      }
+
+      const merchantOrderNo = verified.data.MerchantOrderNo || "";
+      const order = merchantOrderNo ? getOrderByMerchantOrderNo(merchantOrderNo) : null;
+      let updated = null;
+      if (verified.paid && merchantOrderNo) {
+        updated = markOrderPaid(merchantOrderNo, verified.data);
+        console.log("[newebpay/notify] paid", merchantOrderNo, verified.data.TradeNo || "");
+      } else {
+        console.warn(
+          "[newebpay/notify] not SUCCESS",
+          merchantOrderNo,
+          verified.status,
+          order ? order.status : "order_missing"
+        );
+      }
+
+      // Respond to NewebPay first, then optional LINE push (fire-and-forget).
+      plainTextResponse(response, 200, "SUCCESS");
+      if (updated?.userId) {
+        pushToLine(updated.userId, [
+          textMessage(
+            `付款成功\n「${updated.itemDesc}」NT$ ${updated.amt}\n訂單 ${updated.merchantOrderNo}\n謝謝你 接下來會帶你進入解碼流程`
+          ),
+        ]).catch((pushErr) => {
+          console.error("[newebpay/notify] LINE push failed:", pushErr?.message || pushErr);
+        });
+      }
+      return;
+    }
+
+    if (
+      (request.method === "GET" || request.method === "POST") &&
+      request.url.startsWith("/api/newebpay/return")
+    ) {
+      let body = {};
+      if (request.method === "POST") {
+        body = await readFormBody(request);
+      } else {
+        const url = new URL(request.url, `http://${request.headers.host}`);
+        for (const [k, v] of url.searchParams.entries()) body[k] = v;
+      }
+
+      let paid = false;
+      let merchantOrderNo = "";
+      let message = "付款結果處理中";
+
+      if (body.TradeInfo && isNewebpayConfigured()) {
+        const verified = decryptAndVerifyCallback(body);
+        if (verified.ok) {
+          merchantOrderNo = verified.data.MerchantOrderNo || "";
+          paid = verified.paid;
+          message = verified.data.Message || (paid ? "付款成功" : verified.status || message);
+          if (merchantOrderNo) {
+            markOrderReturnSeen(merchantOrderNo, verified.data);
+            if (paid) markOrderPaid(merchantOrderNo, verified.data);
+          }
+        } else {
+          message = `驗簽失敗（${verified.reason}）`;
+        }
+      }
+
+      const nextUrl = paid
+        ? `${publicBaseUrl}/payment-success.html?order=${encodeURIComponent(merchantOrderNo)}`
+        : `${publicBaseUrl}/payment-failed.html?order=${encodeURIComponent(merchantOrderNo)}&msg=${encodeURIComponent(message)}`;
+      redirectTo(response, nextUrl);
+      return;
+    }
+
+    if (request.method === "GET" && request.url.startsWith("/api/newebpay/orders")) {
+      // Dev / ops snapshot only — no secrets.
+      jsonResponse(response, 200, {
+        ok: true,
+        configured: isNewebpayConfigured(),
+        gatewayUrl: getNewebpayConfig().gatewayUrl,
+        orders: listOrdersSnapshot(30),
       });
       return;
     }
