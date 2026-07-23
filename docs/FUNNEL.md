@@ -48,8 +48,8 @@ follow / 歡迎 Flex
 
 | 項目 | 現況 |
 |---|---|
-| 三張牌解讀 | 使用 `server.js` tarotDeck 結構化摘要，標示體驗版 |
-| Dify / emotion-bridge 完整生成 | **TODO** |
+| 三張牌解讀 | 本地 Major Arcana（`FREE_TAROT_CARDS`）口語牌義 + `tarot-new-*.png` 牌面圖；先文字再 Flex（非 LLM） |
+| Dify / emotion-bridge 完整生成 | **TODO**（有 `OPENAI_API_KEY` 時其他路徑可串流；漏斗體驗牌暫不強制） |
 | Relationship Case 持久化 | 記憶體 session（24h TTL）**TODO → DB** |
 | 綠界／點數付款 | **付款 stub**（文案說明 + 導向方案頁） |
 | LINE 輕會員寫入正式會員系統 | 本機 session 標記 **TODO** |
