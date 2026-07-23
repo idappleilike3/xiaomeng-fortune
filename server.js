@@ -1224,8 +1224,9 @@ function buildReplyMessages(event) {
   const lowerText = text.toLowerCase();
 
   // Phase A+B conversation funnel (postback + start keywords + describe text)
+  // Array (incl. empty) = funnel handled; null = not funnel — empty skips reply (stale next_card)
   const funnelMessages = handleFunnelEvent(event, getFunnelCtx());
-  if (funnelMessages && funnelMessages.length) {
+  if (Array.isArray(funnelMessages)) {
     return funnelMessages;
   }
 

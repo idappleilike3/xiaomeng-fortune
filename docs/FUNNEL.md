@@ -23,10 +23,9 @@
 | 開始解碼 | 進入對話漏斗（主題選單） | postback `funnel=start` 或文字「開始解碼」 |
 | 主題（七大類） | 寫入 topic → 問題類型 / 描述 | postback `funnel=topic&id=…` |
 | 問題類型 | 寫入 problem → 請描述 | postback `funnel=problem&id=…` |
-| （聊天室輸入） | 詳細描述 | session `stage=describe` 收下文字 |
-| 略過描述 直接抽牌 | 跳過描述 | postback `funnel=skip_describe` |
-| 開始免費三張牌 | 抽三張體驗牌 | postback `funnel=free_yes` |
-| 下一張牌 / 想知道後續 | 翻牌 / 進需求 | `funnel=next_card` / `funnel=after_cards` |
+| （聊天室輸入） | 詳細描述（至少約 40 字，不可略過） | session `stage=describe` 收下文字 |
+| 開始免費三張牌 | 抽三張體驗牌（須已描述） | postback `funnel=free_yes` |
+| 下一張牌 / 想知道後續 | 翻牌 / 進需求 | `funnel=next_card&from=N` / `funnel=after_cards` |
 | 三種需求 | 推薦 1+備選 | `funnel=need&id=solve_now\|full_arc\|companion` |
 | 立即開始 | 輕會員 + 付款 stub | `funnel=start&pid=…` |
 | 確認建立輕會員 | stub 輕會員 | `funnel=light_member` |
@@ -38,8 +37,8 @@
 follow / 歡迎 Flex
   → 開始解碼 (postback)
   → 七大主題 → 問題類型（其他可跳過）
-  → 詳細描述（或略過）
-  → 免費三張（1、2 完整摘要；3 懸念）
+  → 詳細描述（必填，短文會請再補充）
+  → 免費三張（1、2 完整心理向口語；3 懸念；先文字 2–3 則再 Flex）
   → 三種需求 → 推薦卡
   → 立即開始（輕會員 stub） / 查看所有方案（L2）
 ```
