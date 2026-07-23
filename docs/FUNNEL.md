@@ -49,7 +49,8 @@ follow / 歡迎 Flex
 |---|---|
 | 免費三張牌 | 本地 **22 大阿爾克那**（`FREE_TAROT_CARDS`）口語牌義 + `tarot-new-*.png`；先文字再 Flex（非 LLM） |
 | 付費／深度牌組 | 完整 **78 張**（大＋小）在 `lib/line/tarot-deck-78.js`（`TAROT_DECK_78`）；免費漏斗不使用；付費抽牌入口尚未接线 |
-| Dify / emotion-bridge 完整生成 | **TODO**（有 `OPENAI_API_KEY` 時其他路徑可串流；漏斗體驗牌暫不強制） |
+| 離題對話／「我不知道」引導 | `lib/line/funnel-chat.js`：有 `OPENAI_API_KEY` 或 `DIFY_API_KEY` 才呼叫 LLM（榮格＋塔羅＋情感專家語氣）；否則用內建模板（不扣 token）。AI 身分問句走誠實快路徑 |
+| Dify / emotion-bridge 完整生成 | 漏斗聊天可選 Dify；體驗三張牌仍為本地口語牌義 |
 | Relationship Case 持久化 | 記憶體 session（24h TTL）**TODO → DB** |
 | 綠界／點數付款 | **付款 stub**（文案說明 + 導向方案頁） |
 | LINE 輕會員寫入正式會員系統 | 本機 session 標記 **TODO** |
@@ -70,6 +71,8 @@ follow / 歡迎 Flex
 | `lib/line/funnel-session.js` | 記憶體 session |
 | `lib/line/funnel-flex.js` | Flex 訊息 |
 | `lib/line/funnel-handlers.js` | postback / 文字處理 |
+| `lib/line/funnel-chat.js` | 離題對話、AI 身分、描述卡住引導、LLM／模板 |
+| `lib/line/reply-human.js` | 分段氣泡＋人性化停頓 |
 | `server.js` | webhook 接入；歡迎 CTA 改 postback |
 | `line/rich-menu.json` | v5.1 左上 postback |
 | `docs/LINE_LIFF_RENDER_SETUP.md` | Render / LIFF 設定 |
