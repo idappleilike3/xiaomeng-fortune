@@ -17,6 +17,7 @@ import {
   handleFunnelEvent,
   buildWelcomeFunnelMessages,
 } from "./lib/line/funnel-handlers.js";
+import { replyHumanLike } from "./lib/line/reply-human.js";
 import { resetSession as resetFunnelSession } from "./lib/line/funnel-session.js";
 import { getProduct } from "./lib/line/funnel-catalog.js";
 import { getNewebpayConfig, isNewebpayConfigured } from "./lib/newebpay/config.js";
@@ -1228,7 +1229,8 @@ async function buildReplyMessages(event) {
 
   // Phase A+B conversation funnel (postback + start keywords + describe text)
   // Array (incl. empty) = funnel handled; null = not funnel — empty skips reply (stale next_card)
-  // May delay ~5s after user answers a step (anti-robot UX; replyToken still valid)
+  // May delay ~5s after user answers a step; webhook ACKs first then replyHumanLike
+  // paces paragraphs (reply once + push) so LINE does not retry.
   const funnelMessages = await handleFunnelEvent(event, getFunnelCtx());
   if (Array.isArray(funnelMessages)) {
     return funnelMessages;
@@ -1481,9 +1483,14 @@ async function handleLineWebhook(request, response) {
 
   const events = Array.isArray(payload.events) ? payload.events : [];
 
-  // Acknowledge immediately — human delay (~5s) must not block webhook 200
-  // or LINE will retry. replyToken stays valid ~30s.
+  // Acknowledge immediately — human delay (~5s) + paced bubbles must not block
+  // webhook 200 or LINE will retry. replyToken stays valid ~30s (first bubble only).
   jsonResponse(response, 200, { ok: true });
+
+  const lineClient = {
+    reply: (replyToken, messages) => replyToLine(replyToken, messages),
+    push: (userId, messages) => pushToLine(userId, messages),
+  };
 
   await Promise.all(
     events.map(async (event) => {
@@ -1496,11 +1503,19 @@ async function handleLineWebhook(request, response) {
         return;
       }
       if (!messages.length) return;
-      console.log(`[line-webhook] reply type=${event.type} messages=${messages.length} alt=${messages[0]?.altText || messages[0]?.type || "?"}`);
+      const userId = event.source?.userId || null;
+      console.log(
+        `[line-webhook] reply type=${event.type} messages=${messages.length} user=${userId ? "yes" : "no"} alt=${messages[0]?.altText || messages[0]?.type || "?"}`
+      );
       try {
-        await replyToLine(event.replyToken, messages);
+        // First bubble: replyToken; later paragraphs: push + human pauses
+        await replyHumanLike(
+          lineClient,
+          { replyToken: event.replyToken, userId },
+          messages
+        );
       } catch (err) {
-        console.error(`[line-webhook] replyToLine failed type=${event.type}:`, err?.message || err);
+        console.error(`[line-webhook] replyHumanLike failed type=${event.type}:`, err?.message || err);
       }
     })
   );
