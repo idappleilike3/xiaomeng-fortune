@@ -47,7 +47,8 @@ follow / 歡迎 Flex
 
 | 項目 | 現況 |
 |---|---|
-| 三張牌解讀 | 本地 Major Arcana（`FREE_TAROT_CARDS`）口語牌義 + `tarot-new-*.png` 牌面圖；先文字再 Flex（非 LLM） |
+| 免費三張牌 | 本地 **22 大阿爾克那**（`FREE_TAROT_CARDS`）口語牌義 + `tarot-new-*.png`；先文字再 Flex（非 LLM） |
+| 付費／深度牌組 | 完整 **78 張**（大＋小）在 `lib/line/tarot-deck-78.js`（`TAROT_DECK_78`）；免費漏斗不使用；付費抽牌入口尚未接线 |
 | Dify / emotion-bridge 完整生成 | **TODO**（有 `OPENAI_API_KEY` 時其他路徑可串流；漏斗體驗牌暫不強制） |
 | Relationship Case 持久化 | 記憶體 session（24h TTL）**TODO → DB** |
 | 綠界／點數付款 | **付款 stub**（文案說明 + 導向方案頁） |
