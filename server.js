@@ -12,8 +12,11 @@ import {
   resolveLiffRoute,
   siteUrlForRoute,
 } from "./lib/liff-routes.js";
-import { createFunnelContext, handleFunnelEvent } from "./lib/line/funnel-handlers.js";
-import { welcomeFunnelFlex } from "./lib/line/funnel-flex.js";
+import {
+  createFunnelContext,
+  handleFunnelEvent,
+  buildWelcomeFunnelMessages,
+} from "./lib/line/funnel-handlers.js";
 import { resetSession as resetFunnelSession } from "./lib/line/funnel-session.js";
 import { getProduct } from "./lib/line/funnel-catalog.js";
 import { getNewebpayConfig, isNewebpayConfigured } from "./lib/newebpay/config.js";
@@ -687,9 +690,9 @@ function divinationKeywordFlexMessage() {
   });
 }
 
-/** follow / join /「歡迎詞」/ hi：HERO carousel（開始解碼大鈕 + 七大主題大鈕） */
+/** follow / join /「歡迎詞」/ hi：歡迎 Hero +「開始解碼」(七大分類在開始後才出現) */
 function followWelcomeMessages() {
-  return [welcomeFunnelFlex(getFunnelCtx())];
+  return buildWelcomeFunnelMessages(getFunnelCtx());
 }
 
 function tarotGuidanceFlexMessage() {
@@ -1219,13 +1222,14 @@ function getOracleProduct(question) {
   return oracleProductMap.general;
 }
 
-function buildReplyMessages(event) {
+async function buildReplyMessages(event) {
   const text = event.message?.type === "text" ? event.message.text.trim() : "";
   const lowerText = text.toLowerCase();
 
   // Phase A+B conversation funnel (postback + start keywords + describe text)
   // Array (incl. empty) = funnel handled; null = not funnel — empty skips reply (stale next_card)
-  const funnelMessages = handleFunnelEvent(event, getFunnelCtx());
+  // May delay ~5s after user answers a step (anti-robot UX; replyToken still valid)
+  const funnelMessages = await handleFunnelEvent(event, getFunnelCtx());
   if (Array.isArray(funnelMessages)) {
     return funnelMessages;
   }
@@ -1476,23 +1480,30 @@ async function handleLineWebhook(request, response) {
   }
 
   const events = Array.isArray(payload.events) ? payload.events : [];
+
+  // Acknowledge immediately — human delay (~5s) must not block webhook 200
+  // or LINE will retry. replyToken stays valid ~30s.
+  jsonResponse(response, 200, { ok: true });
+
   await Promise.all(
     events.map(async (event) => {
       if (!event.replyToken) return;
       let messages;
       try {
-        messages = buildReplyMessages(event);
+        messages = await buildReplyMessages(event);
       } catch (err) {
         console.error(`[line-webhook] buildReplyMessages failed type=${event.type}:`, err?.message || err);
-        throw err;
+        return;
       }
       if (!messages.length) return;
       console.log(`[line-webhook] reply type=${event.type} messages=${messages.length} alt=${messages[0]?.altText || messages[0]?.type || "?"}`);
-      await replyToLine(event.replyToken, messages);
+      try {
+        await replyToLine(event.replyToken, messages);
+      } catch (err) {
+        console.error(`[line-webhook] replyToLine failed type=${event.type}:`, err?.message || err);
+      }
     })
   );
-
-  jsonResponse(response, 200, { ok: true });
 }
 
 function serveStatic(request, response) {
@@ -1569,7 +1580,7 @@ const server = createServer(async (request, response) => {
             process.env.GIT_COMMIT ||
             null,
           branch: process.env.RENDER_GIT_BRANCH || null,
-          welcomeFlex: "v3-hero-large",
+          welcomeFlex: "v4-hero-start-only",
           newebpay: isNewebpayConfigured() ? "configured" : "missing",
         },
         line: {
