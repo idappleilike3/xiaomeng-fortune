@@ -536,7 +536,7 @@ function menuFlexMessage() {
       contents: [
         {
           type: "text",
-          text: "🌙 情感解碼",
+          text: "🌙 Erosée · 情感解碼",
           weight: "bold",
           size: "xl",
           color: "#F5D38B",
