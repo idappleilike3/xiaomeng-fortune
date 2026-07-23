@@ -11,7 +11,9 @@
 
 | 圖檔 | 說明 |
 |---|---|
-| `assets/rich-menu-v5.png` | **正確**：六宮格、標籤對齊漏斗（開始解碼／方案…）、無小夢字樣 |
+| `assets/rich-menu-v5.png` | **現行熱區對齊**：六宮格、標籤對齊漏斗（開始解碼／方案…）、無小夢字樣 |
+| `assets/rich-menu-erosee-v6.png` | **華麗插畫版（字已加大）**：2500×1686、未滿 1MB。畫面標籤為情感分析／塔羅指引／更多神殿／萌寵神殿／會員中心／活動中心，**與現行 `line/rich-menu.json` 熱區標籤不一致**；上線前請先改 JSON 對應行為，或僅用 `RICH_MENU_IMAGE` 明確指定 |
+| `assets/rich-menu-erosee-v6-source.png` | v6 原始插畫（未加大字、未壓成 LINE 尺寸） |
 | `assets/line-rich-menu-final.png` | 舊四宮格精緻圖（約 4MB，超過 LINE 1MB；熱區與現行 JSON 不一致） |
 | `assets/rich-menu-xiaomeng.png` | **錯誤品牌**：圖上印「小夢神殿」；預設腳本**不會**再用它 |
 
@@ -59,6 +61,9 @@ npm run rich-menu:setup
 
 ```powershell
 $env:RICH_MENU_IMAGE="assets/rich-menu-v5.png"; npm run rich-menu:setup
+
+# 華麗插畫 v6（須先確認 hotzone／文案與 line/rich-menu.json 一致，否則點擊行為會對錯格）
+$env:RICH_MENU_IMAGE="assets/rich-menu-erosee-v6.png"; npm run rich-menu:setup
 ```
 
 ## Rich Menu 對照（v5.1）
