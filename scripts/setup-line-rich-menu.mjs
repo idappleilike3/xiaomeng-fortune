@@ -2,6 +2,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const rootDir = process.cwd();
+const DEFAULT_PUBLIC_BASE_URL = "https://xiaomeng-fortune.onrender.com";
 
 function loadEnvFile() {
   const envPath = join(rootDir, ".env");
@@ -52,36 +53,52 @@ async function lineRequest(path, options = {}) {
 
 loadEnvFile();
 
+const publicBaseUrl = (
+  process.env.PUBLIC_BASE_URL ||
+  DEFAULT_PUBLIC_BASE_URL
+).replace(/\/$/, "");
 const liffId = process.env.LIFF_ID || "";
-if (!liffId || liffId.includes("你的") || liffId === "YOUR_LIFF_ID") {
-  throw new Error("Set a real LIFF_ID in .env before running rich-menu:setup");
-}
 
 const configPath = existsSync(join(rootDir, "line/rich-menu.json"))
   ? join(rootDir, "line/rich-menu.json")
   : join(rootDir, "line-rich-menu-config.json");
 
-const rawConfig = readFileSync(configPath, "utf8").replaceAll("${LIFF_ID}", liffId);
-const richMenuConfig = JSON.parse(rawConfig);
+let rawConfig = readFileSync(configPath, "utf8");
+rawConfig = rawConfig.replaceAll("${PUBLIC_BASE_URL}", publicBaseUrl);
 
-// Prefer RICH_MENU_IMAGE env, then Erosée v5/v4.
+if (rawConfig.includes("${LIFF_ID}")) {
+  if (!liffId || liffId.includes("你的") || liffId === "YOUR_LIFF_ID") {
+    throw new Error(
+      "Config still has ${LIFF_ID} placeholders. Set a real LIFF_ID in .env, or switch URI actions to ${PUBLIC_BASE_URL}/… HTTPS links."
+    );
+  }
+  rawConfig = rawConfig.replaceAll("${LIFF_ID}", liffId);
+}
+
+const richMenuConfig = JSON.parse(rawConfig);
+// LINE create API rejects unknown fields
+delete richMenuConfig.comment;
+
+// Prefer RICH_MENU_IMAGE env, then Erosée v6 → v5 → v4.
 // NEVER silently fall back to rich-menu-xiaomeng.png (baked-in「小夢神殿」branding).
-// Note: assets/line-rich-menu-final.png is 4-panel art (~4MB); LINE limit is 1MB and
-// line/rich-menu.json is 6-area — only use after compress + matching JSON.
 const envImage = (process.env.RICH_MENU_IMAGE || "").trim();
 const imageCandidates = [
-  envImage ? (envImage.match(/^[A-Za-z]:[\\/]/) || envImage.startsWith("/") ? envImage : join(rootDir, envImage)) : null,
+  envImage
+    ? envImage.match(/^[A-Za-z]:[\\/]/) || envImage.startsWith("/")
+      ? envImage
+      : join(rootDir, envImage)
+    : null,
+  join(rootDir, "assets", "rich-menu-erosee-v6.png"),
   join(rootDir, "assets", "rich-menu-v5.png"),
   join(rootDir, "assets", "rich-menu-v4.png"),
 ].filter(Boolean);
 let imagePath = imageCandidates.find((p) => existsSync(p));
 
-// Explicit opt-in only: ALLOW_XIAOMENG_RICH_MENU=1 (legacy F-version with 小夢 text)
 if (!imagePath && process.env.ALLOW_XIAOMENG_RICH_MENU === "1") {
   const legacy = join(rootDir, "assets", "rich-menu-xiaomeng.png");
   if (existsSync(legacy)) {
     console.warn(
-      "[rich-menu] WARNING: using assets/rich-menu-xiaomeng.png — image has baked-in「小夢神殿」text. Prefer assets/rich-menu-v5.png."
+      "[rich-menu] WARNING: using assets/rich-menu-xiaomeng.png — image has baked-in「小夢神殿」text. Prefer assets/rich-menu-erosee-v6.png."
     );
     imagePath = legacy;
   }
@@ -89,8 +106,7 @@ if (!imagePath && process.env.ALLOW_XIAOMENG_RICH_MENU === "1") {
 
 if (!imagePath) {
   throw new Error(
-    "Missing Erosée rich menu image. Run: npm run rich-menu:image  (writes assets/rich-menu-v5.png)\n" +
-      "Or set RICH_MENU_IMAGE=path/to.png\n" +
+    "Missing Erosée rich menu image. Set RICH_MENU_IMAGE=assets/rich-menu-erosee-v6.png\n" +
       "Do NOT use rich-menu-xiaomeng.png for the 情感解碼 OA (it shows 小夢 branding)."
   );
 }
@@ -121,5 +137,6 @@ await lineRequest(`/v2/bot/user/all/richmenu/${created.richMenuId}`, {
 
 console.log(`Rich menu created and set as default: ${created.richMenuId}`);
 console.log(`Config: ${configPath}`);
-console.log(`Image: ${imagePath}`);
-console.log(`LIFF links use LIFF_ID=${liffId}`);
+console.log(`Image: ${imagePath} (${(imageSize / 1024).toFixed(1)} KB)`);
+console.log(`PUBLIC_BASE_URL=${publicBaseUrl}`);
+if (liffId) console.log(`LIFF_ID=${liffId}`);

@@ -4,57 +4,59 @@
     "height": 1686
   },
   "selected": true,
-  "name": "Erosée 情感解碼選單 v5.1",
+  "name": "Erosée 情感解碼選單 v6",
   "chatBarText": "開始解碼",
-  "comment": "v5.1：左上「開始解碼」改為 postback（對話內漏斗），其餘格位仍開 LIFF 貨架。部署前將 ${LIFF_ID} 替換為真實 LIFF ID。LIFF Endpoint = https://xiaomeng-fortune.onrender.com/erosee-cosmic-home.html",
+  "comment": "v6：對齊 assets/rich-menu-erosee-v6.png 六宮格（情感分析／塔羅指引／更多神殿／萌寵神殿／會員中心／活動中心）。對話內漏斗用 postback；貨架／會員用 HTTPS（${PUBLIC_BASE_URL}）或 LIFF（${LIFF_ID}）。setup 腳本會替換占位符。",
   "areas": [
     {
       "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "postback",
-        "label": "開始解碼",
-        "data": "funnel=start",
-        "displayText": "開始解碼"
+        "label": "情感分析",
+        "data": "funnel=topic&id=love",
+        "displayText": "情感分析"
       }
     },
     {
       "bounds": { "x": 833, "y": 0, "width": 834, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "查看方案",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing&entry=richmenu"
+        "type": "postback",
+        "label": "塔羅指引",
+        "data": "funnel=start",
+        "displayText": "塔羅指引"
       }
     },
     {
       "bounds": { "x": 1667, "y": 0, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "情感系列",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Femotion&entry=richmenu"
+        "label": "更多神殿",
+        "uri": "${PUBLIC_BASE_URL}/erosee-l2-pricing.html?entry=richmenu"
       }
     },
     {
       "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 },
       "action": {
-        "type": "uri",
-        "label": "萌寵系列",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fpet&entry=richmenu"
+        "type": "postback",
+        "label": "萌寵神殿",
+        "data": "funnel=topic&id=pet",
+        "displayText": "萌寵神殿"
       }
     },
     {
       "bounds": { "x": 833, "y": 843, "width": 834, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "月費訂閱",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Fpricing%2Fsubscribe&entry=richmenu"
+        "label": "會員中心",
+        "uri": "${PUBLIC_BASE_URL}/erosee-l2-pricing.html?entry=richmenu#subscribe"
       }
     },
     {
       "bounds": { "x": 1667, "y": 843, "width": 833, "height": 843 },
       "action": {
         "type": "uri",
-        "label": "邀請好友",
-        "uri": "https://liff.line.me/${LIFF_ID}?route=%2Finvite&entry=richmenu&campaign=invite"
+        "label": "活動中心",
+        "uri": "${PUBLIC_BASE_URL}/erosee-l2-pricing.html?entry=richmenu&campaign=promo"
       }
     }
   ]

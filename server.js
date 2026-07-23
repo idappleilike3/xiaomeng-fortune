@@ -1333,6 +1333,7 @@ async function buildReplyMessages(event) {
   // 重新觸發歡迎詞(對齊 LINE_SYSTEM §3.2 v3.1 Rich Menu 第 6 格 + §1.1)
   // 也接受 hi/hello，方便不解除封鎖也能測 welcome Flex
   if (
+    text === "歡迎" ||
     text === "歡迎詞" ||
     text === "重新觸發歡迎詞" ||
     text === "加入情感解碼" ||
@@ -1606,7 +1607,7 @@ const server = createServer(async (request, response) => {
           // Length only — compare with Console Channel secret (usually 32). Never expose the secret.
           channelSecretLen: channelSecret.length,
           channelSecretConfigured: channelSecret.length > 0,
-          welcomeTriggers: ["follow", "join", "歡迎詞", "hi", "hello"],
+          welcomeTriggers: ["follow", "join", "歡迎", "歡迎詞", "hi", "hello"],
         },
         erosee: {
           home: eroseeHomeUrl,

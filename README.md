@@ -247,11 +247,13 @@ Cmd + Shift + R(Mac)
 2. 看 build log 找錯誤
 3. 確認 7 個環境變數都設對
 
-### LINE 收不到歡迎詞
+### LINE 收不到歡迎詞／還是舊文案
 
 1. 確認 2 個 env(LINE_CHANNEL_ACCESS_TOKEN + SECRET)有設
 2. 確認 webhook URL:`{PUBLIC_BASE_URL}/api/line/webhook`
 3. LINE Developers Console → Webhook 設定對
+4. **關閉** Official Account Manager「加入好友歡迎訊息」（純文字會蓋掉 webhook Flex）；真歡迎詞是 hero +「開始解碼」
+5. 傳 `hi` 或刪好友再加驗證；圖文選單需跑過 `npm run rich-menu:setup` 才會上到 LINE
 
 ### 角色立繪 / Hero BGM 沒顯示
 

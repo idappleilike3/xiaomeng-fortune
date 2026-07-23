@@ -251,9 +251,9 @@ Phase 2 待辦：訂閱「每日神諭」、積分到期提醒、第二神殿解
 - [ ] 記錄 **LIFF ID** → `LIFF_ID` / `LIFF_URL`  
 - [ ] Webhook URL = `https://xiaomeng-fortune.onrender.com/api/line/webhook`，啟用並驗證  
 - [ ] 啟用 LIFF `shareTargetPicker`（分享功能）  
-- [ ] 上傳 Rich Menu 圖 + 套用 `line/rich-menu.json`  
-- [ ] 設定 OA 歡迎訊息（可對齊 `welcomeFlexMessage` 文案）  
-- [ ] Render 環境變數含 `PUBLIC_BASE_URL`、`LINE_OA_URL`（見 `docs/LINE_LIFF_RENDER_SETUP.md`）  
+- [ ] 上傳 Rich Menu 圖 + 套用 `line/rich-menu.json`（`RICH_MENU_IMAGE=assets/rich-menu-erosee-v6.png` + `npm run rich-menu:setup`）  
+- [ ] **關閉或精簡** LINE Official Account Manager「加入好友歡迎訊息」（純文字會與 webhook Flex 衝突；真歡迎詞以 webhook `welcomeFunnelFlex` 為準）  
+- [ ] Render 環境變數含 `PUBLIC_BASE_URL=https://xiaomeng-fortune.onrender.com`、`LINE_OA_URL`（見 `docs/LINE_LIFF_RENDER_SETUP.md`）  
 
 ### 環境變數（`.env.example`）
 
