@@ -64,20 +64,34 @@ const configPath = existsSync(join(rootDir, "line/rich-menu.json"))
 const rawConfig = readFileSync(configPath, "utf8").replaceAll("${LIFF_ID}", liffId);
 const richMenuConfig = JSON.parse(rawConfig);
 
-// Prefer RICH_MENU_IMAGE env (absolute or repo-relative), then v5 → v4 → xiaomeng.
-// Note: assets/line-rich-menu-final.png is a 4-panel art (~4MB); LINE limit is 1MB and
-// line/rich-menu.json is 6-area — only use final after compress + matching 4-area JSON.
+// Prefer RICH_MENU_IMAGE env, then Erosée v5/v4.
+// NEVER silently fall back to rich-menu-xiaomeng.png (baked-in「小夢神殿」branding).
+// Note: assets/line-rich-menu-final.png is 4-panel art (~4MB); LINE limit is 1MB and
+// line/rich-menu.json is 6-area — only use after compress + matching JSON.
 const envImage = (process.env.RICH_MENU_IMAGE || "").trim();
 const imageCandidates = [
   envImage ? (envImage.match(/^[A-Za-z]:[\\/]/) || envImage.startsWith("/") ? envImage : join(rootDir, envImage)) : null,
   join(rootDir, "assets", "rich-menu-v5.png"),
   join(rootDir, "assets", "rich-menu-v4.png"),
-  join(rootDir, "assets", "rich-menu-xiaomeng.png"),
 ].filter(Boolean);
-const imagePath = imageCandidates.find((p) => existsSync(p));
+let imagePath = imageCandidates.find((p) => existsSync(p));
+
+// Explicit opt-in only: ALLOW_XIAOMENG_RICH_MENU=1 (legacy F-version with 小夢 text)
+if (!imagePath && process.env.ALLOW_XIAOMENG_RICH_MENU === "1") {
+  const legacy = join(rootDir, "assets", "rich-menu-xiaomeng.png");
+  if (existsSync(legacy)) {
+    console.warn(
+      "[rich-menu] WARNING: using assets/rich-menu-xiaomeng.png — image has baked-in「小夢神殿」text. Prefer assets/rich-menu-v5.png."
+    );
+    imagePath = legacy;
+  }
+}
+
 if (!imagePath) {
   throw new Error(
-    "Missing rich menu image. Set RICH_MENU_IMAGE=path/to.png or add assets/rich-menu-v5.png (fallback: rich-menu-xiaomeng.png)"
+    "Missing Erosée rich menu image. Run: npm run rich-menu:image  (writes assets/rich-menu-v5.png)\n" +
+      "Or set RICH_MENU_IMAGE=path/to.png\n" +
+      "Do NOT use rich-menu-xiaomeng.png for the 情感解碼 OA (it shows 小夢 branding)."
   );
 }
 const imageBytes = readFileSync(imagePath);

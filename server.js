@@ -13,6 +13,7 @@ import {
   siteUrlForRoute,
 } from "./lib/liff-routes.js";
 import { createFunnelContext, handleFunnelEvent } from "./lib/line/funnel-handlers.js";
+import { welcomeFunnelFlex } from "./lib/line/funnel-flex.js";
 import { resetSession as resetFunnelSession } from "./lib/line/funnel-session.js";
 import { getProduct } from "./lib/line/funnel-catalog.js";
 import { getNewebpayConfig, isNewebpayConfigured } from "./lib/newebpay/config.js";
@@ -152,7 +153,7 @@ const oracleProductMap = {
     reason: "適合財務整理、開源規劃與提醒自己穩定累積。",
   },
   general: {
-    title: "小夢老師開運選品",
+    title: "情感解碼開運選品",
     reason: "依照籤意挑選療癒、提醒與日常儀式感商品。",
   },
 };
@@ -280,11 +281,11 @@ const appData = {
 function getAutomationTemplates() {
   return {
     daily:
-      "早安，我是小夢老師。\n\n今天想知道感情、工作還是財運？回覆「塔羅」，我替你抽今日一張牌。\n\n免費看方向，完整解析可看今日行動建議。",
+      "早安，我是情感解碼。\n\n今天想知道感情、工作還是財運？回覆「開始解碼」，我陪你用免費三張牌看方向。\n\n完整解析可再看今日行動建議。",
     weekly:
       "本週運勢已更新。\n\n設定生日的人可以看本週流年提醒。回覆「週運」查看免費摘要，想看感情、事業、財運完整解析可再解鎖。",
     profile:
-      `你還差一點資料就能完成命盤。\n\n補上出生時間與出生地後，小夢老師就能幫你看八字時辰、紫微命宮與合盤方向。\n\n設定生日：${publicBaseUrl}/#profile`,
+      `你還差一點資料就能完成命盤。\n\n補上出生時間與出生地後，情感解碼就能幫你看八字時辰、紫微命宮與合盤方向。\n\n設定生日：${publicBaseUrl}/#profile`,
     premium:
       "你今天的牌面有明顯提醒。\n\n免費版先給你方向；如果想知道對方想法、未來 14 天走勢與下一步行動，可以解鎖完整解析。",
   };
@@ -523,14 +524,8 @@ function flexMessage(altText, contents) {
 }
 
 function menuFlexMessage() {
-  const menuItems = [
-    ["先設定生日", "之後會帶入命盤與提醒", liffPageUrl("profile"), "#F5D38B"],
-    ["塔羅抽牌", "感情、工作、財運都可以問", liffPageUrl("demo"), "#B780FF"],
-    ["求籤問事", "像到廟裡一樣先寫問題", liffPageUrl("demo"), "#78E0D5"],
-    ["命運市集", "看適合你的療癒選品", liffPageUrl("market"), "#F8A6C7"],
-  ];
-
-  return flexMessage("歡迎來找小夢老師", {
+  // Legacy fallback menu — Erosée branding; prefer welcomeFunnelFlex for new users
+  return flexMessage("歡迎 · 情感解碼", {
     type: "bubble",
     size: "mega",
     body: {
@@ -541,7 +536,7 @@ function menuFlexMessage() {
       contents: [
         {
           type: "text",
-          text: "歡迎你來找小夢老師",
+          text: "🌙 情感解碼",
           weight: "bold",
           size: "xl",
           color: "#F5D38B",
@@ -549,7 +544,7 @@ function menuFlexMessage() {
         },
         {
           type: "text",
-          text: "如果你心裡剛好有一件事，可以先選塔羅或求籤。想讓之後的解析更貼近你，建議先設定生日資料。",
+          text: "如果你心裡剛好有一件事，可以先開始解碼。想看完整方案，也可以直接逛貨架。",
           size: "sm",
           color: "#F8EEDB",
           wrap: true,
@@ -558,45 +553,41 @@ function menuFlexMessage() {
           type: "box",
           layout: "vertical",
           spacing: "sm",
-          paddingAll: "14px",
           margin: "md",
-          backgroundColor: "#2A1744",
-          borderColor: "#F5D38B",
-          borderWidth: "1px",
-          cornerRadius: "16px",
           contents: [
             {
-              type: "text",
-              text: "你可以這樣開始",
-              size: "sm",
-              weight: "bold",
-              color: "#F5D38B",
+              type: "button",
+              style: "primary",
+              height: "sm",
+              color: "#7C4DC4",
+              action: postbackAction("開始解碼", "funnel=start", "開始解碼"),
             },
             {
-              type: "text",
-              text: "感情卡住、工作選擇、財運方向、最近心情，都可以先從一個問題開始。",
-              size: "xs",
-              color: "#FFF8EE",
-              wrap: true,
+              type: "button",
+              style: "secondary",
+              height: "sm",
+              color: "#F5D38B",
+              action: uriAction("查看所有方案", eroseeLink("/pricing")),
+            },
+            {
+              type: "button",
+              style: "secondary",
+              height: "sm",
+              color: "#FF8AB7",
+              action: uriAction("情感系列", eroseeLink("/pricing/emotion")),
+            },
+            {
+              type: "button",
+              style: "secondary",
+              height: "sm",
+              color: "#78E0D5",
+              action: uriAction("萌寵系列", eroseeLink("/pricing/pet")),
             },
           ],
         },
         {
-          type: "box",
-          layout: "vertical",
-          spacing: "sm",
-          margin: "md",
-          contents: menuItems.map(([label, hint, uri, color]) => ({
-            type: "button",
-            style: "secondary",
-            height: "sm",
-            color,
-            action: uriAction(`${label}｜${hint}`, uri),
-          })),
-        },
-        {
           type: "text",
-          text: "也可以直接打：塔羅、求籤、靈數 1996-08-18、命盤、MBTI、市集。",
+          text: "也可以直接回覆：開始解碼、hi、歡迎詞。",
           size: "xs",
           color: "#CDBCEB",
           wrap: true,
@@ -696,81 +687,9 @@ function divinationKeywordFlexMessage() {
   });
 }
 
-function welcomeFlexMessage() {
-  // Brand welcome + CTA buttons (Messaging API follow). Console greeting cannot host Flex/postback.
-  // ESM-safe: use top-level existsSync/join (require() crashes under "type":"module").
-  const avatarPath = join(rootDir, "assets", "welcome-avatar.png");
-  const avatarUrl = existsSync(avatarPath)
-    ? `${publicBaseUrl}/assets/welcome-avatar.png`
-    : null;
-  const pricingUri =
-    eroseeLink("/pricing") ||
-    `${publicBaseUrl}${LIFF_PRICING_PATH.startsWith("/") ? LIFF_PRICING_PATH : `/${LIFF_PRICING_PATH}`}`;
-  return flexMessage("歡迎 · 開始解碼", {
-    type: "bubble",
-    size: "mega",
-    body: {
-      type: "box",
-      layout: "vertical",
-      spacing: "md",
-      backgroundColor: "#0D0718",
-      contents: [
-        ...(avatarUrl
-          ? [{
-              type: "image",
-              url: avatarUrl,
-              size: "sm",
-              align: "center",
-              margin: "lg",
-              aspectRatio: "1:1",
-              aspectMode: "circle",
-            }]
-          : [{
-              type: "text",
-              text: "🌙",
-              size: "xxl",
-              align: "center",
-              margin: "lg",
-            }]),
-        {
-          type: "text",
-          text: "嗨 我是情感解碼",
-          weight: "bold",
-          size: "lg",
-          color: "#F5D38B",
-          align: "center",
-          wrap: true,
-        },
-        {
-          type: "text",
-          text: "今晚如果你心裡剛好卡著一件事\n可以先點「開始解碼」\n我會陪你用免費三張牌 把現況慢慢攤開",
-          size: "sm",
-          color: "#F8EEDB",
-          align: "center",
-          wrap: true,
-          margin: "md",
-        },
-        {
-          type: "button",
-          style: "primary",
-          color: "#7C4DC4",
-          margin: "lg",
-          action: postbackAction("開始解碼", "funnel=start", "開始解碼"),
-        },
-        {
-          type: "button",
-          style: "secondary",
-          color: "#F5D38B",
-          action: uriAction("查看所有方案", pricingUri),
-        },
-      ],
-    },
-  });
-}
-
-/** follow / join /「歡迎詞」：單一 Flex，內含開始解碼 + 查看所有方案 */
+/** follow / join /「歡迎詞」/ hi：HERO carousel（開始解碼大鈕 + 七大主題大鈕） */
 function followWelcomeMessages() {
-  return [welcomeFlexMessage()];
+  return [welcomeFunnelFlex(getFunnelCtx())];
 }
 
 function tarotGuidanceFlexMessage() {
@@ -801,7 +720,7 @@ function tarotGuidanceFlexMessage() {
         },
         {
           type: "text",
-          text: "選擇主題,由小夢陪你抽牌。",
+          text: "選擇主題,由情感解碼陪你抽牌。",
           size: "sm",
           color: "#C9B88A",
           wrap: true,
@@ -1050,7 +969,7 @@ function tarotFlexMessage(card) {
   const position = isReversed ? "逆位" : "正位";
   const ritualHint = isReversed ? "這張牌提醒你先停下來，看見卡住的地方。" : "這張牌像是一盞燈，先照亮你眼前的方向。";
 
-  return flexMessage(`小夢老師替你抽到 ${card[0]}`, {
+  return flexMessage(`情感解碼替你抽到 ${card[0]}`, {
     type: "bubble",
     size: "mega",
     body: {
@@ -1067,7 +986,7 @@ function tarotFlexMessage(card) {
         },
         {
           type: "text",
-          text: "小夢老師替你翻開這張牌",
+          text: "情感解碼替你翻開這張牌",
           weight: "bold",
           size: "lg",
           color: "#F5D38B",
@@ -1321,7 +1240,7 @@ function buildReplyMessages(event) {
   }
 
   if (!text) {
-    return [menuFlexMessage()];
+    return followWelcomeMessages();
   }
 
   if (/占卜|神殿|命運/.test(text)) {
@@ -1409,6 +1328,7 @@ function buildReplyMessages(event) {
   if (
     text === "歡迎詞" ||
     text === "重新觸發歡迎詞" ||
+    text === "加入情感解碼" ||
     text === "加入小夢" ||
     lowerText === "hi" ||
     lowerText === "hello"
@@ -1416,7 +1336,8 @@ function buildReplyMessages(event) {
     return followWelcomeMessages();
   }
 
-  return [menuFlexMessage()];
+  // Unknown text → Erosée welcome HERO (never legacy 小夢 menu)
+  return followWelcomeMessages();
 }
 
 async function generateMasterLetterContent(letter) {
@@ -1430,7 +1351,7 @@ async function generateMasterLetterContent(letter) {
   const FORTUNE_CLOSERS = [
     "願這封信成為你今夜的指引。",
     "記得,所有的答案都已在你的靈魂之中。",
-    "若仍迷茫,小夢老師隨時在這裡為你調頻。",
+    "若仍迷茫,情感解碼隨時在這裡為你調頻。",
     "把你的心安放在這段訊息上,讓它慢慢滊透。",
     "今夜,把窗打開,讓風進來,答案會自己走到你面前。"
   ];
@@ -1450,7 +1371,7 @@ async function generateMasterLetterContent(letter) {
   }
   const opener = FORTUNE_OPENERS[Math.floor(Math.random() * FORTUNE_OPENERS.length)];
   const closer = FORTUNE_CLOSERS[Math.floor(Math.random() * FORTUNE_CLOSERS.length)];
-  return opener + "\\n\\n看著你在信中傾訴的掙扎, 我能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌, 當前的卡關只是星象短暫的逆行。\\n\\n" + reading + "\\n\\n" + closer + "\\n\\n——小夢老師 深夜親筆\\n" + new Date().toLocaleString("zh-TW");
+  return opener + "\\n\\n看著你在信中傾訴的掙扎, 我能感受到你此刻靈魂的焦慮與沉重。萬物皆有星軌, 當前的卡關只是星象短暫的逆行。\\n\\n" + reading + "\\n\\n" + closer + "\\n\\n——情感解碼 深夜親筆\\n" + new Date().toLocaleString("zh-TW");
 }
 
 /** Probe Messaging API token without exposing it (for /health). */
@@ -1647,7 +1568,7 @@ const server = createServer(async (request, response) => {
             process.env.GIT_COMMIT ||
             null,
           branch: process.env.RENDER_GIT_BRANCH || null,
-          welcomeFlex: "v2-buttons",
+          welcomeFlex: "v3-hero-large",
           newebpay: isNewebpayConfigured() ? "configured" : "missing",
         },
         line: {
@@ -2154,7 +2075,7 @@ const server = createServer(async (request, response) => {
         try {
           await pushToLine(letter.userId, [{
             type: "text",
-            text: `【命運指引】來自小夢老師的一封深夜親筆信\n\n${reading}\n\n—— 小夢老師 深夜親筆`,
+            text: `【命運指引】來自情感解碼的一封深夜親筆信\n\n${reading}\n\n—— 情感解碼 深夜親筆`,
           }]);
           queued.status = "delivered";
           queued.deliveredAt = Date.now();
@@ -2737,7 +2658,7 @@ server.on("error", (err) => {
 const listenHost = process.env.HOST || "0.0.0.0";
 server.listen(port, listenHost, () => {
   const lan = getLanIPv4();
-  console.log(`小夢神殿（固定建議埠 3000；其他專案請用 3001+）：http://localhost:${port}`);
+  console.log(`情感解碼（固定建議埠 3000；其他專案請用 3001+）：http://localhost:${port}`);
   console.log(`主站：http://localhost:${port}/`);
   console.log(`Erosée LIFF 首頁：http://localhost:${port}${LIFF_ENTRY_PATH}`);
   console.log(`Erosée L2 方案：http://localhost:${port}${LIFF_PRICING_PATH}`);
